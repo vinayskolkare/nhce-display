@@ -341,6 +341,165 @@
         from { opacity: 0; transform: translateY(15px); }
         to { opacity: 1; transform: translateY(0); }
     }
+		.header-flex {
+    grid-column: span 12;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 30px;
+}	
+	
+/* Grid for Syllabus Cards */
+.grid-layout {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    width: 100%;
+}
+
+/* Subject Rows */
+.item-row {
+    padding: 12px 15px;
+    background: rgba(34, 29, 92, 0.05);
+    border-radius: 12px;
+    margin-bottom: 10px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.9rem;
+}
+
+.item-row i {
+    color: var(--accent-red);
+    font-size: 0.8rem;
+}
+
+/* Specialty VAP Card */
+.vap-card {
+    background: var(--primary-blue) !important;
+    color: white;
+}
+
+.vap-card .item-row {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+
+	.value-added-card {
+        padding: 40px;
+        background: #fff;
+        border-radius: 30px;
+        border: none;
+    }
+
+    .value-header {
+        text-align: center;
+        margin-bottom: 40px;
+        border-bottom: 2px solid #f0f0f0;
+        padding-bottom: 30px;
+    }
+
+    .value-header h2 {
+        color: var(--primary-blue);
+        font-weight: 800;
+        font-size: 2.2rem;
+        margin: 10px 0;
+    }
+
+    .value-header .subtitle {
+        color: #b1933c; /* Matches the golden text in image */
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.9rem;
+    }
+
+    .value-grid {
+        display: grid;
+        grid-template-columns: 1.2fr 1fr;
+        gap: 40px;
+    }
+
+    .col-title {
+        color: var(--primary-blue);
+        font-size: 1.3rem;
+        font-weight: 800;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .feature-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 12px 0;
+        border-bottom: 1px solid #f5f5f5;
+        font-size: 0.95rem;
+        color: #444;
+    }
+
+    .feature-item small {
+        color: var(--accent-red);
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    /* Professional Skill Styling */
+    .highlight-col {
+        background: #fcfaff;
+        padding: 25px;
+        border-radius: 20px;
+        border: 1px dashed #d1c4e9;
+    }
+
+    .expert-note {
+        font-size: 0.8rem;
+        color: #b1933c;
+        margin-top: -15px;
+        margin-bottom: 20px;
+        font-weight: 600;
+    }
+
+    .skill-card {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        background: #fff;
+        padding: 15px;
+        border-radius: 12px;
+        margin-bottom: 10px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+    }
+
+    .skill-card i {
+        color: var(--primary-blue);
+        font-size: 1.2rem;
+    }
+
+    .skill-info h5 {
+        margin: 0;
+        font-size: 0.9rem;
+        font-weight: 700;
+    }
+
+    .skill-info p {
+        margin: 0;
+        font-size: 0.8rem;
+        color: #888;
+    }
+
+    .disclaimer {
+        font-size: 0.75rem;
+        color: #999;
+        margin-top: 15px;
+        font-style: italic;
+    }
+
+    @media (max-width: 992px) {
+        .value-grid { grid-template-columns: 1fr; }
+    }
     </style>
 </head>
 <body>
@@ -363,7 +522,7 @@
         </div>
         <ul class="nav-links">
             <li><a onclick="switchTab('overview')" id="link-overview" class="active"><i class="fa-solid fa-chart-line"></i> <span>Overview</span></a></li>
-            <li><a onclick="switchTab('academics')" id="link-academics"><i class="fa-solid fa-book"></i> <span>Academics</span></a></li>
+            <li><a onclick="switchTab('academics')" id="link-academics"><i class="fa-solid fa-book"></i> <span>Syllabus</span></a></li>
             <li><a onclick="switchTab('labs')" id="link-labs"><i class="fa-solid fa-flask"></i> <span>Labs</span></a></li>
             <li><a onclick="switchTab('coe')" id="link-coe"><i class="fa-solid fa-microchip"></i> <span>CoE</span></a></li>
             <li><a onclick="switchTab('activities')" id="link-activities"><i class="fa-solid fa-calendar-days"></i> <span>Activities</span></a></li>
@@ -413,34 +572,227 @@
                         <p class="sub-title">Restructuring Indian education to create an equitable and inclusive system providing learning for all.</p>
                     </div>
                 </div>
-                <div class="card span-6">
-                    <h3>NEP & Scheme (2024-25)</h3>
-                    <ul class="list-items">
-                        <li><strong>2nd Year:</strong> <span class="counter" data-target="160">0</span> Credits (Current scheme)</li>
-                        <li><strong>3rd Year:</strong> <span class="counter" data-target="160">0</span> Credits (2022 scheme)</li>
-                        <li><strong>4th Year:</strong> <span class="counter" data-target="160">0</span> Credits (2021 scheme)</li>
-                    </ul>
-                </div>
-                <div class="card span-6">
-                    <h3>Degree Programs</h3>
-                    <div class="degree-container">
-                        <span class="degree-tag">Major Degree</span> 
-                        <p style="margin-bottom: 10px;"><span class="counter" data-target="160">0</span> Credits as per NEP</p>
-                        <span class="degree-tag">Minor Degree</span> 
-                        <p style="margin-bottom: 10px;"><span class="counter" data-target="18">0</span> Credits (Cross-branch selection: e.g. Mechanical students opting for CS scheme)</p>
-                        <span class="degree-tag">Honours Degree</span> 
-                        <p><span class="counter" data-target="18">0</span> Credits (Specialized Research)</p>
-                    </div>
-                </div>
-                <div class="card span-12">
-                    <h3>Career Lifecycle</h3>
-                    <ul class="list-items">
-                        <li><strong>Specify & plan:</strong>define specs (function, frequency, power, area), block diagram, interfaces, and a verification/test plan.</li>
-                        <li><strong>Develop rtl + verify:</strong>  write clean verilog/systemverilog rtl and a testbench (directed/uvm), run regressions, and close coverage.</li>
-                        <li><strong>Implement & sign off:</strong>  synthesize with constraints (sdc), then run physical design (floorplan → p&r → cts) and sign off (sta, drc/lvs, ir/em).</li>
-					 <li><strong>Operate & validate:</strong>use eda flows (simulation, lint/cdc, synthesis, sta, pd) and finally do silicon bring-up/debug (jtag/scan, measurements) and iterate ecos if needed.global program (ece)</li>
-                    </ul>
-                </div>
+<div class="span-12 reveal" style="margin-bottom: 40px;">
+    <h3 style="color: var(--primary-blue); font-weight: 800; border-left: 6px solid var(--accent-red); padding-left: 15px; margin-bottom: 20px; font-size: 1.6rem;">
+        THIRD SEMESTER <i class="fas fa-chart-line" style="float:right; opacity:0.2"></i>
+    </h3>
+
+    <div class="card" style="padding: 30px;">
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+            
+            <div style="border-right: 1px solid rgba(34, 29, 92, 0.1); padding-right: 15px;">
+                <div class="item-row"><i class="fas fa-check"></i> Numerical Methods and Transforms</div>
+                <div class="item-row"><i class="fas fa-check"></i> Analog Electronic Circuits</div>
+                <div class="item-row"><i class="fas fa-check"></i> Analog Electronic Circuits Lab</div>
+                <div class="item-row"><i class="fas fa-check"></i> Digital Electronic Circuits</div>
+                <div class="item-row"><i class="fas fa-check"></i> Digital Electronic Circuits Lab</div>
+            </div>
+
+            <div style="border-right: 1px solid rgba(34, 29, 92, 0.1); padding-right: 15px;">
+                <div class="item-row"><i class="fas fa-check"></i> Signals and Systems</div>
+                <div class="item-row"><i class="fas fa-check"></i> Circuit Design and Analysis</div>
+                <div class="item-row"><i class="fas fa-check"></i> Ability Enhancement Course – III</div>
+                <div class="item-row"><i class="fas fa-check"></i> Electronics System Design using Proteus</div>
+                <div class="item-row"><i class="fas fa-check"></i> Programming on Raspberry Pi using Python</div>
+            </div>
+
+            <div>
+                <div class="item-row"><i class="fas fa-check"></i> Industrial Robot Programming using Roboguide</div>
+                <div class="item-row"><i class="fas fa-check"></i> Data Visualization with Scilab</div>
+                <div class="item-row"><i class="fas fa-check"></i> Bioinspired Design and Innovation</div>
+                <div class="item-row"><i class="fas fa-check"></i> Design Thinking and Fabrication</div>
+                <div class="item-row"><i class="fas fa-check"></i> Basic Applied Mathematics – I</div>
+                <div class="item-row"><i class="fas fa-check"></i> NSS / Physical Education / Yoga</div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<div class="span-12 reveal" style="margin-bottom: 40px;">
+    <h3 style="color: var(--primary-blue); font-weight: 800; border-left: 6px solid var(--accent-red); padding-left: 15px; margin-bottom: 20px; font-size: 1.6rem;">
+        FOURTH SEMESTER <i class="fas fa-chart-line" style="float:right; opacity:0.2"></i>
+    </h3>
+
+    <div class="card" style="padding: 30px;">
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+            
+            <div style="border-right: 1px solid rgba(34, 29, 92, 0.1); padding-right: 15px;">
+                <div class="item-row"><i class="fas fa-check"></i> Complex Analysis and Probability Theory</div>
+                <div class="item-row"><i class="fas fa-check"></i> System Design using HDL</div>
+                <div class="item-row"><i class="fas fa-check"></i> System Design using HDL Lab</div>
+                <div class="item-row"><i class="fas fa-check"></i> Digital Signal Processing</div>
+                <div class="item-row"><i class="fas fa-check"></i> Digital Signal Processing Lab</div>
+            </div>
+
+            <div style="border-right: 1px solid rgba(34, 29, 92, 0.1); padding-right: 15px;">
+                <div class="item-row"><i class="fas fa-check"></i> Microprocessors and Microcontrollers</div>
+                <div class="item-row"><i class="fas fa-check"></i> Microprocessors and Microcontrollers Lab</div>
+                <div class="item-row"><i class="fas fa-check"></i> Professional Elective – I</div>
+                <div class="item-row"><i class="fas fa-check"></i> Control Systems / LIC / EMFT / BSP / Competitive Coding</div>
+                <div class="item-row"><i class="fas fa-check"></i> Ability Enhancement Course – IV</div>
+            </div>
+
+            <div>
+                <div class="item-row"><i class="fas fa-check"></i> ALP with Microcontroller</div>
+                <div class="item-row"><i class="fas fa-check"></i> PCB Design using OrCAD</div>
+                <div class="item-row"><i class="fas fa-check"></i> Embedded Design using MPLAB / RTOS – QNX</div>
+                <div class="item-row"><i class="fas fa-check"></i> Universal Human Values & Life Skills</div>
+                <div class="item-row"><i class="fas fa-check"></i> Mini Project</div>
+                <div class="item-row"><i class="fas fa-check"></i> NSS / Physical Education / Yoga</div>
+            </div>
+
+        </div>
+    </div>
+</div>
+		
+		
+		<div class="span-12 reveal" style="margin-bottom: 40px;">
+    <h3 style="color: var(--primary-blue); font-weight: 800; border-left: 6px solid var(--accent-red); padding-left: 15px; margin-bottom: 20px; font-size: 1.6rem;">
+        FIFTH SEMESTER <i class="fas fa-chart-line" style="float:right; opacity:0.2"></i>
+    </h3>
+
+    <div class="card" style="padding: 30px;">
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+
+            <div style="border-right: 1px solid rgba(34, 29, 92, 0.1); padding-right: 15px;">
+                <div class="item-row"><i class="fas fa-check"></i> Operations Research and Management</div>
+                <div class="item-row"><i class="fas fa-check"></i> Communication Systems – I</div>
+                <div class="item-row"><i class="fas fa-check"></i> Communication Systems – I Lab</div>
+                <div class="item-row"><i class="fas fa-check"></i> CMOS VLSI Design</div>
+                <div class="item-row"><i class="fas fa-check"></i> CMOS VLSI Design Lab</div>
+            </div>
+
+            <div style="border-right: 1px solid rgba(34, 29, 92, 0.1); padding-right: 15px;">
+                <div class="item-row"><i class="fas fa-check"></i> Professional Elective – I</div>
+                <div class="item-row"><i class="fas fa-check"></i> Data Communication and Networking</div>
+                <div class="item-row"><i class="fas fa-check"></i> Electromagnetic Field Theory</div>
+                <div class="item-row"><i class="fas fa-check"></i> DSP Algorithms and Architecture</div>
+                <div class="item-row"><i class="fas fa-check"></i> Internet of Things</div>
+                <div class="item-row"><i class="fas fa-check"></i> Competitive Coding</div>
+                <div class="item-row"><i class="fas fa-check"></i> RTOS – QNX</div>
+            </div>
+
+            <div>
+                <div class="item-row"><i class="fas fa-check"></i> Research Methodology and IPR</div>
+                <div class="item-row"><i class="fas fa-check"></i> Critical and Creative Thinking Skills</div>
+                <div class="item-row"><i class="fas fa-check"></i> Environmental Studies</div>
+                <div class="item-row"><i class="fas fa-check"></i> Mini Project – II</div>
+                <div class="item-row"><i class="fas fa-check"></i> NSS / Physical Education / Yoga</div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<div class="span-12 reveal" style="margin-bottom: 40px;">
+    <h3 style="color: var(--primary-blue); font-weight: 800; border-left: 6px solid var(--accent-red); padding-left: 15px; margin-bottom: 20px; font-size: 1.6rem;">
+        SIXTH SEMESTER <i class="fas fa-chart-line" style="float:right; opacity:0.2"></i>
+    </h3>
+
+    <div class="card" style="padding: 30px;">
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+
+            <div style="border-right: 1px solid rgba(34, 29, 92, 0.1); padding-right: 15px;">
+                <div class="item-row"><i class="fas fa-check"></i> Embedded System Design</div>
+                <div class="item-row"><i class="fas fa-check"></i> Embedded System Design Lab</div>
+                <div class="item-row"><i class="fas fa-check"></i> Communication Systems – II</div>
+                <div class="item-row"><i class="fas fa-check"></i> Communication Systems – II Lab</div>
+            </div>
+
+            <div style="border-right: 1px solid rgba(34, 29, 92, 0.1); padding-right: 15px;">
+                <div class="item-row"><i class="fas fa-check"></i> Essentials of Cyber Security</div>
+                <div class="item-row"><i class="fas fa-check"></i> Professional Elective – II</div>
+                <div class="item-row"><i class="fas fa-check"></i> Machine Learning Algorithms</div>
+                <div class="item-row"><i class="fas fa-check"></i> Biomedical Signal Processing</div>
+                <div class="item-row"><i class="fas fa-check"></i> RTL Design and Verification</div>
+                <div class="item-row"><i class="fas fa-check"></i> Low Power VLSI Design</div>
+                <div class="item-row"><i class="fas fa-check"></i> Optical Communication</div>
+            </div>
+
+            <div>
+                <div class="item-row"><i class="fas fa-check"></i> Project Phase – I</div>
+                <div class="item-row"><i class="fas fa-check"></i> Problem Solving Skills</div>
+                <div class="item-row"><i class="fas fa-check"></i> Ability Enhancement Course – V</div>
+                <div class="item-row"><i class="fas fa-check"></i> Antenna Simulation using Ansys</div>
+                <div class="item-row"><i class="fas fa-check"></i> Network Simulation using NS-2</div>
+                <div class="item-row"><i class="fas fa-check"></i> Linux and Shell Programming</div>
+                <div class="item-row"><i class="fas fa-check"></i> ALP with Microcontrollers</div>
+                <div class="item-row"><i class="fas fa-check"></i> NSS / Physical Education / Yoga</div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+<div class="span-12 reveal" style="margin-bottom: 40px;">
+    <h3 style="color: var(--primary-blue); font-weight: 800; border-left: 6px solid var(--accent-red); padding-left: 15px; margin-bottom: 20px; font-size: 1.6rem;">
+        SEVENTH SEMESTER <i class="fas fa-chart-line" style="float:right; opacity:0.2"></i>
+    </h3>
+
+    <div class="card" style="padding: 30px;">
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+
+            <div style="border-right: 1px solid rgba(34, 29, 92, 0.1); padding-right: 15px;">
+                <div class="item-row"><i class="fas fa-check"></i> Wireless Communication</div>
+                <div class="item-row"><i class="fas fa-check"></i> Wireless Communication Lab</div>
+            </div>
+
+            <div style="border-right: 1px solid rgba(34, 29, 92, 0.1); padding-right: 15px;">
+                <div class="item-row"><i class="fas fa-check"></i> Computer Vision</div>
+                <div class="item-row"><i class="fas fa-check"></i> Computer Vision Lab</div>
+            </div>
+
+            <div>
+                <div class="item-row"><i class="fas fa-check"></i> Coding and Cryptography</div>
+                <div class="item-row"><i class="fas fa-check"></i> Project Phase – II</div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<div class="span-12 reveal" style="margin-bottom: 40px;">
+    <h3 style="color: var(--primary-blue); font-weight: 800; border-left: 6px solid var(--accent-red); padding-left: 15px; margin-bottom: 20px; font-size: 1.6rem;">
+        EIGHTH SEMESTER <i class="fas fa-chart-line" style="float:right; opacity:0.2"></i>
+    </h3>
+
+    <div class="card" style="padding: 30px;">
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+
+            <div style="border-right: 1px solid rgba(34, 29, 92, 0.1); padding-right: 15px;">
+                <div class="item-row"><i class="fas fa-check"></i> Professional Elective – III</div>
+                <div class="item-row"><i class="fas fa-check"></i> Satellite Communication</div>
+                <div class="item-row"><i class="fas fa-check"></i> Statistical Signal Processing</div>
+                <div class="item-row"><i class="fas fa-check"></i> Automotive Electronics</div>
+                <div class="item-row"><i class="fas fa-check"></i> Wireless Sensor Networks</div>
+                <div class="item-row"><i class="fas fa-check"></i> Analog and Mixed-Mode VLSI Design</div>
+            </div>
+
+            <div style="border-right: 1px solid rgba(34, 29, 92, 0.1); padding-right: 15px;">
+                <div class="item-row"><i class="fas fa-check"></i> Professional Elective – IV</div>
+                <div class="item-row"><i class="fas fa-check"></i> Radar Networks</div>
+                <div class="item-row"><i class="fas fa-check"></i> Multimedia Communication</div>
+                <div class="item-row"><i class="fas fa-check"></i> Nanoelectronics</div>
+                <div class="item-row"><i class="fas fa-check"></i> Quantum Computing</div>
+                <div class="item-row"><i class="fas fa-check"></i> Software Defined Radio</div>
+            </div>
+
+            <div>
+                <div class="item-row"><i class="fas fa-check"></i> Internship</div>
+                <div class="item-row"><i class="fas fa-check"></i> Indian Knowledge Systems</div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
 
             </div>
         </section>
@@ -505,47 +857,61 @@
                 <h4 class="activities-section-title">Academic Activities</h4>
                 
                 <div class="span-4 reveal">
+				<a href="ece-results.html?cat=17&name=Co-curricular" style="text-decoration: none; color: inherit;">
                     <div class="activity-card">
                         <div class="activity-img"><img src="images/img-45.jpg" alt="Co-curricular"></div>
                         <div class="activity-info"><h5>Co-curricular Activities</h5><p>Innovative Teaching and Learning Pedagogical Approaches</p></div>
                     </div>
+					</a>
                 </div>
                 <div class="span-4 reveal">
+				<a href="ece-results.html?cat=18&name=Co-curricular" style="text-decoration: none; color: inherit;">
                     <div class="activity-card">
                         <div class="activity-img"><img src="images/img-46.png" alt="Seminars"></div>
                         <div class="activity-info"><h5>Seminars & Workshops</h5><p>Sessions on FIRMWARE Development by experts.</p></div>
                     </div>
+					</a>
                 </div>
                 <div class="span-4 reveal">
+				<a href="ece-results.html?cat=26&name=Co-curricular" style="text-decoration: none; color: inherit;">
+				
                     <div class="activity-card">
                         <div class="activity-img"><img src="images/img-47.jpg" alt="Alumni"></div>
                         <div class="activity-info"><h5>Alumni Talk Series</h5><p>Bridge the gap with industry insights from our successful graduates worldwide.</p></div>
                     </div>
+					</a>
                 </div>
 
                 <h4 class="activities-section-title">Industry & Social</h4>
                 
                 <div class="span-4 reveal">
+				<a href="ece-results.html?cat=18&name=Co-curricular" style="text-decoration: none; color: inherit;">
                     <div class="activity-card">
                         <div class="activity-img"><img src="images/img-53.webp" alt="Outreach"></div>
                         <div class="activity-info"><h5>Outreach & Extension</h5><p>Social responsibility programs and knowledge sharing with the local community.</p></div>
                     </div>
+					</a>
                 </div>
                 <div class="span-4 reveal">
+				<a href="ece-results.html?cat=26&name=Live Projects" style="text-decoration: none; color: inherit;">
                     <div class="activity-card">
                         <div class="activity-img"><img src="images/img-51.jpg" alt="Projects"></div>
                         <div class="activity-info"><h5>Live Projects</h5><p>Real-world problem solving through industry-sponsored capstone projects.</p></div>
                     </div>
+					</a>
                 </div>
                 <div class="span-4 reveal">
+				<a href="ece-results.html?cat=27&name=Industrial Visits" style="text-decoration: none; color: inherit;">
                     <div class="activity-card">
                         <div class="activity-img"><img src="images/img-50.jpg" alt="Industrial Visits"></div>
                         <div class="activity-info"><h5>Industrial Visits</h5><p>Structured Industrial Visits on Practical industrial Knowledge</p></div>
                     </div>
+					</a>
                 </div>
 
                 <h4 class="activities-section-title">Students Achievements</h4>
                 <div class="span-12">
+				<a href="ece-results.html?cat=8&name=Achievement" style="text-decoration: none; color: inherit;">
                     <div class="media-grid-pure">
                         <div class="achievement-container reveal">
                             <div class="media-item-pure"><img src="images/img-56.png" alt="SIH"></div>
@@ -569,6 +935,7 @@
                             </ul>
                         </div>
                     </div>
+					</a>
                 </div>
 
                 <h4 class="activities-section-title">Club Activities</h4>
@@ -776,5 +1143,66 @@
             initReveal();
         };
     </script>
+	
+				<script>
+window.addEventListener('load', () => {
+    // Standard initializations
+    if (typeof createNeuralEffect === "function") createNeuralEffect('neural-canvas');
+    if (typeof initHexBg === "function") initHexBg();
+    initReveal();
+
+    // 1. Get the tab from the URL (?tab=activities)
+    const urlParams = new URLSearchParams(window.location.search);
+    const targetTab = urlParams.get('tab');
+
+    if (targetTab) {
+        // 2. Wait for the specific element to exist before switching
+        const checkExist = setInterval(() => {
+            const element = document.getElementById(targetTab);
+            if (element) {
+                console.log("Found tab, switching to:", targetTab);
+                switchTab(targetTab);
+                clearInterval(checkExist); // Stop looking once found
+            }
+        }, 50); // Checks every 50ms
+
+        // 3. Safety timeout: stop looking after 3 seconds if not found
+        setTimeout(() => clearInterval(checkExist), 3000);
+    } else {
+        // Default startup tab
+        switchTab('overview');
+    }
+});
+</script>
+			<script>
+window.addEventListener('load', () => {
+    // Standard initializations
+    if (typeof createNeuralEffect === "function") createNeuralEffect('neural-canvas');
+    if (typeof initHexBg === "function") initHexBg();
+    initReveal();
+
+    // 1. Get the tab from the URL (?tab=activities)
+    const urlParams = new URLSearchParams(window.location.search);
+    const targetTab = urlParams.get('tab');
+
+    if (targetTab) {
+        // 2. Wait for the specific element to exist before switching
+        const checkExist = setInterval(() => {
+            const element = document.getElementById(targetTab);
+            if (element) {
+                console.log("Found tab, switching to:", targetTab);
+                switchTab(targetTab);
+                clearInterval(checkExist); // Stop looking once found
+            }
+        }, 50); // Checks every 50ms
+
+        // 3. Safety timeout: stop looking after 3 seconds if not found
+        setTimeout(() => clearInterval(checkExist), 3000);
+    } else {
+        // Default startup tab
+        switchTab('overview');
+    }
+});
+</script>
 </body>
 </html>

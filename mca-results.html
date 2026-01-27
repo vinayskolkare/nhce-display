@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>EEE - Updates & Seminars</title>
+    <title>MCA - Updates & Seminars</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -79,7 +79,7 @@
     </div>
 
     <aside class="sidebar">
-        <a href="eee.html?tab=activities" class="back-link"><i class="fa-solid fa-circle-arrow-left"></i> <span>Go Back</span></a>
+        <a href="mca.html?tab=activities" class="back-link"><i class="fa-solid fa-circle-arrow-left"></i> <span>Go Back</span></a>
         <div class="logo-area"><img src="images/logo-2.png" alt="NHCE Logo"></div>
     </aside>
 
@@ -97,59 +97,59 @@
 
     <script>
        // 1. Get parameters from URL (e.g., aiml-results-1.html?cat=11&name=Seminars)
-const urlParams = new URLSearchParams(window.location.search);
-const catId = urlParams.get('cat') || '11'; 
-const catName = urlParams.get('name') || 'Updates'; // Use 'name' parameter for the header
-const wpBaseUrl = 'https://department-of-electrical-and-electronics-engineering.newhorizoncollegeofengineering.in/'; 
+        const urlParams = new URLSearchParams(window.location.search);
+        const catId = urlParams.get('cat') || '11'; 
+        const catName = urlParams.get('name') || 'Updates'; // Use 'name' parameter for the header
+        const wpBaseUrl = 'https://mca.newhorizoncollegeofengineering.in/'; 
 
-// 2. Set the Page Title immediately
-document.getElementById('category-title').innerText = catName;
-document.title = `AIML - ${catName}`;
+        // 2. Set the Page Title immediately
+        document.getElementById('category-title').innerText = catName;
+        document.title = `MCA - ${catName}`;
 
-async function loadPosts() {
-    const listElement = document.getElementById('posts-list');
-    
-    try {
-        // Fetch posts filtered by the dynamic category ID
-        const response = await fetch(`${wpBaseUrl}/wp-json/wp/v2/posts?categories=${catId}&_embed&per_page=12`);
-        const posts = await response.json();
-        
-        listElement.innerHTML = ''; 
+        async function loadPosts() {
+            const listElement = document.getElementById('posts-list');
+            
+            try {
+                // Fetch posts filtered by the dynamic category ID
+                const response = await fetch(`${wpBaseUrl}/wp-json/wp/v2/posts?categories=${catId}&_embed&per_page=12`);
+                const posts = await response.json();
+                
+                listElement.innerHTML = ''; 
 
-        if (!Array.isArray(posts) || posts.length === 0) {
-            listElement.innerHTML = '<div class="loader">No articles found in this section.</div>';
-            return;
+                if (!Array.isArray(posts) || posts.length === 0) {
+                    listElement.innerHTML = '<div class="loader">No articles found in this section.</div>';
+                    return;
+                }
+
+                posts.forEach(post => {
+                    const img = post._embedded?.['wp:featuredmedia']?.[0]?.source_url 
+                                || 'https://via.placeholder.com/600x400?text=NHCE+AIML';
+
+                    // Clean up excerpt text
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = post.excerpt.rendered;
+                    const cleanExcerpt = tempDiv.textContent || tempDiv.innerText || "";
+
+                    listElement.innerHTML += `
+                        <a href="${post.link}" target="_blank" class="post-card">
+                            <img src="${img}" class="post-img" alt="${post.title.rendered}">
+                            <div class="post-info">
+                                <span class="date-tag" style="color: var(--accent-red); font-size: 0.8rem; font-weight: 700;">
+                                    ${new Date(post.date).toLocaleDateString()}
+                                </span>
+                                <h2 style="margin-top: 5px;">${post.title.rendered}</h2>
+                                <p>${cleanExcerpt.substring(0, 120)}...</p>
+                            </div>
+                        </a>
+                    `;
+                });
+            } catch (error) {
+                console.error("Fetch Error:", error);
+                listElement.innerHTML = '<div class="loader">Failed to connect to the server.</div>';
+            }
         }
 
-        posts.forEach(post => {
-            const img = post._embedded?.['wp:featuredmedia']?.[0]?.source_url 
-                        || 'https://via.placeholder.com/600x400?text=NHCE+AIML';
-
-            // Clean up excerpt text
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = post.excerpt.rendered;
-            const cleanExcerpt = tempDiv.textContent || tempDiv.innerText || "";
-
-            listElement.innerHTML += `
-                <a href="${post.link}" target="_blank" class="post-card">
-                    <img src="${img}" class="post-img" alt="${post.title.rendered}">
-                    <div class="post-info">
-                        <span class="date-tag" style="color: var(--accent-red); font-size: 0.8rem; font-weight: 700;">
-                            ${new Date(post.date).toLocaleDateString()}
-                        </span>
-                        <h2 style="margin-top: 5px;">${post.title.rendered}</h2>
-                        <p>${cleanExcerpt.substring(0, 120)}...</p>
-                    </div>
-                </a>
-            `;
-        });
-    } catch (error) {
-        console.error("Fetch Error:", error);
-        listElement.innerHTML = '<div class="loader">Failed to connect to the server.</div>';
-    }
-}
-
-loadPosts();
+        loadPosts();
     </script>
 </body>
 </html>

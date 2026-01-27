@@ -190,10 +190,6 @@
                 <div id="btn-bcom" class="nav-item" onclick="switchProgram('bcom', this)">B.Com <i class="fa-solid fa-chevron-right"></i></div>
                 <div id="btn-bca" class="nav-item" onclick="switchProgram('bca', this)">BCA <i class="fa-solid fa-chevron-right"></i></div>
             </div>
-            <div class="sidebar-group">
-                <h4>PG Programs</h4>
-                <div id="btn-mcom" class="nav-item" onclick="switchProgram('mcom', this)">M.Com <i class="fa-solid fa-chevron-right"></i></div>
-            </div>
         </aside>
 
         <main id="content-mount">
@@ -220,9 +216,7 @@
                     <div class="detail-section">
                         <h3><i class="fa-solid fa-briefcase"></i> Special Formats</h3>
                         <div class="badge-container">
-                            <span class="badge">Executive</span>
-                            <span class="badge">Professional</span>
-                            <span class="badge">Global Certification</span>
+                           <a href="nhcm-results.html?name=/bca-value-added-program" style="text-decoration: none; color: inherit;"><span class="badge">Click here</span></a>
                         </div>
                     </div>
                 </div>
@@ -253,7 +247,8 @@
             desc: "Focuses on developing managerial and leadership roles across marketing, finance, HR, and entrepreneurship.",
             stats: { Duration: "3 Years", University: "BNU", Medium: "English", Intake: "As per Norms" },
             eligibility: ["Class 12 / 2nd PUC (Any Stream)", "Merit-based Admissions", "Recognized Board Certification"],
-            formats: ["Executive", "Professional", "Global Certification"],
+            formats: ["Click Here"],
+            imageForFormats: ["bba-value-added-program"],
             subjects: ["Financial Accounting", "Marketing Management", "Cost Accounting", "Management Process"],
             hod: { name: "Prof. Arun Raghu Babu", role: "Head of the Department, BBA" }
         },
@@ -262,7 +257,8 @@
             desc: "Expertise in finance, accounting, taxation, and business law with a focus on professional skills.",
             stats: { Duration: "3 Years", University: "BNU", Medium: "English", Focus: "Tax & Finance" },
             eligibility: ["Class 12 / II PUC Passed", "Open to Arts/Science/Commerce", "BNU Eligibility Criteria"],
-            formats: ["Executive", "Professional", "Global Format"],
+            formats: ["Click Here"],
+            imageForFormats: ["bcom-value-added-program"],
             subjects: ["Business Law", "Auditing", "Banking", "Advanced Accounting"],
             hod: { name: "Prof. Kampa Belliappa", role: "Head of the Department, B.Com" }
         },
@@ -271,18 +267,11 @@
             desc: "Technical skills in computing, software development, and modern IT domains like AI and Cloud.",
             stats: { Duration: "3 Years", University: "BNU", Max_Package: "₹7 LPA+", Focus: "IT/Tech" },
             eligibility: ["Class 12 / 2nd PUC Passed", "Science/Comm/Arts Accepted", "BNU Approval Needed"],
-            formats: ["Executive", "Professional", "Full-Stack + Cloud"],
+            formats: ["Click Here"],
+            imageForFormats: ["bca-value-added-program"],
             subjects: ["Python/Java", "DBMS", "Web Technologies", "AI & ML Basics"],
             valueAdds: ["Workshops & Hackathons", "Internships & Industry Training", "Certifications in Python, Cloud", "Technical seminars & guest lectures"]
         },
-        mcom: {
-            name: "Master of Commerce",
-            desc: "Postgraduate degree for high-level expertise in accounting, finance, and leadership.",
-            stats: { Level: "Postgraduate", Duration: "2 Years", University: "BNU", Focus: "Financial Mgmt" },
-            eligibility: ["B.Com / BBA Graduation", "Minimum 50% Aggregate", "45% for SC/ST"],
-            formats: ["UGC NET Coaching", "Financial Modeling", "Data Analytics"],
-            subjects: ["Monetary System", "Corporate Reporting", "Strategic Cost Mgmt", "Tax Planning"]
-        }
     };
 
     function switchProgram(id, element) {
@@ -304,7 +293,7 @@
                     </div>
                     <div class="detail-section">
                         <h3><i class="fa-solid fa-briefcase"></i> Special Formats</h3>
-                        <div class="badge-container">${p.formats.map(f => `<span class="badge">${f}</span>`).join('')}</div>
+                        <div class="badge-container">${p.formats.map(f => ` <a href="nhcm-results.html?name=${p.imageForFormats[0]}" style="text-decoration: none; color: inherit;"><span class="badge">${f}</span>`).join('')}</div>
                     </div>
                 </div>
                 <div class="detail-section">
@@ -341,6 +330,34 @@
     const elements = Array.from({ length: 12 }, () => new KineticElement());
     function animate() { elements.forEach(e => e.update()); requestAnimationFrame(animate); }
     animate();
+    window.addEventListener('load', () => {
+            // Standard initializations
+            if (typeof createNeuralEffect === "function") createNeuralEffect('neural-canvas');
+            if (typeof initHexBg === "function") initHexBg();
+            initReveal();
+
+            // 1. Get the tab from the URL (?tab=activities)
+            const urlParams = new URLSearchParams(window.location.search);
+            const targetTab = urlParams.get('tab');
+
+            if (targetTab) {
+                // 2. Wait for the specific element to exist before switching
+                const checkExist = setInterval(() => {
+                    const element = document.getElementById(targetTab);
+                    if (element) {
+                        console.log("Found tab, switching to:", targetTab);
+                        switchTab(targetTab);
+                        clearInterval(checkExist); // Stop looking once found
+                    }
+                }, 50); // Checks every 50ms
+
+                // 3. Safety timeout: stop looking after 3 seconds if not found
+                setTimeout(() => clearInterval(checkExist), 3000);
+            } else {
+                // Default startup tab
+                switchTab('overview');
+            }
+        });
 </script>
 </body>
 </html>

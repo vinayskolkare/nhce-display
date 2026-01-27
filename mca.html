@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NHCE - AI & ML Dashboard</title>
+    <title>NHCE - MCA</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -341,6 +341,166 @@
         from { opacity: 0; transform: translateY(15px); }
         to { opacity: 1; transform: translateY(0); }
     }
+	
+.header-flex {
+    grid-column: span 12;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 30px;
+}	
+	
+/* Grid for Syllabus Cards */
+.grid-layout {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    width: 100%;
+}
+
+/* Subject Rows */
+.item-row {
+    padding: 12px 15px;
+    background: rgba(34, 29, 92, 0.05);
+    border-radius: 12px;
+    margin-bottom: 10px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.9rem;
+}
+
+.item-row i {
+    color: var(--accent-red);
+    font-size: 0.8rem;
+}
+
+/* Specialty VAP Card */
+.vap-card {
+    background: var(--primary-blue) !important;
+    color: white;
+}
+
+.vap-card .item-row {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+
+	.value-added-card {
+        padding: 40px;
+        background: #fff;
+        border-radius: 30px;
+        border: none;
+    }
+
+    .value-header {
+        text-align: center;
+        margin-bottom: 40px;
+        border-bottom: 2px solid #f0f0f0;
+        padding-bottom: 30px;
+    }
+
+    .value-header h2 {
+        color: var(--primary-blue);
+        font-weight: 800;
+        font-size: 2.2rem;
+        margin: 10px 0;
+    }
+
+    .value-header .subtitle {
+        color: #b1933c; /* Matches the golden text in image */
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.9rem;
+    }
+
+    .value-grid {
+        display: grid;
+        grid-template-columns: 1.2fr 1fr;
+        gap: 40px;
+    }
+
+    .col-title {
+        color: var(--primary-blue);
+        font-size: 1.3rem;
+        font-weight: 800;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .feature-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 12px 0;
+        border-bottom: 1px solid #f5f5f5;
+        font-size: 0.95rem;
+        color: #444;
+    }
+
+    .feature-item small {
+        color: var(--accent-red);
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    /* Professional Skill Styling */
+    .highlight-col {
+        background: #fcfaff;
+        padding: 25px;
+        border-radius: 20px;
+        border: 1px dashed #d1c4e9;
+    }
+
+    .expert-note {
+        font-size: 0.8rem;
+        color: #b1933c;
+        margin-top: -15px;
+        margin-bottom: 20px;
+        font-weight: 600;
+    }
+
+    .skill-card {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        background: #fff;
+        padding: 15px;
+        border-radius: 12px;
+        margin-bottom: 10px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+    }
+
+    .skill-card i {
+        color: var(--primary-blue);
+        font-size: 1.2rem;
+    }
+
+    .skill-info h5 {
+        margin: 0;
+        font-size: 0.9rem;
+        font-weight: 700;
+    }
+
+    .skill-info p {
+        margin: 0;
+        font-size: 0.8rem;
+        color: #888;
+    }
+
+    .disclaimer {
+        font-size: 0.75rem;
+        color: #999;
+        margin-top: 15px;
+        font-style: italic;
+    }
+
+    @media (max-width: 992px) {
+        .value-grid { grid-template-columns: 1fr; }
+    }
     </style>
 </head>
 <body>
@@ -363,7 +523,7 @@
         </div>
         <ul class="nav-links">
             <li><a onclick="switchTab('overview')" id="link-overview" class="active"><i class="fa-solid fa-chart-line"></i> <span>Overview</span></a></li>
-            <li><a onclick="switchTab('academics')" id="link-academics"><i class="fa-solid fa-book"></i> <span>Academics</span></a></li>
+            <li><a onclick="switchTab('academics')" id="link-academics"><i class="fa-solid fa-book"></i> <span>Syllabus</span></a></li>
             <li><a onclick="switchTab('labs')" id="link-labs"><i class="fa-solid fa-flask"></i> <span>Labs</span></a></li>
             <li><a onclick="switchTab('activities')" id="link-activities"><i class="fa-solid fa-calendar-days"></i> <span>Activities</span></a></li>
         </ul>
@@ -409,37 +569,97 @@
                         <p class="sub-title">Restructuring Indian education to create an equitable and inclusive system providing learning for all.</p>
                     </div>
                 </div>
-                <div class="card span-6">
-                    <h3>Scheme 2024 (Academic Year 2025-26)</h3>
-                    <ul class="list-items">
-                      <li>1st Year: 40 Credits (Scheme 2024) Batch 2024-26 onwards</li>
-					  <li>2nd Year: 40 Credits (Scheme 2024) Batch 2024-26 onwards</li>
-                    </ul>
-                </div>
-                <div class="card span-6">
-                    <h3>Programs Offered</h3>
-                    <div class="degree-container">
-                        <span class="degree-tag">MCA – 80 Credits</span><br/>
-                         
-                        <span class="degree-tag">PhD <span style="visibility:hidden;">honour degr</span></span> 
-                      
+              
+                <div class="header-flex">
+                    <div class="header-text">
+                        <h1>Master of Computer Applications</h1>
+                        <p>2025 - 2026 Academic Cycle</p>
                     </div>
                 </div>
-                <div class="card span-6">
-                    <h3>MCA Outcomes</h3>
-                    <ul class="list-items">
-                        <li><strong>Technical Proficiency:</strong> Strong foundation in computer applications, programming, and software development.</li>
-                        <li><strong>Application Development:</strong> Skills to design, develop, and deploy computer-based applications.</li>
-                        <li><strong>Professional Readiness:</strong> Preparedness for careers in IT industry or higher studies and research</li>
-                    </ul>
-                </div>
-                <div class="card span-6">
-                    <h3>Career Lifecycle</h3>
-                    <ul class="list-items">
-                        <li><strong>Experiment:</strong> Data Acquisition & Modeling</li>
-                        <li><strong>Develop:</strong> Testing & Deployment</li>
-                        <li><strong>Operate:</strong> Monitoring & Feedback</li>
-                    </ul>
+
+                <div id="academic" class="span-12 section-container">
+                    <div class="span-12 reveal" style="margin-bottom: 40px;">
+                        <h3 style="color: var(--primary-blue); font-weight: 800; border-left: 6px solid var(--accent-red); padding-left: 15px; margin-bottom: 20px; font-size: 1.6rem;">
+                            FIRST SEMESTER <i class="fas fa-chart-line" style="float:right; opacity:0.2"></i>
+                        </h3>
+                        
+                        <div class="card" style="padding: 30px;">
+                            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+                                <div style="border-right: 1px solid rgba(34, 29, 92, 0.1); padding-right: 15px;">
+                                    <div class="item-row"><i class="fas fa-check"></i> COMPUTATIONAL MATHEMATICS</div>
+                                    <div class="item-row"><i class="fas fa-check"></i> PROBLEM SOLVING WITH C</div>
+                                    <div class="item-row"><i class="fas fa-check"></i> OBJECT ORIENTED PROGRAMMING WITH JAVA</div>
+                                </div>
+                                <div style="border-right: 1px solid rgba(34, 29, 92, 0.1); padding-right: 15px;">
+                                    <div class="item-row"><i class="fas fa-check"></i> COMPUTER NETWORKS</div>
+                                    <div class="item-row"><i class="fas fa-check"></i> LINUX OPERATING SYSTEM AND SHELL SCRIPTING</div>
+                                    <div class="item-row"><i class="fas fa-check"></i> DATABASE MANAGEMENT SYSTEMS</div>
+                                </div>
+                                <div>
+                                    <div class="item-row"><i class="fas fa-check"></i> PROGRAMMING WITH C LAB</div>
+                                    <div class="item-row"><i class="fas fa-check"></i> OBJECT ORIENTED PROGRAMMING WITH JAVA LAB</div>
+                                    <div class="item-row"><i class="fas fa-check"></i> FOUNDATION MATHEMATICS FOR COMPUTER APPLICATIONS</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="span-12 reveal">
+                        <h3 style="color: var(--primary-blue); font-weight: 800; border-left: 6px solid var(--accent-red); padding-left: 15px; margin-bottom: 20px; font-size: 1.6rem;">
+                            SECOND SEMESTER <i class="fas fa-briefcase" style="float:right; opacity:0.2"></i>
+                        </h3>
+                        
+                        <div class="card" style="padding: 30px;">
+                            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
+                                <div style="border-right: 1px solid rgba(34, 29, 92, 0.1); padding-right: 15px;">
+                                    <div class="item-row"><i class="fas fa-check"></i> DATA STRUCTURES</div>
+                                    <div class="item-row"><i class="fas fa-check"></i> ADVANCED JAVA</div>
+                                    <div class="item-row"><i class="fas fa-check"></i> DESIGN AND ANALYSIS OF ALGORITHMS</div> 
+                                    <div class="item-row"><i class="fas fa-check"></i> PROFESSIONAL ELECTIVES - 1</div>
+                                </div>
+                                <div>
+                                    <div class="item-row"><i class="fas fa-check"></i> LAB BASED PROFESSIONAL ELECTIVES -1</div>
+                                    <div class="item-row"><i class="fas fa-check"></i> DATA STRUCTURES AND ALGORITHMS LAB</div>
+                                    <div class="item-row"><i class="fas fa-check"></i> ADVANCED JAVA LAB</div> 
+                                    <div class="item-row"><i class="fas fa-check"></i> MINI PROJECT</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="span-12 reveal" style="margin-top: 40px; margin-bottom: 40px;">
+                        <h3 style="color: var(--primary-blue); font-weight: 800; border-left: 6px solid var(--accent-red); padding-left: 15px; margin-bottom: 20px; font-size: 1.6rem;">
+                            THRID SEMESTER <i class="fas fa-brain" style="float:right; opacity:0.2"></i>
+                        </h3>
+                        
+                        <div class="card" style="padding: 30px;">
+                            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
+                                <div>
+                                    <div class="item-row"><i class="fas fa-check"></i> MACHINE LEARNING</div>
+                                    <div class="item-row"><i class="fas fa-check"></i> WEB DEVELOPMENTUSING FULL STACK</div>
+                                    <div class="item-row"><i class="fas fa-check"></i> PROFESSIONAL ELECTIVES - 2</div>
+                                    <div class="item-row"><i class="fas fa-check"></i> PROJECT WORK</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="span-12 reveal" style="margin-top: 40px; margin-bottom: 40px;">
+                        <h3 style="color: var(--primary-blue); font-weight: 800; border-left: 6px solid var(--accent-red); padding-left: 15px; margin-bottom: 20px; font-size: 1.6rem;">
+                            FOURTH SEMESTER <i class="fas fa-microchip" style="float:right; opacity:0.2"></i>
+                        </h3>
+                        
+                        <div class="card" style="padding: 30px;">
+                            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
+                                <div>
+                                    <div class="item-row"><i class="fas fa-check"></i> PROFESSIONAL ELECTIVES - 3</div>
+                                    <div class="item-row"><i class="fas fa-check"></i> LAB BASED PROFESSIONAL ELECTIVES - 2</div>
+                                    <div class="item-row"><i class="fas fa-check"></i> TECHNICAL SEMINAR</div>
+                                    <div class="item-row"><i class="fas fa-check"></i> INTERNSHIP</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -482,68 +702,70 @@
                 <h4 class="activities-section-title">Academic Activities</h4>
                 
                 <div class="span-4 reveal">
-                    <div class="activity-card">
-                        <div class="activity-img"><img src="images/img-101.webp" alt="Co-curricular"></div>
-                        <div class="activity-info"><h5>Co-curricular Activities</h5><p>Engaging technical competitions, hackathons, and coding challenges held regularly.</p></div>
-                    </div>
+                    <a href="mca-results.html?cat=15&name=Co-curricular Activities" style="text-decoration: none; color: inherit;">
+                        <div class="activity-card">
+                            <div class="activity-img"><img src="images/img-101.webp" alt="Co-curricular"></div>
+                            <div class="activity-info"><h5>Co-curricular Activities</h5><p>Engaging technical competitions, hackathons, and coding challenges held regularly.</p></div>
+                        </div>
+                    </a>
                 </div>
                 <div class="span-4 reveal">
-                    <div class="activity-card">
-                        <div class="activity-img"><img src="images/img-102.png" alt="Seminars"></div>
-                        <div class="activity-info"><h5>Seminars & Workshops</h5><p>Hands-on sessions on Generative AI, MLOps, and Deep Learning by experts.</p></div>
-                    </div>
+                    <a href="mca-results.html?cat=12&name=Seminars and Workshops" style="text-decoration: none; color: inherit;">
+                        <div class="activity-card">
+                            <div class="activity-img"><img src="images/img-102.png" alt="Seminars"></div>
+                            <div class="activity-info"><h5>Seminars & Workshops</h5><p>Hands-on sessions on Generative AI, MLOps, and Deep Learning by experts.</p></div>
+                        </div>
+                    </a>
                 </div>
                 <div class="span-4 reveal">
-                    <div class="activity-card">
-                        <div class="activity-img"><img src="images/img-7.webp" alt="Alumni"></div>
-                        <div class="activity-info"><h5>Alumni Talk Series</h5><p>Bridge the gap with industry insights from our successful graduates worldwide.</p></div>
-                    </div>
+                    <a href="mca-results.html?cat=19&name=Alumni Talk Series" style="text-decoration: none; color: inherit;">
+                        <div class="activity-card">
+                            <div class="activity-img"><img src="images/img-7.webp" alt="Alumni"></div>
+                            <div class="activity-info"><h5>Alumni Talk Series</h5><p>Bridge the gap with industry insights from our successful graduates worldwide.</p></div>
+                        </div>
+                    </a>
                 </div>
 
                 <h4 class="activities-section-title">Industry & Social</h4>
                 
                 <div class="span-4 reveal">
-                    <div class="activity-card">
-                        <div class="activity-img"><img src="images/img-105.png" alt="Outreach"></div>
-                        <div class="activity-info"><h5>Outreach & Extension</h5><p>Social responsibility programs and knowledge sharing with the local community.</p></div>
-                    </div>
-                </div>
-                <div class="span-4 reveal">
-                    <div class="activity-card">
-                        <div class="activity-img"><img src="images/img-9.jpg" alt="Projects"></div>
-                        <div class="activity-info"><h5>Live Projects</h5><p>Real-world problem solving through industry-sponsored capstone projects.</p></div>
-                    </div>
-                </div>
-                <div class="span-4 reveal">
-                    <div class="activity-card">
-                        <div class="activity-img"><img src="images/img-104.png" alt="Industrial Visits"></div>
-                        <div class="activity-info"><h5>Industrial Visits</h5><p>Structured Industrial Visits on Practical industrial Knowledge</p></div>
-                    </div>
+                    <a href="mca-results.html?cat=18&name=Extension Program" style="text-decoration: none; color: inherit;">
+                        <div class="activity-card">
+                            <div class="activity-img"><img src="images/img-105.png" alt="Outreach"></div>
+                            <div class="activity-info"><h5>Extension Program</h5><p>Social responsibility programs and knowledge sharing with the local community.</p></div>
+                        </div>
+                    </a>
                 </div>
 
                 <h4 class="activities-section-title">Students Achievements</h4>
                 <div class="span-12">
                     <div class="media-grid-pure">
                         <div class="achievement-container reveal">
-                            <div class="media-item-pure"><img src="images/img-106.jpg" alt="SIH"></div>
-                            <ul class="list-items">
-                                <li>Achieves Notable Success in VTU Handball Tournament</li>
-                                <li>Champions of the State-Level Inter-Collegiate Basketball Meet</li>
-                            </ul>
+                            <a href="mca-results.html?cat=10&name=Achievements" style="text-decoration: none; color: inherit;">
+                                <div class="media-item-pure"><img src="images/img-106.jpg" alt="SIH"></div>
+                                <ul class="list-items">
+                                    <li>Achieves Notable Success in VTU Handball Tournament</li>
+                                    <li>Champions of the State-Level Inter-Collegiate Basketball Meet</li>
+                                </ul>
+                            </a>
                         </div>
                         <div class="achievement-container reveal">
-                            <div class="media-item-pure"><img src="images/img-110.jpeg" alt="Research"></div>
-                            <ul class="list-items">
-                                <li>Proud to announce our students’ outstanding performance in the Electric Bike Design Challenge (EBDC 4.0)</li>
-                                <li> VTU Inter-Collegiate Division Level Tournament Winners</li>
-                            </ul>
+                            <a href="mca-results.html?cat=10&name=Achievements" style="text-decoration: none; color: inherit;">
+                                <div class="media-item-pure"><img src="images/img-110.jpeg" alt="Research"></div>
+                                <ul class="list-items">
+                                    <li>Proud to announce our students’ outstanding performance in the Electric Bike Design Challenge (EBDC 4.0)</li>
+                                    <li> VTU Inter-Collegiate Division Level Tournament Winners</li>
+                                </ul>
+                            </a>
                         </div>
                         <div class="achievement-container reveal">
-                            <div class="media-item-pure"><img src="images/img-107.jpg" alt="Global"></div>
-                            <ul class="list-items">
-                                <li>tudent achieved a notable success by winning the Pictionary event at NISARG – 2024</li>
-                                <li>NPTEL – Elite , Elite Silver and Elite Gold Certifications</li>
-                            </ul>
+                            <a href="mca-results.html?cat=10&name=Achievements" style="text-decoration: none; color: inherit;">
+                                <div class="media-item-pure"><img src="images/img-107.jpg" alt="Global"></div>
+                                <ul class="list-items">
+                                    <li>tudent achieved a notable success by winning the Pictionary event at NISARG - 2024</li>
+                                    <li>NPTEL - Elite , Elite Silver and Elite Gold Certifications</li>
+                                </ul>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -556,12 +778,12 @@
 </div>
                 <div class="span-12 reveal">
                     <div class="media-grid-pure">
-                        <div class="media-item-pure"><img src="images/image-4.jpg" alt="Club 1"></div>
-                        <div class="media-item-pure"><img src="images/img-111.jpg" alt="Club 2"></div>
-                        <div class="media-item-pure"><img src="images/img-112.webp" alt="Club 3"></div>
-                        <div class="media-item-pure"><img src="images/img-113.webp" alt="Club 4"></div>
-                        <div class="media-item-pure"><img src="images/activity-02.webp" alt="Club 5"></div>
-                        <div class="media-item-pure"><img src="images/img-114.jpg" alt="Club 6"></div>
+                        <a href="mca-results.html?cat=11&name=Club Activites" style="text-decoration: none; color: inherit;"><div class="media-item-pure"><img src="images/image-4.jpg" alt="Club 1"></div></a>
+                        <a href="mca-results.html?cat=11&name=Club Activites" style="text-decoration: none; color: inherit;"><div class="media-item-pure"><img src="images/img-111.jpg" alt="Club 2"></div></a>
+                        <a href="mca-results.html?cat=11&name=Club Activites" style="text-decoration: none; color: inherit;"><div class="media-item-pure"><img src="images/img-112.webp" alt="Club 3"></div></a>
+                        <a href="mca-results.html?cat=11&name=Club Activites" style="text-decoration: none; color: inherit;"><div class="media-item-pure"><img src="images/img-113.webp" alt="Club 4"></div></a>
+                        <a href="mca-results.html?cat=11&name=Club Activites" style="text-decoration: none; color: inherit;"><div class="media-item-pure"><img src="images/activity-02.webp" alt="Club 5"></div></a>
+                        <a href="mca-results.html?cat=11&name=Club Activites" style="text-decoration: none; color: inherit;"><div class="media-item-pure"><img src="images/img-114.jpg" alt="Club 6"></div></a>
                     </div>
                 </div>
             </div>
@@ -710,6 +932,34 @@
             animateCounters(document.getElementById('overview'));
             initReveal();
         };
+        window.addEventListener('load', () => {
+            // Standard initializations
+            if (typeof createNeuralEffect === "function") createNeuralEffect('neural-canvas');
+            if (typeof initHexBg === "function") initHexBg();
+            initReveal();
+
+            // 1. Get the tab from the URL (?tab=activities)
+            const urlParams = new URLSearchParams(window.location.search);
+            const targetTab = urlParams.get('tab');
+
+            if (targetTab) {
+                // 2. Wait for the specific element to exist before switching
+                const checkExist = setInterval(() => {
+                    const element = document.getElementById(targetTab);
+                    if (element) {
+                        console.log("Found tab, switching to:", targetTab);
+                        switchTab(targetTab);
+                        clearInterval(checkExist); // Stop looking once found
+                    }
+                }, 50); // Checks every 50ms
+
+                // 3. Safety timeout: stop looking after 3 seconds if not found
+                setTimeout(() => clearInterval(checkExist), 3000);
+            } else {
+                // Default startup tab
+                switchTab('overview');
+            }
+        });
     </script>
 </body>
 </html>

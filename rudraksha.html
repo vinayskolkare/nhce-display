@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rudraksh 2025 - NHCE MBA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-blue: #221d5c;
+            --accent-red: #ec2024;
+            --light-bg: #f0f2f5;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--light-bg);
+            color: var(--primary-blue);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* Simple Navigation */
+        .nav-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        .back-btn {
+            text-decoration: none;
+            color: var(--primary-blue);
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: white;
+            padding: 10px 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            transition: 0.3s;
+        }
+
+        .back-btn:hover {
+            background: var(--primary-blue);
+            color: white;
+        }
+
+        /* Hero Section */
+        .rudraksh-hero {
+            background: white;
+            border-radius: 30px;
+            padding: 40px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: center;
+            box-shadow: 0 15px 35px rgba(34, 29, 92, 0.1);
+            margin-bottom: 50px;
+        }
+
+        .hero-text h1 {
+            font-size: 2.8rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            border-left: 8px solid var(--accent-red);
+            padding-left: 20px;
+        }
+
+        .hero-image img {
+            width: 100%;
+            border-radius: 20px;
+            display: block;
+        }
+
+        /* Three Card Grid */
+        .fest-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+        }
+
+        .fest-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            border-bottom: 6px solid var(--accent-red);
+        }
+
+        .fest-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .fest-info {
+            padding: 25px;
+        }
+
+        .fest-info h3 {
+            margin: 0 0 10px 0;
+            font-size: 1.3rem;
+            font-weight: 800;
+        }
+
+        .fest-info p {
+            font-size: 0.95rem;
+            color: #555;
+            margin: 0;
+        }
+
+        /* Responsive Mobile Layout */
+        @media (max-width: 850px) {
+            .rudraksh-hero { grid-template-columns: 1fr; }
+            .fest-grid { grid-template-columns: 1fr; }
+            .hero-text h1 { font-size: 2rem; }
+        }
+		
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="nav-header">
+        <a href="mba.html?tab=activities" class="back-btn">
+            <i class="fa-solid fa-arrow-left"></i> Back
+        </a>
+    </div>
+
+    <div class="rudraksh-hero">
+        <div class="hero-text">
+            <h1>ABOUT RUDRAKSH</h1>
+            <p>Rudraksh an Inter-Collegiate Management & Cultural Fest, stands as one of the flagship milestones of the Department of Management Studies, New Horizon College of Engineering. Since its inception in 2017, the event has grown into a vibrant annual tradition, bringing together management acumen, creativity, and cultural expression from institutions across the region.</p>
+            <p>Under the visionary leadership of Dr. Mohan Manghnani, Chairman, NHEI, the institution continues to provide a dynamic platform for students to nurture their co-curricular and extra-curricular skills. Through his continued support and guidance, The Rudraksha MBA Event enables the student community to explore talent, enhance leadership capabilities, and celebrate innovation—strengthening its legacy year after year.</p>
+        </div>
+        <div class="hero-image">
+            <img src="images/img-3001.jpg" alt="Rudraksh Fest NHCE">
+        </div>
+    </div>
+	
+<div class="span-12 reveal" style="margin-top: 20px;">
+    <div class="card" style="padding: 0; overflow: hidden; border: none; height: auto;">
+        <img src="images/img-3009.png" alt="Rudraksh 2025 Banner" 
+             style="width: 100%; display: block; object-fit: cover; max-height: 500px;">
+    </div>
+</div>
+
+    <div class="fest-grid">
+        <div class="fest-card">
+            <img src="images/img-3005.jpg" alt="Management">
+            <div class="fest-info">
+                <h3>Management Events</h3>
+                <p>Sharpen your business acumen with competitions in Marketing, Finance, and Decision Science.</p>
+            </div>
+        </div>
+
+        <div class="fest-card">
+            <img src="images/img-3003.jpg" alt="Cultural">
+            <div class="fest-info">
+                <h3>Cultural Fest</h3>
+                <p>A vibrant platform to showcase your talent in dance, music, and the arts during the two-day event.</p>
+            </div>
+        </div>
+
+        <div class="fest-card">
+            <img src="images/3006.jpg" alt="Networking">
+            <div class="fest-info">
+                <h3>Networking</h3>
+                <p>Expand your professional horizon by connecting with industry experts and students from across the nation.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

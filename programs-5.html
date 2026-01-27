@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Academic Hub | Fluid Touch Grid</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --blue: #231d5d;
+            --red: #c01c28;
+            --white: #ffffff;
+            
+            /* DYNAMIC SCALING */
+            --h-w: clamp(210px, 15vw, 300px); 
+            --h-h: clamp(240px, 18vw, 340px);
+            --icon-size: clamp(3.2rem, 4.5vw, 5.5rem);
+            
+            /* TIGHTER SPACING */
+            --text-size: clamp(0.9rem, 1.1vw, 1.3rem);
+            --grid-gap: clamp(25px, 4vw, 50px); 
+            
+            --logo-url: url('images/logofiles-01.png');
+            --ease-out: cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        body, html {
+            margin: 0; padding: 0;
+            width: 100%;
+            min-height: 100vh;
+            background-color: #f8fafc;
+            display: flex; 
+            justify-content: center; 
+            align-items: center;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            overflow-x: hidden;
+            overflow-y: auto; 
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .back-btn {
+            position: fixed;
+            top: 25px;
+            right: 25px;
+            width: 48px;
+            height: 48px;
+            background-color: var(--blue);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none;
+            z-index: 1000;
+            font-size: 1.3rem;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background-color: var(--red);
+            transform: scale(1.1);
+        }
+
+        /* BACKGROUND ELEMENTS */
+        .bubble-container {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .bubble, .bg-hex {
+            position: absolute;
+            bottom: -150px;
+            opacity: 0.1;
+            animation: float-elements linear infinite;
+        }
+
+        .bubble { border-radius: 50%; }
+        
+        .bg-hex {
+            width: 60px; height: 70px;
+            background-color: currentColor;
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+            opacity: 0.05;
+        }
+
+        .b-blue { color: var(--blue); background-color: var(--blue); }
+        .b-red { color: var(--red); background-color: var(--red); }
+
+        @keyframes float-elements {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            20% { opacity: 0.15; }
+            80% { opacity: 0.15; }
+            100% { transform: translateY(-120vh) rotate(360deg); opacity: 0; }
+        }
+
+        .logo-bg {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50vw;
+            height: 50vw;
+            background-image: var(--logo-url);
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: contain;
+            opacity: 0.04;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .bg-pattern {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: radial-gradient(#cbd5e1 1.5px, transparent 1.5px);
+            background-size: 50px 50px;
+            z-index: 0;
+        }
+
+        .master-wrapper {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            gap: calc(var(--grid-gap) * 1.2); 
+            width: 100%;
+            padding: 30px 40px; 
+            box-sizing: border-box;
+        }
+
+        .column {
+            display: flex;
+            flex-direction: column;
+            gap: var(--grid-gap);
+            margin-left: calc(var(--h-w) * -0.15); 
+        }
+
+        .column:first-child { margin-left: 0; }
+
+        .column:nth-child(even) {
+            margin-top: calc(var(--h-h) / 2 + (var(--grid-gap) / 2));
+        }
+
+        /* ANIMATIONS */
+        @keyframes pufferAppear {
+            0% { transform: scale(0); opacity: 0; }
+            70% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes slowPulse {
+            0% { transform: scale(1); filter: drop-shadow(0 15px 30px rgba(0,0,0,0.2)); }
+            50% { transform: scale(1.03); filter: drop-shadow(0 20px 40px rgba(0,0,0,0.3)); }
+            100% { transform: scale(1); filter: drop-shadow(0 15px 30px rgba(0,0,0,0.2)); }
+        }
+
+        @keyframes lightSwitch {
+            0%, 100% { 
+                filter: brightness(1); 
+                box-shadow: inset 0 0 20px rgba(255,255,255,0.1);
+            }
+            50% { 
+                filter: brightness(1.4); 
+                box-shadow: inset 0 0 60px rgba(255,255,255,0.6), 0 0 30px rgba(255,255,255,0.2);
+            }
+        }
+
+        .hex-wrap {
+            position: relative;
+            cursor: pointer;
+            opacity: 0;
+            animation: pufferAppear 0.6s var(--ease-out) forwards;
+            transition: transform 0.4s var(--ease-out);
+        }
+
+        .hex {
+            width: var(--h-w);
+            height: var(--h-h);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none;
+            position: relative;
+            transition: all 0.5s var(--ease-out);
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+            animation: lightSwitch 3s ease-in-out infinite, slowPulse 4s ease-in-out infinite;
+        }
+
+        .blue { 
+            background-color: var(--blue);
+            background-image: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, var(--blue) 40%, rgba(0,0,0,0.3) 100%);
+        }
+        .red { 
+            background-color: var(--red); 
+            background-image: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, var(--red) 40%, rgba(0,0,0,0.3) 100%);
+        }
+        .white { 
+            background-color: var(--white); 
+            border: 2px solid #e2e8f0;
+            background-image: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
+        }
+
+        /* TOUCH & HOVER SENSITIVITY - REMOVED RECTANGLE MORPH */
+        .hex-wrap:hover, .hex-wrap:active {
+            z-index: 100;
+            transform: scale(1.08) translateY(-10px);
+        }
+
+        .hex-wrap:hover .hex, .hex-wrap:active .hex {
+            filter: brightness(1.2);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            animation-play-state: paused;
+        }
+
+        .hex i {
+            font-size: var(--icon-size);
+            margin-bottom: 15px;
+            color: white;
+            transition: transform 0.4s var(--ease-out);
+            text-shadow: 0 4px 15px rgba(255,255,255,0.3);
+        }
+
+        .hex-wrap:hover i, .hex-wrap:active i {
+            transform: scale(1.1) rotate(3deg);
+        }
+
+        .hex span {
+            color: white;
+            font-weight: 800;
+            font-size: var(--text-size);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            text-align: center;
+            padding: 0 10%;
+            line-height: 1.1;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .white i, .white span { 
+            color: #0f172a; 
+            text-shadow: none;
+        }
+
+        /* Staggered timings */
+        .column:nth-child(1) .hex { animation-delay: 0.1s; }
+        .column:nth-child(2) .hex { animation-delay: 0.5s; }
+        .column:nth-child(3) .hex { animation-delay: 0.9s; }
+        .column:nth-child(4) .hex { animation-delay: 1.3s; }
+        .column:nth-child(5) .hex { animation-delay: 1.7s; }
+
+        .column:nth-child(1) .hex-wrap { animation-delay: 0.1s; }
+        .column:nth-child(2) .hex-wrap { animation-delay: 0.2s; }
+        .column:nth-child(3) .hex-wrap { animation-delay: 0.3s; }
+        .column:nth-child(4) .hex-wrap { animation-delay: 0.4s; }
+        .column:nth-child(5) .hex-wrap { animation-delay: 0.5s; }
+
+    </style>
+</head>
+<body>
+
+    <a href="index-2.html" class="back-btn" title="Go Back">
+        <i class="fa-solid fa-arrow-left"></i>
+    </a>
+
+    <div class="bg-pattern"></div>
+    <div class="logo-bg"></div>
+    <div class="bubble-container" id="bubbleBox"></div>
+
+    <div class="master-wrapper">
+        <div class="column">
+            <div class="hex-wrap">
+                <a href="aiml.html" class="hex blue">
+                    <i class="fa-solid fa-brain"></i>
+                    <span>Artificial Intelligence & ML</span>
+                </a>
+            </div>
+            <div class="hex-wrap">
+                <a href="apps.html" class="hex white">
+                    <i class="fa-solid fa-atom"></i>
+                    <span>Applied Sciences</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="column">
+            <div class="hex-wrap">
+                <a href="cse-ds.html" class="hex red">
+                    <i class="fa-solid fa-database"></i>
+                    <span>Computer Science (DS)</span>
+                </a>
+            </div>
+            <div class="hex-wrap">
+                <a href="cs-1.html" class="hex red">
+                    <i class="fa-solid fa-laptop-code"></i>
+                    <span>Computer Science & Engg</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="column">
+            <div class="hex-wrap">
+                <a href="ce.html" class="hex blue">
+                    <i class="fa-solid fa-microchip"></i>
+                    <span>Computer Engineering</span>
+                </a>
+            </div>
+            <div class="hex-wrap">
+                <a href="ece.html" class="hex blue">
+                    <i class="fa-solid fa-tower-broadcast"></i>
+                    <span>Electronics & Comm.</span>
+                </a>
+            </div>
+            <div class="hex-wrap">
+                <a href="mca.html" class="hex white">
+                    <i class="fa-solid fa-code"></i>
+                    <span>Master of Computer Apps</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="column">
+            <div class="hex-wrap">
+                <a href="eee.html" class="hex red">
+                    <i class="fa-solid fa-bolt"></i>
+                    <span>Electrical & Electronics</span>
+                </a>
+            </div>
+            <div class="hex-wrap">
+                <a href="ise.html" class="hex blue">
+                    <i class="fa-solid fa-network-wired"></i>
+                    <span>Information Science</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="column">
+            <div class="hex-wrap">
+                <a href="mech.html" class="hex white">
+                    <i class="fa-solid fa-gears"></i>
+                    <span>Mechanical Engineering</span>
+                </a>
+            </div>
+            <div class="hex-wrap">
+                <a href="mba.html" class="hex red">
+                    <i class="fa-solid fa-chart-line"></i>
+                    <span>Master of Business Admin</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const bubbleBox = document.getElementById('bubbleBox');
+        const colors = ['b-blue', 'b-red'];
+
+        function createBgElements(count) {
+            for (let i = 0; i < count; i++) {
+                // Create Bubble
+                const bubble = document.createElement('div');
+                const bSize = Math.floor(Math.random() * 30) + 10;
+                bubble.className = `bubble ${colors[Math.floor(Math.random() * colors.length)]}`;
+                bubble.style.width = `${bSize}px`;
+                bubble.style.height = `${bSize}px`;
+                bubble.style.left = `${Math.random() * 100}%`;
+                bubble.style.animationDuration = `${Math.random() * 7 + 8}s`;
+                bubble.style.animationDelay = `${Math.random() * -10}s`;
+                bubbleBox.appendChild(bubble);
+
+                // Create Floating Hexagon
+                const bgHex = document.createElement('div');
+                const hSize = Math.floor(Math.random() * 40) + 40;
+                bgHex.className = `bg-hex ${colors[Math.floor(Math.random() * colors.length)]}`;
+                bgHex.style.width = `${hSize}px`;
+                bgHex.style.height = `${hSize * 1.1}px`;
+                bgHex.style.left = `${Math.random() * 100}%`;
+                bgHex.style.animationDuration = `${Math.random() * 10 + 12}s`;
+                bgHex.style.animationDelay = `${Math.random() * -15}s`;
+                bubbleBox.appendChild(bgHex);
+            }
+        }
+
+        createBgElements(15);
+    </script>
+</body>
+</html>

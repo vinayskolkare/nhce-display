@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NHCE - Hall of Fame & Achievements</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary: #221d5c;
+            --accent: #ec2024;
+            --bg-light: #f8fafc;
+            --white: #ffffff;
+            --text-main: #1e293b;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: var(--bg-light); 
+            color: var(--primary); 
+            overflow-x: hidden;
+            font-size: 1.2rem; /* Increased base font */
+        }
+
+        /* --- THE LABORATORY ANIMATION SYSTEM --- */
+        #animation-container {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at center, #ffffff 0%, #e2e8f0 100%);
+            overflow: hidden;
+        }
+
+        #hex-canvas {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            opacity: 0.4;
+        }
+
+        .center-watermark {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 45vw;
+            opacity: 0.04;
+            pointer-events: none;
+        }
+
+        /* Floating Bubbles and Hexagons */
+        .particle {
+            position: absolute;
+            pointer-events: none;
+            opacity: 0.15;
+            z-index: 0;
+        }
+        .bubble { border-radius: 50%; filter: blur(30px); }
+        .hex-shape { 
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+            filter: blur(2px);
+        }
+
+        /* --- CONTENT STYLING --- */
+        .page-wrapper { max-width: 1400px; margin: 0 auto; padding: 60px 25px; position: relative; z-index: 10; }
+
+        .nav-header { display: flex; align-items: center; margin-bottom: 50px; }
+        .back-btn {
+            background: var(--white); color: var(--primary); text-decoration: none;
+            padding: 15px 30px; border-radius: 50px; font-weight: 800; font-size: 1.1rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1); display: inline-flex; align-items: center; gap: 12px;
+            transition: 0.4s; border: 2px solid transparent;
+        }
+        .back-btn:hover { background: var(--primary); color: white; transform: translateX(-10px); }
+
+        header { text-align: center; margin-bottom: 100px; }
+        .pre-h { color: var(--accent); font-weight: 900; letter-spacing: 6px; text-transform: uppercase; font-size: 1.2rem; display: block; margin-bottom: 20px; }
+        h1 { font-size: clamp(3rem, 8vw, 5.5rem); font-weight: 900; line-height: 1; letter-spacing: -2px; }
+
+        .section-header { 
+            font-size: 2.5rem; font-weight: 900; margin: 100px 0 50px; 
+            padding-left: 30px; border-left: 10px solid var(--accent);
+            text-transform: uppercase;
+        }
+
+        /* --- ACHIEVEMENT CARDS --- */
+        .card-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 40px; }
+        .feature-card { 
+            background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); 
+            padding: 50px; border-radius: 35px; border: 1px solid white; 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.06);
+            transition: 0.4s ease;
+        }
+        .feature-card:hover { transform: translateY(-15px); border-color: var(--accent); }
+        .feature-card h3 { color: var(--accent); font-size: 1.8rem; font-weight: 800; margin-bottom: 30px; border-bottom: 2px solid #f1f5f9; padding-bottom: 15px; }
+        .feature-card p { font-size: 1.2rem; line-height: 1.7; color: var(--text-main); margin-bottom: 15px; }
+        .feature-card ul { list-style: none; }
+        .feature-card li { margin-bottom: 25px; display: flex; gap: 20px; line-height: 1.5; font-weight: 500; }
+        .feature-card i { color: var(--accent); font-size: 1.3rem; margin-top: 5px; }
+
+        /* --- GRID SYSTEM --- */
+        .photo-grid { display: grid; gap: 25px; margin-bottom: 80px; }
+        .grid-3x2 { grid-template-columns: repeat(3, 1fr); }
+        
+        .img-item { 
+            aspect-ratio: 16/11; border-radius: 25px; overflow: hidden; 
+            position: relative; border: 8px solid white;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.12);
+        }
+        .img-item img { width: 100%; height: 100%; object-fit: cover; transition: 0.7s; }
+        .img-item:hover img { transform: scale(1.15); }
+        .img-cap {
+            position: absolute; bottom: 0; left: 0; width: 100%; padding: 30px;
+            background: linear-gradient(transparent, rgba(34, 29, 92, 0.95));
+            color: white; font-size: 1.1rem; font-weight: 700; opacity: 0; transition: 0.4s;
+        }
+        .img-item:hover .img-cap { opacity: 1; }
+
+        @media (max-width: 1000px) {
+            .grid-3x2 { grid-template-columns: repeat(2, 1fr); }
+            .card-container { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 600px) {
+            .grid-3x2 { grid-template-columns: 1fr; }
+            h1 { font-size: 3rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="animation-container">
+        <canvas id="hex-canvas"></canvas>
+        <img src="images/logo-1.png" class="center-watermark" alt="NHCE">
+    </div>
+
+    <div class="page-wrapper">
+        <nav class="nav-header">
+            <a href="index-2.html" class="back-btn">
+                <i class="fa-solid fa-arrow-left"></i> BACK
+            </a>
+        </nav>
+
+        <header>
+            <span class="pre-h">NHCE Hall of Fame</span>
+            <h1>Celebrating <span style="color:var(--accent)">Excellence</span></h1>
+        </header>
+
+        <h2 class="section-header">Institutional Achievements</h2>
+        <div class="card-container">
+            <div class="feature-card">
+                <h3><i class="fa-solid fa-ranking-star"></i> National Rankings</h3>
+                <ul>
+                    <li><i class="fa-solid fa-check-circle"></i> <b>NIRF Ranking:</b> Consistently ranked among the top Engineering Colleges in India by the Ministry of Education.</li>
+                    <li><i class="fa-solid fa-check-circle"></i> <b>ARIIA:</b> Categorized in the 'Excellent' band in Atal Ranking of Institutions on Innovation Achievements.</li>
+                    <li><i class="fa-solid fa-check-circle"></i> <b>Platinum Category:</b> AICTE-CII Survey of Industry-Linked Technical Institutes.</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <h3><i class="fa-solid fa-flask-vial"></i> Research Excellence</h3>
+                <ul>
+                    <li><i class="fa-solid fa-microscope"></i> <b>World Top 2%:</b> Dr. Arun Kumar & Dr. M.S. Raghu (Stanford University List).</li>
+                    <li><i class="fa-solid fa-certificate"></i> <b>VTU Research Centers:</b> All 9 departments recognized as official research centers for Ph.D./M.Sc (Engg).</li>
+                    <li><i class="fa-solid fa-star"></i> <b>IIC 4-Star:</b> Rated 4/4 stars for fostering innovation by the MoE Innovation Cell.</li>
+                </ul>
+            </div>
+        </div>
+
+        <h2 class="section-header">Academic & Tech Spotlight</h2>
+        <div class="photo-grid grid-3x2">
+            <div class="img-item"><img src="images/club-07.webp" alt="A1"><div class="img-cap">Smart India Hackathon Winners</div></div>
+            <div class="img-item"><img src="images/img-166.webp" alt="A2"><div class="img-cap">India Elite Education Awards 2024</div></div>
+            <div class="img-item"><img src="images/img-168.jpeg" alt="A3"><div class="img-cap">IEEE Student Industry Connect</div></div>
+            <div class="img-item"><img src="images/img-169.jpg" alt="A4"><div class="img-cap">NPTEL Local Chapter Milestone</div></div>
+            <div class="img-item"><img src="images/img-171.jpg" alt="A5"><div class="img-cap">Award Highest Number of Patents</div></div>
+            <div class="img-item"><img src="images/img-172.webp" alt="A6"><div class="img-cap">Autonomous Vehicle Prototype Hub</div></div>
+        </div>
+
+        <h2 class="section-header">Student & Sports Laurels</h2>
+        <div class="card-container">
+            <div class="feature-card">
+                <h3><i class="fa-solid fa-medal"></i> Sports Championships</h3>
+                <ul>
+                    <li><i class="fa-solid fa-trophy"></i> <b>Powerlifting:</b> Overall State Champions (Men) in VTU State Championship 2024-25.</li>
+                    <li><i class="fa-solid fa-gold-medal"></i> <b>Judo:</b> Sahil Yadav secured Gold in VTU State Level Judo.</li>
+                    <li><i class="fa-solid fa-basketball"></i> <b>Basketball:</b> Runners-Up in VTU Bengaluru Central Division Tournament.</li>
+                    <li><i class="fa-solid fa-table-tennis"></i> <b>Table Tennis:</b> Women's Team winners in VTU Central Division.</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <h3><i class="fa-solid fa-lightbulb"></i> Innovation & Tech</h3>
+                <ul>
+                    <li><i class="fa-solid fa-code"></i> <b>ETHIndia:</b> Winners of Asia's largest Ethereum Hackathon.</li>
+                    <li><i class="fa-solid fa-robot"></i> <b>Robowars:</b> 2nd place in National Level Robowars at BITS Goa Quark-2024.</li>
+                    <li><i class="fa-solid fa-car-side"></i> <b>EBDC 4.0:</b> Best Innovation and Endurance Awards in Electric Bike Challenge.</li>
+                </ul>
+            </div>
+        </div>
+
+        <h2 class="section-header">Sports & Student Gallery</h2>
+        <div class="photo-grid grid-3x2">
+            <div class="img-item"><img src="images/img-181.webp" alt="S1"><div class="img-cap">State Powerlifting Champions</div></div>
+            <div class="img-item"><img src="images/img-182.webp" alt="S2"><div class="img-cap">State Level Judo Championship Winners</div></div>
+            <div class="img-item"><img src="images/img-183.webp" alt="S3"><div class="img-cap">VTU Basketball Final Winners</div></div>
+            <div class="img-item"><img src="images/img-176.jpeg" alt="T1"><div class="img-cap">National Electric Bike Challenge</div></div>
+            <div class="img-item"><img src="images/img-177.png" alt="T2"><div class="img-cap">Robowars BITS Goa Runners</div></div>
+            <div class="img-item"><img src="images/img-187.webp" alt="S4"><div class="img-cap">State Level Athletic Meet Relay</div></div>
+        </div>
+    </div>
+
+    <script>
+        // --- BACKGROUND ANIMATION LOGIC ---
+        const canvas = document.getElementById('hex-canvas');
+        const ctx = canvas.getContext('2d');
+        const container = document.getElementById('animation-container');
+        let width, height;
+
+        function setSize() {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            canvas.width = width;
+            canvas.height = height;
+        }
+        window.addEventListener('resize', setSize);
+        setSize();
+
+        // 1. Draw Hexagon Grid
+        function drawHexGrid() {
+            const size = 45;
+            const hexH = size * 1.5;
+            const hexW = Math.sqrt(3) * size;
+            ctx.clearRect(0, 0, width, height);
+            ctx.strokeStyle = 'rgba(34, 29, 92, 0.05)';
+            ctx.lineWidth = 1;
+
+            for (let y = 0; y < height + hexH; y += hexH) {
+                for (let x = 0; x < width + hexW; x += hexW) {
+                    let cx = x + (Math.floor(y / hexH) % 2 === 0 ? hexW / 2 : 0);
+                    ctx.beginPath();
+                    for (let i = 0; i < 6; i++) {
+                        ctx.lineTo(cx + size * Math.cos(i * Math.PI / 3), y + size * Math.sin(i * Math.PI / 3));
+                    }
+                    ctx.closePath();
+                    ctx.stroke();
+                }
+            }
+        }
+
+        // 2. Particle System (Bubbles & Hexagons)
+        const particles = [];
+        class Particle {
+            constructor() {
+                this.reset();
+            }
+            reset() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.size = Math.random() * 60 + 20;
+                this.speedX = (Math.random() - 0.5) * 0.4;
+                this.speedY = (Math.random() - 0.5) * 0.4;
+                this.type = Math.random() > 0.5 ? 'bubble' : 'hex-shape';
+                this.color = Math.random() > 0.6 ? '#221d5c' : '#ec2024';
+                
+                if (!this.el) {
+                    this.el = document.createElement('div');
+                    container.appendChild(this.el);
+                }
+                this.el.className = `particle ${this.type}`;
+                this.el.style.backgroundColor = this.color;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.x < -100 || this.x > width + 100 || this.y < -100 || this.y > height + 100) {
+                    this.reset();
+                }
+                this.el.style.width = `${this.size}px`;
+                this.el.style.height = `${this.size}px`;
+                this.el.style.left = `${this.x}px`;
+                this.el.style.top = `${this.y}px`;
+            }
+        }
+
+        for (let i = 0; i < 18; i++) {
+            particles.push(new Particle());
+        }
+
+        function animate() {
+            drawHexGrid();
+            particles.forEach(p => p.update());
+            requestAnimationFrame(animate);
+        }
+        animate();
+    </script>
+</body>
+</html>

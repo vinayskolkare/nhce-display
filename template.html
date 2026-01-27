@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NHCE - Template</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-blue: #221d5c;
+            --accent-red: #ec2024;
+            --light-bg: #f0f2f5;
+            --white: #ffffff;
+            --text-dark: #221d5c;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--light-bg);
+            color: var(--text-dark);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* --- BACKGROUND SYSTEM --- */
+        .bg-overlay-container {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+            background: radial-gradient(circle at 50% 50%, #ffffff 0%, #f0f2f5 100%);
+        }
+
+        #bg-hex-canvas {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            opacity: 0.5;
+            z-index: 1;
+        }
+
+        .center-watermark {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 35vw;
+            max-width: 500px;
+            opacity: 0.04;
+            z-index: 2;
+        }
+
+        .floating-element {
+            position: absolute;
+            opacity: 0.1;
+            z-index: 0;
+        }
+
+        .float-bubble { border-radius: 50%; filter: blur(40px); }
+        .float-hex { clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); }
+
+        /* --- CONTENT WRAPPER --- */
+        .page-content {
+            position: relative;
+            z-index: 10;
+            padding: 40px 5%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-overlay-container" id="bg-container">
+        <canvas id="bg-hex-canvas"></canvas>
+        <img src="images/logo-1.png" class="center-watermark" alt="Watermark">
+    </div>
+
+    <main class="page-content">
+        </main>
+
+    <script>
+        const container = document.getElementById('bg-container');
+        const hexCanvas = document.getElementById('bg-hex-canvas');
+        const ctx = hexCanvas.getContext('2d');
+        let width, height;
+        const hexSize = 30;
+        const hexW = hexSize * Math.sqrt(3);
+        const hexH = hexSize * 1.5;
+
+        function resize() {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            hexCanvas.width = width;
+            hexCanvas.height = height;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        function drawGrid() {
+            ctx.clearRect(0, 0, width, height);
+            ctx.strokeStyle = 'rgba(34, 29, 92, 0.03)';
+            ctx.lineWidth = 1;
+            for (let y = 0; y < height + hexH; y += hexH) {
+                for (let x = 0; x < width + hexW; x += hexW) {
+                    let cx = x + (Math.floor(y / hexH) % 2 === 0 ? hexW / 2 : 0);
+                    ctx.beginPath();
+                    for (let i = 0; i < 6; i++) {
+                        ctx.lineTo(cx + hexSize * Math.cos(i * Math.PI / 3), y + hexSize * Math.sin(i * Math.PI / 3));
+                    }
+                    ctx.closePath();
+                    ctx.stroke();
+                }
+            }
+        }
+
+        const particles = [];
+        const colors = ['#221d5c', '#ec2024'];
+
+        class Particle {
+            constructor(type) {
+                this.type = type;
+                this.reset();
+            }
+            reset() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.size = Math.random() * 50 + 15;
+                this.speedX = (Math.random() - 0.5) * 0.3;
+                this.speedY = (Math.random() - 0.5) * 0.3;
+                this.color = colors[Math.floor(Math.random() * colors.length)];
+                this.rotation = Math.random() * 360;
+                this.rotSpeed = (Math.random() - 0.2) * 0.2;
+                if (!this.el) {
+                    this.el = document.createElement('div');
+                    container.appendChild(this.el);
+                }
+                this.el.className = `floating-element ${this.type === 'bubble' ? 'float-bubble' : 'float-hex'}`;
+                this.el.style.backgroundColor = this.color;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                this.rotation += this.rotSpeed;
+                if (this.x < -60) this.x = width + 30;
+                if (this.x > width + 60) this.x = -30;
+                if (this.y < -60) this.y = height + 30;
+                if (this.y > height + 60) this.y = -30;
+                this.el.style.width = `${this.size}px`;
+                this.el.style.height = this.type === 'hex' ? `${this.size * 1.1}px` : `${this.size}px`;
+                this.el.style.transform = `translate(${this.x}px, ${this.y}px) rotate(${this.rotation}deg)`;
+            }
+        }
+
+        for (let i = 0; i < 8; i++) particles.push(new Particle('bubble'));
+        for (let i = 0; i < 7; i++) particles.push(new Particle('hex'));
+
+        function animate() {
+            drawGrid();
+            particles.forEach(p => p.update());
+            requestAnimationFrame(animate);
+        }
+        animate();
+    </script>
+</body>
+</html>

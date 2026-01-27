@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NHCM - Activities</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-blue: #221d5c;
+            --accent-red: #ec2024;
+            --white: #ffffff;
+            --overlay: rgba(255, 255, 255, 0.96);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f4f7f9;
+            color: var(--primary-blue);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* --- KINETIC BACKGROUND ENGINE --- */
+        #bg-container {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -2;
+            background: #f4f7f9;
+        }
+
+        .floating-element {
+            position: absolute;
+            opacity: 0.15;
+            pointer-events: none;
+        }
+        .float-bubble { border-radius: 50%; }
+        .float-hex { clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%); }
+
+        .body-watermark {
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40%;
+            opacity: 0.04;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* --- LAYOUT --- */
+        .main-wrapper {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+
+        .top-nav {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 15px;
+        }
+
+        .back-nav {
+            background: var(--white);
+            color: var(--primary-blue);
+            text-decoration: none;
+            padding: 10px 25px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border: 1px solid rgba(34,29,92,0.1);
+        }
+
+        .content-card {
+            background: var(--overlay);
+            backdrop-filter: blur(15px);
+            border-radius: 40px;
+            padding: 50px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.06);
+        }
+
+        .header-section { text-align: center; margin-bottom: 60px; }
+        .header-section h1 { font-size: 3.2rem; font-weight: 800; letter-spacing: -2px; }
+        .header-section p { color: var(--accent-red); font-weight: 700; text-transform: uppercase; letter-spacing: 3px; font-size: 0.9rem; }
+
+        /* --- ACTIVITY SECTIONS --- */
+        .activity-section { margin-bottom: 80px; }
+        
+        .activity-title {
+            margin-bottom: 30px;
+            padding-left: 20px;
+            border-left: 6px solid var(--accent-red);
+        }
+        .activity-title h2 { font-size: 2rem; font-weight: 800; color: var(--primary-blue); }
+        .activity-title p { color: #555; font-size: 1.1rem; }
+
+        /* --- 3-COLUMN GRID --- */
+        .image-grid-3col {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .grid-item {
+            aspect-ratio: 4 / 3;
+            border-radius: 25px;
+            overflow: hidden;
+            background: #eee;
+            border: 4px solid white;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease;
+        }
+
+        .grid-item:hover { transform: translateY(-10px); }
+        .grid-item img { width: 100%; height: 100%; object-fit: cover; }
+
+        @media (max-width: 992px) {
+            .image-grid-3col { grid-template-columns: repeat(2, 1fr); }
+            h1 { font-size: 2.2rem; }
+        }
+
+        @media (max-width: 600px) {
+            .image-grid-3col { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="bg-container"></div>
+    <img src="images/logo-1.png" class="body-watermark" alt="Logo">
+
+    <div class="main-wrapper">
+        <nav class="top-nav">
+            <a href="index-3.html" class="back-nav"><i class="fa-solid fa-arrow-left"></i> Back</a>
+        </nav>
+
+        <main class="content-card">
+            <div class="header-section">
+                <p>Campus Life & Beyond</p>
+                <h1>Student Activities</h1>
+            </div>
+
+            <section class="activity-section">
+                <div class="activity-title">
+                    <h2>Club Activities</h2>
+                    <p>Fostering creativity and leadership through various hobby and academic clubs.</p>
+                </div>
+                <div class="image-grid-3col">
+                    <div class="grid-item"><img src="images/img-1050.jpg" alt="Club activity 1"></div>
+                    <div class="grid-item"><img src="images/img-1051.jpg" alt="Club activity 2"></div>
+                    <div class="grid-item"><img src="images/img-1052.jpg" alt="Club activity 3"></div>
+                </div>
+            </section>
+
+            <section class="activity-section">
+                <div class="activity-title">
+                    <h2>Extension and Outreach activities</h2>
+                    <p>Engaging with the community through social service and impact programs.</p>
+                </div>
+                <div class="image-grid-3col">
+                    <div class="grid-item"><img src="images/img-1045.jpg" alt="Outreach activity 1"></div>
+                    <div class="grid-item"><img src="images/img-1048.jpg" alt="Outreach activity 2"></div>
+                    <div class="grid-item"><img src="images/img-1049.png" alt="Outreach activity 3"></div>
+                </div>
+            </section>
+
+            <section class="activity-section">
+                <div class="activity-title">
+                    <h2>Educational Tour</h2>
+                    <p>Learning beyond the classroom with industrial visits and study trips.</p>
+                </div>
+                <div class="image-grid-3col">
+                    <div class="grid-item"><img src="images/img-1041.jpg" alt="Educational tour 1"></div>
+                    <div class="grid-item"><img src="images/img-1042.jpeg" alt="Educational tour 2"></div>
+                    <div class="grid-item"><img src="images/img-1043.jpg" alt="Educational tour 3"></div>
+                </div>
+            </section>
+
+            <section class="activity-section">
+                <div class="activity-title">
+                    <h2>Value Added Program</h2>
+                    <p>Enhancing professional skills with specialized certification tracks.</p>
+                </div>
+                <div class="image-grid-3col">
+                    <div class="grid-item"><img src="images/img-1056.jpg" alt="Value added program 1"></div>
+                    <div class="grid-item"><img src="images/img-1057.jpg" alt="Value added program 2"></div>
+                    <div class="grid-item"><img src="images/img-1059.webp" alt="Value added program 3"></div>
+                </div>
+            </section>
+
+            <section class="activity-section">
+                <div class="activity-title">
+                    <h2>Yoga and Meditation</h2>
+                    <p>Promoting holistic wellness and mental clarity for our student community.</p>
+                </div>
+                <div class="image-grid-3col">
+                    <div class="grid-item"><img src="images/img-1061.jpg" alt="Yoga session 1"></div>
+                    <div class="grid-item"><img src="images/img-1062.jpg" alt="Yoga session 2"></div>
+                    <div class="grid-item"><img src="images/image-1063.jpg" alt="Yoga session 3"></div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+<script>
+    const bg = document.getElementById('bg-container');
+    const elements = [];
+    class KineticElement {
+        constructor() {
+            this.el = document.createElement('div');
+            this.type = Math.random() > 0.5 ? 'float-bubble' : 'float-hex';
+            this.el.className = `floating-element ${this.type}`;
+            this.size = Math.random() * 80 + 30;
+            this.x = Math.random() * window.innerWidth;
+            this.y = Math.random() * window.innerHeight;
+            this.vx = (Math.random() - 0.5) * 2;
+            this.vy = (Math.random() - 0.5) * 2;
+            this.el.style.width = this.size + 'px';
+            this.el.style.height = this.size + 'px';
+            this.el.style.backgroundColor = Math.random() > 0.5 ? '#221d5c' : '#ec2024';
+            bg.appendChild(this.el);
+        }
+        move() {
+            this.x += this.vx; this.y += this.vy;
+            if(this.x < -100 || this.x > window.innerWidth + 100) this.vx *= -1;
+            if(this.y < -100 || this.y > window.innerHeight + 100) this.vy *= -1;
+            this.el.style.transform = `translate(${this.x}px, ${this.y}px) rotate(${this.x/5}deg)`;
+        }
+    }
+    for(let i=0; i<15; i++) elements.push(new KineticElement());
+    function animate() { elements.forEach(e => e.move()); requestAnimationFrame(animate); }
+    animate();
+</script>
+
+</body>
+</html>

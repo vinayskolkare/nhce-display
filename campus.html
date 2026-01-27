@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NHCE - Campus Infrastructure</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-blue: #221d5c;
+            --accent-red: #ec2024;
+            --light-bg: #f0f2f5;
+            --white: #ffffff;
+            --text-dark: #221d5c;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--light-bg);
+            color: var(--text-dark);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* --- BACKGROUND SYSTEM (From Template) --- */
+        .bg-overlay-container {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+            background: radial-gradient(circle at 50% 50%, #ffffff 0%, #f0f2f5 100%);
+        }
+
+        #bg-hex-canvas {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            opacity: 0.5;
+            z-index: 1;
+        }
+
+        .center-watermark {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 35vw;
+            max-width: 500px;
+            opacity: 0.04;
+            z-index: 2;
+        }
+
+        .floating-element {
+            position: absolute;
+            opacity: 0.1;
+            z-index: 0;
+        }
+
+        .float-bubble { border-radius: 50%; filter: blur(40px); }
+        .float-hex { clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); }
+
+        /* --- NAVIGATION --- */
+        .back-btn {
+            position: fixed;
+            top: 30px;
+            left: 30px;
+            z-index: 100;
+            background: var(--primary-blue);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 10px 20px rgba(34, 29, 92, 0.2);
+            transition: all 0.3s ease;
+        }
+        .back-btn:hover { background: var(--accent-red); transform: translateX(-5px); }
+
+        .page-content {
+            position: relative;
+            z-index: 10;
+            padding: 100px 5% 60px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header-section {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .header-section h1 {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 800;
+            color: var(--primary-blue);
+            text-transform: uppercase;
+        }
+
+        .accent-line {
+            width: 80px;
+            height: 6px;
+            background: var(--accent-red);
+            margin: 15px auto;
+        }
+
+        /* --- STATS SECTION --- */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 50px;
+        }
+
+        .stat-card {
+            background: rgba(255,255,255,0.8);
+            backdrop-filter: blur(10px);
+            padding: 25px;
+            border-radius: 20px;
+            text-align: center;
+            border-bottom: 5px solid var(--accent-red);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+
+        .stat-card h2 { font-size: 2.5rem; color: var(--primary-blue); font-weight: 800; }
+        .stat-card p { font-weight: 700; color: #666; font-size: 0.75rem; text-transform: uppercase; }
+
+        /* --- INFO BLOCKS --- */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .info-card {
+            background: rgba(255,255,255,0.7);
+            padding: 40px;
+            border-radius: 25px;
+            border: 1px solid white;
+        }
+
+        .info-card h3 {
+            color: var(--primary-blue);
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .info-card h3 i { color: var(--accent-red); }
+
+        .info-card ul { list-style: none; }
+        .info-card ul li {
+            margin-bottom: 12px;
+            padding-left: 20px;
+            position: relative;
+            line-height: 1.5;
+            color: #444;
+        }
+
+        .info-card ul li::before {
+            content: "";
+            position: absolute;
+            left: 0; top: 8px;
+            width: 8px; height: 8px;
+            background: var(--accent-red);
+            border-radius: 2px;
+        }
+
+        /* --- 3x2 MEDIA GRIDS --- */
+        .grid-title {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--primary-blue);
+            margin: 40px 0 20px;
+            padding-left: 15px;
+            border-left: 5px solid var(--accent-red);
+            text-transform: uppercase;
+        }
+
+        .media-grid-3x2 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 60px;
+        }
+
+        .media-item {
+            aspect-ratio: 16/10;
+            background: #e0e0e0;
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .media-item img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s ease;
+        }
+
+        .media-item:hover img { transform: scale(1.1); }
+
+        .media-label {
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            padding: 15px;
+            background: linear-gradient(transparent, rgba(34, 29, 92, 0.9));
+            color: white; font-weight: 700; font-size: 0.85rem;
+        }
+
+        @media (max-width: 992px) {
+            .stats-row, .info-grid, .media-grid-3x2 { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 600px) {
+            .stats-row, .info-grid, .media-grid-3x2 { grid-template-columns: 1fr; }
+            .back-btn { top: 15px; left: 15px; padding: 8px 15px; font-size: 0.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <a href="index-2.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> BACK</a>
+
+    <div class="bg-overlay-container" id="bg-container">
+        <canvas id="bg-hex-canvas"></canvas>
+        <img src="images/logo-1.png" class="center-watermark" alt="NHCE">
+    </div>
+
+    <main class="page-content">
+        <div class="header-section">
+            <h1>Campus & Infrastructure</h1>
+            <div class="accent-line"></div>
+            <p>A lush 12-acre smart campus in the heart of Bengaluru's IT Corridor</p>
+        </div>
+
+        <div class="stats-row">
+            <div class="stat-card"><h2 class="counter" data-target="12">0</h2><p>Acres Green Campus</p></div>
+            <div class="stat-card"><h2 class="counter" data-target="605" data-suffix="+">0</h2><p>Library Capacity</p></div>
+            <div class="stat-card"><h2 class="counter" data-target="1200" data-suffix="+">0</h2><p>Student Hostels</p></div>
+            <div class="stat-card"><h2 class="counter" data-target="100" data-suffix="%">0</h2><p>Wi-Fi Campus</p></div>
+        </div>
+
+        <div class="info-grid">
+            <div class="info-card">
+                <h3><i class="fa-solid fa-graduation-cap"></i> Academic Infrastructure</h3>
+                <ul>
+                    <li>ICT-enabled, Air-Conditioned Classrooms</li>
+                    <li>Industry-Partner Labs (IBM, SAP, Cisco, 5G, AI/ML)</li>
+                    <li>700-seater International Standard Auditorium</li>
+                    <li>Online classroom recording & Video Conferencing</li>
+                </ul>
+            </div>
+            <div class="info-card">
+                <h3><i class="fa-solid fa-house-chimney-user"></i> Student Support</h3>
+                <ul>
+                    <li>Separate Hostels with 1200+ capacity</li>
+                    <li>Hygienic subsidized multi-cuisine cafeterias</li>
+                    <li>24/7 Security with CCTV Surveillance</li>
+                    <li>On-campus Medical Clinic, Bank & ATM</li>
+                </ul>
+            </div>
+        </div>
+
+        <h2 class="grid-title">Academic & Industry Labs</h2>
+        <div class="media-grid-3x2">
+            <div class="media-item"><img src="images/nvidia-1.webp" alt="Lab"><div class="media-label">Excellence Center</div></div>
+            <div class="media-item"><img src="images/img-200.webp" alt="Class"><div class="media-label">Smart ICT Lecture Hall</div></div>
+            <div class="media-item"><img src="images/img-201.jpg" alt="Library"><div class="media-label">Two-Floor Central Library</div></div>
+            <div class="media-item"><img src="images/img-204.jpg" alt="Auditorium"><div class="media-label">700-Seater Auditorium</div></div>
+            <div class="media-item"><img src="images/img-205.jpg" alt="Conf"><div class="media-label">Corporate Conference Room</div></div>
+            <div class="media-item"><img src="images/img-203.jpeg" alt="5G"><div class="media-label">5G & Emerging Tech Lab</div></div>
+        </div>
+
+        <h2 class="grid-title">More Amenities</h2>
+        <div class="media-grid-3x2">
+            <div class="media-item"><img src="images/img-207.jpg" alt="Sports"><div class="media-label">Basketball & Volleyball Courts</div></div>
+            <div class="media-item"><img src="images/img-206.jpg" alt="Gym"><div class="media-label">Indoor Gymnasium & Fitness</div></div>
+            <div class="media-item"><img src="images/img-210.jpg" alt="Yoga"><div class="media-label">Incubation Centre</div></div>
+            <div class="media-item"><img src="images/img-209.jpeg" alt="Hostel"><div class="media-label">Modern Residential Hostels</div></div>
+            <div class="media-item"><img src="images/img-211.jpeg" alt="Cafe"><div class="media-label">Subsidized Food Court</div></div>
+            <div class="media-item"><img src="images/img-214.jpg" alt="Green"><div class="media-label">Cafe Court</div></div>
+			
+			
+			
+			<div class="media-item"><img src="images/img-212.jpg" alt="Hostel"><div class="media-label">Transportation</div></div>
+            <div class="media-item"><img src="images/img-213.jpg" alt="Cafe"><div class="media-label">Sports Ground</div></div>
+            <div class="media-item"><img src="images/img-208.jpg" alt="Green"><div class="media-label">Lush Green Open Spaces</div></div>
+        </div>
+    </main>
+
+    <script>
+        /* --- ORIGINAL BACKGROUND SCRIPT --- */
+        const container = document.getElementById('bg-container');
+        const hexCanvas = document.getElementById('bg-hex-canvas');
+        const ctx = hexCanvas.getContext('2d');
+        let width, height;
+        const hexSize = 30, hexW = hexSize * Math.sqrt(3), hexH = hexSize * 1.5;
+
+        function resize() {
+            width = window.innerWidth; height = window.innerHeight;
+            hexCanvas.width = width; hexCanvas.height = height;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        function drawGrid() {
+            ctx.clearRect(0, 0, width, height);
+            ctx.strokeStyle = 'rgba(34, 29, 92, 0.03)';
+            for (let y = 0; y < height + hexH; y += hexH) {
+                for (let x = 0; x < width + hexW; x += hexW) {
+                    let cx = x + (Math.floor(y / hexH) % 2 === 0 ? hexW / 2 : 0);
+                    ctx.beginPath();
+                    for (let i = 0; i < 6; i++) ctx.lineTo(cx + hexSize * Math.cos(i * Math.PI / 3), y + hexSize * Math.sin(i * Math.PI / 3));
+                    ctx.closePath(); ctx.stroke();
+                }
+            }
+        }
+
+        const particles = [];
+        const colors = ['#221d5c', '#ec2024'];
+
+        class Particle {
+            constructor(type) { this.type = type; this.reset(); }
+            reset() {
+                this.x = Math.random() * width; this.y = Math.random() * height;
+                this.size = Math.random() * 50 + 15; this.speedX = (Math.random() - 0.5) * 0.3;
+                this.speedY = (Math.random() - 0.5) * 0.3; this.color = colors[Math.floor(Math.random() * colors.length)];
+                this.rotation = Math.random() * 360; this.rotSpeed = (Math.random() - 0.2) * 0.2;
+                if (!this.el) { this.el = document.createElement('div'); container.appendChild(this.el); }
+                this.el.className = `floating-element ${this.type === 'bubble' ? 'float-bubble' : 'float-hex'}`;
+                this.el.style.backgroundColor = this.color;
+            }
+            update() {
+                this.x += this.speedX; this.y += this.speedY; this.rotation += this.rotSpeed;
+                if (this.x < -60 || this.x > width + 60 || this.y < -60 || this.y > height + 60) this.reset();
+                this.el.style.transform = `translate(${this.x}px, ${this.y}px) rotate(${this.rotation}deg)`;
+                this.el.style.width = `${this.size}px`;
+                this.el.style.height = this.type === 'hex' ? `${this.size * 1.1}px` : `${this.size}px`;
+            }
+        }
+
+        for (let i = 0; i < 8; i++) particles.push(new Particle('bubble'));
+        for (let i = 0; i < 7; i++) particles.push(new Particle('hex'));
+
+        /* --- COUNTER ANIMATION --- */
+        function animateCounters() {
+            const counters = document.querySelectorAll('.counter');
+            counters.forEach(counter => {
+                const target = +counter.getAttribute('data-target');
+                const suffix = counter.getAttribute('data-suffix') || '';
+                let count = 0;
+                const update = () => {
+                    const inc = target / 100;
+                    if (count < target) {
+                        count += inc;
+                        counter.innerText = Math.ceil(count) + suffix;
+                        setTimeout(update, 20);
+                    } else { counter.innerText = target + suffix; }
+                };
+                update();
+            });
+        }
+
+        function animate() {
+            drawGrid();
+            particles.forEach(p => p.update());
+            requestAnimationFrame(animate);
+        }
+
+        window.onload = () => { animate(); animateCounters(); };
+    </script>
+</body>
+</html>

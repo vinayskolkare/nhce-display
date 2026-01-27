@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Academic Hub | Premium Stagger Load</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --blue: #231d5d;
+            --red: #c01c28;
+            --white: #ffffff;
+            --h-w: clamp(160px, 18vw, 220px); 
+            --h-h: calc(var(--h-w) * 1.1547);
+            --gap-x: 20px;
+            --gap-y: 20px;
+            --v-offset: calc(var(--h-h) * 0.25);
+            --logo-url: url('images/logo-1.png');
+        }
+
+        body, html {
+            margin: 0; padding: 0;
+            width: 100%; height: 100%;
+            background-color: #f8fafc;
+            display: flex; justify-content: center; align-items: center;
+            font-family: 'Segoe UI', sans-serif;
+            overflow: hidden;
+        }
+
+        /* WATERMARK */
+        .logo-bg {
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 75vh; height: 75vh;
+            background-image: var(--logo-url);
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: contain;
+            opacity: 0.05;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* KINETIC BACKGROUND */
+        #kineticBox {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 2; pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            bottom: -120px;
+            opacity: 0;
+            animation: rise linear forwards;
+        }
+
+        @keyframes rise {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            15% { opacity: 0.2; }
+            85% { opacity: 0.2; }
+            100% { transform: translateY(-125vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* SPREAD WRAPPER */
+        .spread-wrapper {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px;
+        }
+
+        .row {
+            display: flex;
+            justify-content: center;
+            margin-top: calc((var(--v-offset) * -1) + var(--gap-y));
+        }
+
+        .row:first-child { margin-top: 0; }
+
+        /* APPEAR ANIMATION STYLE */
+        .hex-wrap {
+            position: relative;
+            width: var(--h-w);
+            height: var(--h-h);
+            margin: 0 calc(var(--gap-x) / 2);
+            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.12));
+            transition: all 0.3s ease;
+            
+            /* Initial state for animation */
+            opacity: 0;
+            transform: scale(0.5) translateY(40px);
+            animation: hexAppear 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        @keyframes hexAppear {
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .hex-wrap:hover {
+            filter: brightness(1.15) drop-shadow(0 15px 30px rgba(0,0,0,0.2));
+            z-index: 50;
+        }
+
+        .hex {
+            width: 100%; height: 100%;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            text-decoration: none;
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+        }
+
+        .blue { background-color: var(--blue); }
+        .red { background-color: var(--red); }
+        .white { background-color: var(--white); border: 1px solid #e2e8f0; }
+
+        .hex i {
+            font-size: calc(var(--h-w) * 0.3);
+            margin-bottom: 10px;
+            color: white;
+        }
+
+        .hex span {
+            color: white;
+            font-weight: 800;
+            font-size: calc(var(--h-w) * 0.08);
+            text-transform: uppercase;
+            text-align: center;
+            padding: 0 15px;
+            letter-spacing: 1px;
+            line-height: 1.1;
+        }
+
+        .white i, .white span { color: var(--blue); }
+
+        .back-btn {
+            position: fixed; top: 30px; right: 30px;
+            width: 60px; height: 60px;
+            background: var(--blue); color: white;
+            border-radius: 50%; display: flex;
+            justify-content: center; align-items: center;
+            text-decoration: none; z-index: 100;
+        }
+
+        @media (max-width: 992px) {
+            :root { --h-w: 120px; }
+            .spread-wrapper { transform: scale(0.85); }
+        }
+    </style>
+</head>
+<body>
+
+    <a href="index.html" class="back-btn"><i class="fa-solid fa-house"></i></a>
+    <div class="logo-bg"></div>
+    <div id="kineticBox"></div>
+
+    <div class="spread-wrapper">
+        <div class="row">
+            <div class="hex-wrap"><a href="admissions-nhcm.html" class="hex blue"><i class="fa-solid fa-graduation-cap"></i><span>Admissions</span></a></div>
+            <div class="hex-wrap"><a href="programs-nhcm.html" class="hex white"><i class="fa-solid fa-flask"></i><span>Programs</span></a></div>
+            <div class="hex-wrap"><a href="acdemics-nhcm.html" class="hex white"><i class="fa-solid fa-microscope"></i><span>Academics</span></a></div>
+        </div>
+
+        <div class="row">
+            <div class="hex-wrap"><a href="placemnt-nhcm.html" class="hex red"><i class="fa-solid fa-lightbulb"></i><span>Placements</span></a></div>
+            <div class="hex-wrap"><a href="event-nhcm.html" class="hex red"><i class="fa-solid fa-calendar-check"></i><span>Events</span></a></div>
+            <div class="hex-wrap"><a href="teaching.html" class="hex blue"><i class="fa-solid fa-address-card"></i><span>Innovative Teaching</span></a></div>
+            <div class="hex-wrap"><a href="nhcm-campus.html" class="hex blue"><i class="fa-solid fa-trophy"></i><span>Campus</span></a></div>
+        </div>
+
+        <div class="row">
+            <div class="hex-wrap"><a href="nhcm-library.html" class="hex white"><i class="fa-solid fa-book-open"></i><span>Library</span></a></div>
+            <div class="hex-wrap"><a href="nhsac.html" class="hex red"><i class="fa-solid fa-users-gear"></i><span>NHSAC</span></a></div>
+            <div class="hex-wrap"><a href="activities-nhcm.html" class="hex blue"><i class="fa-solid fa-info-circle"></i><span>Activities</span></a></div>
+        </div>
+    </div>
+
+    <script>
+        // STAGGER ANIMATION INJECTION
+        const hexes = document.querySelectorAll('.hex-wrap');
+        hexes.forEach((hex, index) => {
+            hex.style.animationDelay = (index * 0.1) + 's';
+        });
+
+        // KINETIC BACKGROUND ENGINE
+        const container = document.getElementById('kineticBox');
+        const colors = ['#231d5d', '#c01c28', '#cbd5e1']; 
+        
+        function spawn() {
+            const p = document.createElement('div');
+            const size = Math.random() * 40 + 20;
+            p.className = 'particle';
+            p.style.width = size + 'px';
+            p.style.height = size + 'px';
+            p.style.left = Math.random() * 100 + 'vw';
+            p.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            
+            if(Math.random() > 0.4) {
+                p.style.clipPath = "polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)";
+            } else {
+                p.style.borderRadius = "50%";
+            }
+            
+            const duration = Math.random() * 3 + 4; 
+            p.style.animationDuration = duration + 's';
+            container.appendChild(p);
+            setTimeout(() => p.remove(), duration * 1000);
+        }
+
+        setInterval(spawn, 150); // High pressure: Every 150ms
+    </script>
+	
+		<script>
+	(function() {
+    const timeoutDuration = 5000; // 5 seconds
+    const redirectUrl = 'index.html';      // Your home page URL
+    let idleTimer;
+
+    const resetTimer = () => {
+        // Clear the existing timer whenever there is activity
+        clearTimeout(idleTimer);
+        
+        // Start a new timer
+        idleTimer = setTimeout(() => {
+            window.location.href = redirectUrl;
+        }, timeoutDuration);
+    };
+
+    // Events to watch for "interaction"
+    const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'];
+
+    // Add event listeners to the window
+    events.forEach(name => {
+        window.addEventListener(name, resetTimer, true);
+    });
+
+    // Initialize the timer on page load
+    resetTimer();
+})();
+	</script>
+</body>
+</html>

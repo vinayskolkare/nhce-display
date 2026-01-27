@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NHCM - Student Activity Committee</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-blue: #221d5c;
+            --accent-red: #ec2024;
+            --white: #ffffff;
+            --overlay: rgba(255, 255, 255, 0.96);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f4f7f9;
+            color: var(--primary-blue);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* --- KINETIC BACKGROUND --- */
+        #bg-container {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -2;
+            background: #f4f7f9;
+        }
+
+        .floating-element {
+            position: absolute;
+            opacity: 0.15;
+            pointer-events: none;
+        }
+        .float-bubble { border-radius: 50%; }
+        .float-hex { clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%); }
+
+        .body-watermark {
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40%;
+            opacity: 0.04;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* --- LAYOUT --- */
+        .main-wrapper {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+
+        .top-nav {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 15px;
+        }
+
+        .back-nav {
+            background: var(--white);
+            color: var(--primary-blue);
+            text-decoration: none;
+            padding: 10px 25px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border: 1px solid rgba(34,29,92,0.1);
+        }
+
+        .content-card {
+            background: var(--overlay);
+            backdrop-filter: blur(15px);
+            border-radius: 40px;
+            padding: 50px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.06);
+        }
+
+        .header-section { text-align: center; margin-bottom: 60px; }
+        .header-section h1 { font-size: 3.2rem; font-weight: 800; letter-spacing: -2px; }
+        .header-section p { color: var(--accent-red); font-weight: 700; text-transform: uppercase; letter-spacing: 3px; font-size: 0.9rem; }
+
+        /* --- CATEGORY TITLES --- */
+        .category-title {
+            margin: 40px 0 20px;
+            padding-left: 15px;
+            border-left: 5px solid var(--accent-red);
+            font-size: 1.5rem;
+            font-weight: 800;
+        }
+
+        /* --- CLUB GRID --- */
+        .club-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .club-card {
+            background: var(--white);
+            border-radius: 25px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.03);
+            border: 1px solid #f0f0f0;
+            transition: all 0.3s ease;
+        }
+
+        .club-card:hover { transform: translateY(-10px); border-color: var(--accent-red); box-shadow: 0 15px 35px rgba(0,0,0,0.1); }
+
+        .club-img {
+            height: 180px;
+            width: 100%;
+            overflow: hidden;
+            background: #eee;
+        }
+
+        .club-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .club-card:hover .club-img img { transform: scale(1.1); }
+        
+        .club-info { padding: 20px; text-align: center; }
+        .club-info h3 { font-size: 1.25rem; font-weight: 800; margin-bottom: 5px; color: var(--primary-blue); }
+        .club-info span { font-size: 0.85rem; color: var(--accent-red); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* --- COMMITTEE FOOTER --- */
+        .committee-banner {
+            background: var(--primary-blue);
+            color: white;
+            padding: 40px;
+            border-radius: 30px;
+            text-align: center;
+            margin-top: 50px;
+        }
+        .committee-banner h3 { font-size: 1.8rem; margin-bottom: 10px; }
+
+        @media (max-width: 768px) {
+            .content-card { padding: 30px 20px; }
+            h1 { font-size: 2.2rem; }
+            .club-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="bg-container"></div>
+    <img src="images/logo-1.png" class="body-watermark" alt="Logo">
+
+    <div class="main-wrapper">
+        <nav class="top-nav">
+            <a href="index-3.html" class="back-nav"><i class="fa-solid fa-arrow-left"></i> Back</a>
+        </nav>
+
+        <main class="content-card">
+            <div class="header-section">
+                <p>Campus Life & Engagement</p>
+                <h1>NHSAC Clubs</h1>
+            </div>
+
+            <h2 class="category-title">Arts & Performance</h2>
+            <div class="club-grid">
+                <div class="club-card">
+                    <div class="club-img"><img src="images/img-1022.jpg" alt="Srujana"></div>
+                    <div class="club-info"><h3>SRUJANA</h3><span>Creativity Club</span></div>
+                </div>
+                <div class="club-card">
+                    <div class="club-img"><img src="images/img-1023.jpg" alt="Avinya"></div>
+                    <div class="club-info"><h3>AVINYA</h3><span>Dance Club</span></div>
+                </div>
+                <div class="club-card">
+                    <div class="club-img"><img src="images/img-1024.jpg" alt="Navarasa"></div>
+                    <div class="club-info"><h3>NAVARASA</h3><span>Drama Club</span></div>
+                </div>
+                <div class="club-card">
+                    <div class="club-img"><img src="images/img-1025.png" alt="Alaap"></div>
+                    <div class="club-info"><h3>ALAAP</h3><span>Music Club</span></div>
+                </div>
+                <div class="club-card">
+                    <div class="club-img"><img src="images/img-1026.jpg" alt="Asmi"></div>
+                    <div class="club-info"><h3>ASMI</h3><span>Fashion Club</span></div>
+                </div>
+            </div>
+
+            <h2 class="category-title">Hobby & Social Responsibility</h2>
+            <div class="club-grid">
+                <div class="club-card">
+                    <div class="club-img"><img src="images/img-1021.png" alt="Aroha"></div>
+                    <div class="club-info"><h3>AROHA</h3><span>Adventure Club</span></div>
+                </div>
+                <div class="club-card">
+                    <div class="club-img"><img src="images/img-1027.png" alt="Avni"></div>
+                    <div class="club-info"><h3>AVNI</h3><span>Eco Club</span></div>
+                </div>
+                <div class="club-card">
+                    <div class="club-img"><img src="images/img-1028.png" alt="Utkarsh"></div>
+                    <div class="club-info"><h3>UTKARSH</h3><span>Outreach Club</span></div>
+                </div>
+                <div class="club-card">
+                    <div class="club-img"><img src="images/img-1029.jpg" alt="Aakriti"></div>
+                    <div class="club-info"><h3>AAKRITI</h3><span>Photography Club</span></div>
+                </div>
+                <div class="club-card">
+                    <div class="club-img"><img src="images/img-1030.png" alt="Leo Club"></div>
+                    <div class="club-info"><h3>LEO CLUB</h3><span>Social Service</span></div>
+                </div>
+            </div>
+
+            <h2 class="category-title">Professional & Academic</h2>
+            <div class="club-grid">
+                <div class="club-card">
+                    <div class="club-img"><img src="images/img-1031.webp" alt="IT Club"></div>
+                    <div class="club-info"><h3>IT CLUB</h3><span>Technology Hub</span></div>
+                </div>
+                <div class="club-card">
+                    <div class="club-img"><img src="images/img-1033.jpg" alt="Management Club"></div>
+                    <div class="club-info"><h3>MANAGEMENT CLUB</h3><span>Leadership Cell</span></div>
+                </div>
+                <div class="club-card">
+                    <div class="club-img"><img src="images/img-1037.png" alt="Commerce Club"></div>
+                    <div class="club-info"><h3>COMMERCE CLUB</h3><span>Financial Literacy</span></div>
+                </div>
+                <div class="club-card">
+                    <div class="club-img"><img src="images/img-1040.jpg" alt="Drishya"></div>
+                    <div class="club-info"><h3>DRISHYA</h3><span>Media Club</span></div>
+                </div>
+                <div class="club-card">
+                    <div class="club-img"><img src="images/img-1038.png" alt="Adhya"></div>
+                    <div class="club-info"><h3>ADHYA</h3><span>Literary Club</span></div>
+                </div>
+            </div>
+
+            <div class="committee-banner">
+                <h3>Core Student Committee</h3>
+                <p>Driving Intercollegiate Participation & Leading Core Events at NHCM</p>
+            </div>
+
+        </main>
+    </div>
+
+<script>
+    const bg = document.getElementById('bg-container');
+    const elements = [];
+    class KineticElement {
+        constructor() {
+            this.el = document.createElement('div');
+            this.type = Math.random() > 0.5 ? 'float-bubble' : 'float-hex';
+            this.el.className = `floating-element ${this.type}`;
+            this.size = Math.random() * 80 + 30;
+            this.x = Math.random() * window.innerWidth;
+            this.y = Math.random() * window.innerHeight;
+            this.vx = (Math.random() - 0.5) * 2;
+            this.vy = (Math.random() - 0.5) * 2;
+            this.el.style.width = this.size + 'px';
+            this.el.style.height = this.size + 'px';
+            this.el.style.backgroundColor = Math.random() > 0.5 ? '#221d5c' : '#ec2024';
+            bg.appendChild(this.el);
+        }
+        move() {
+            this.x += this.vx; this.y += this.vy;
+            if(this.x < -100 || this.x > window.innerWidth + 100) this.vx *= -1;
+            if(this.y < -100 || this.y > window.innerHeight + 100) this.vy *= -1;
+            this.el.style.transform = `translate(${this.x}px, ${this.y}px) rotate(${this.x/5}deg)`;
+        }
+    }
+    for(let i=0; i<15; i++) elements.push(new KineticElement());
+    function animate() { elements.forEach(e => e.move()); requestAnimationFrame(animate); }
+    animate();
+</script>
+
+</body>
+</html>

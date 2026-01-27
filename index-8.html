@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>NHCE & NHCM Portal</title>
+<link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+html, body {
+    margin: 0; padding: 0;
+    overflow: hidden;
+    height: 100vh; width: 100vw;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background-color: #f8f9fa;
+    position: relative;
+    touch-action: none; 
+}
+
+#transitionOverlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-color: #ffffff;
+    z-index: 200;
+    pointer-events: none;
+    opacity: 0;
+}
+
+.doodle-bg {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    z-index: 0;
+    pointer-events: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(clamp(60px, 8vw, 120px), 1fr));
+    grid-template-rows: repeat(auto-fill, minmax(clamp(60px, 8vw, 120px), 1fr));
+    gap: 5px; opacity: 0.08; 
+    box-sizing: border-box;
+}
+
+.doodle-bg i {
+    font-size: clamp(1rem, 2vw, 2rem);
+    color: #221d5c;
+    display: flex; justify-content: center; align-items: center;
+    transform: rotate(-15deg);
+}
+
+canvas { 
+    display: block; position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.split-view {
+    position: relative;
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+    z-index: 101;
+}
+
+.portal-side {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.click-zone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    padding: 20px;
+    border-radius: 20px;
+    transition: transform 0.3s ease;
+    z-index: 10;
+}
+
+.click-zone:hover {
+    transform: scale(1.02);
+}
+
+.logo-container {
+    position: relative;
+    width: clamp(180px, 20vw, 450px); 
+    height: clamp(180px, 20vw, 450px);
+    display: flex; justify-content: center; align-items: center;
+    animation: pulse 1.5s infinite alternate;
+    border-radius: 50%;
+}
+
+.logo-container img {
+    width: 85%; height: 85%;
+    object-fit: contain;
+}
+
+.tap-text {
+    margin-top: clamp(15px, 2vh, 30px);
+    font-size: clamp(22px, 3vw, 55px);
+    font-weight: 900;
+    color: #221d5c; 
+    text-shadow: 0 0 20px rgba(255,255,255,0.8);
+}
+
+.ripple {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 100%; height: 100%;
+    border-radius: 50%;
+    border: 1.5px solid rgba(34, 29, 92, 0.15); 
+    pointer-events: none;
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0;
+    animation: rippleAnim 3.5s infinite ease-out;
+}
+
+@keyframes rippleAnim {
+    0% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
+    100% { transform: translate(-50%, -50%) scale(2.2); opacity: 0; }
+}
+
+.r2 { animation-delay: 0.5s; }
+.r3 { animation-delay: 1.0s; }
+.r4 { animation-delay: 1.5s; }
+.r5 { animation-delay: 2.0s; }
+.r6 { animation-delay: 2.5s; }
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    100% { transform: scale(1.04); }
+}
+</style>
+</head>
+<body>
+
+<div id="transitionOverlay"></div>
+<div class="doodle-bg" id="doodleContainer"></div>
+
+<div class="split-view">
+    <div class="portal-side">
+        <div class="click-zone" onclick="startTransition(event, 'index-2.html')">
+            <div class="logo-container">
+                <img src="images/L1.png" alt="NHCE Logo" />
+                <div class="ripple r1"></div>
+                <div class="ripple r2"></div>
+                <div class="ripple r3"></div>
+                <div class="ripple r4"></div>
+                <div class="ripple r5"></div>
+                <div class="ripple r6"></div>
+            </div>
+            <div class="tap-text">DISCOVER →</div>
+        </div>
+    </div>
+
+    <div class="portal-side">
+        <div class="click-zone" onclick="startTransition(event, 'index-3.html')">
+            <div class="logo-container">
+                <img src="images/L2.png" alt="NHCM Logo" />
+                <div class="ripple r1"></div>
+                <div class="ripple r2"></div>
+                <div class="ripple r3"></div>
+                <div class="ripple r4"></div>
+                <div class="ripple r5"></div>
+                <div class="ripple r6"></div>
+            </div>
+            <div class="tap-text">DISCOVER →</div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+<script>
+const perfConfig = {
+    maxDPR: window.innerWidth > 2500 ? 1.5 : Math.min(window.devicePixelRatio, 2),
+    doodleSize: window.innerWidth > 2500 ? 120 : 75
+};
+
+function fillDoodles() {
+    const container = document.getElementById('doodleContainer');
+    container.innerHTML = '';
+    const icons = ['fa-graduation-cap', 'fa-book', 'fa-microscope', 'fa-pencil', 'fa-flask', 'fa-atom', 'fa-brain'];
+    const total = Math.min(Math.ceil((window.innerWidth * window.innerHeight) / (perfConfig.doodleSize ** 2)), 150);
+    for(let i=0; i < total; i++) {
+        const icon = document.createElement('i');
+        icon.className = `fa-solid ${icons[Math.floor(Math.random() * icons.length)]}`;
+        container.appendChild(icon);
+    }
+}
+fillDoodles();
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+camera.position.z = 5;
+
+const renderer = new THREE.WebGLRenderer({ antialias: window.innerWidth < 2500, alpha: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(perfConfig.maxDPR);
+document.body.appendChild(renderer.domElement);
+
+// --- KINETIC BUBBLES & HEXAGONS INJECTION ---
+const particles = [];
+const particleGroup = new THREE.Group();
+scene.add(particleGroup);
+
+function createKineticElements() {
+    const count = 40;
+    const hexGeo = new THREE.CircleGeometry(0.15, 6);
+    const bubbleGeo = new THREE.SphereGeometry(0.1, 16, 16);
+    
+    for(let i=0; i<count; i++) {
+        const isHex = Math.random() > 0.5;
+        const mat = new THREE.MeshBasicMaterial({ 
+            color: '#221d5c', 
+            transparent: true, 
+            opacity: Math.random() * 0.3 + 0.1 
+        });
+        const mesh = new THREE.Mesh(isHex ? hexGeo : bubbleGeo, mat);
+        
+        resetParticle(mesh);
+        // Randomize initial Y so they don't all start at bottom
+        mesh.position.y = (Math.random() * 10) - 5;
+        
+        particles.push({
+            mesh: mesh,
+            speed: 0.01 + Math.random() * 0.02,
+            sway: 0.005 + Math.random() * 0.01,
+            offset: Math.random() * Math.PI * 2
+        });
+        particleGroup.add(mesh);
+    }
+}
+
+function resetParticle(mesh) {
+    mesh.position.x = (Math.random() - 0.5) * 12;
+    mesh.position.y = -6;
+    mesh.position.z = Math.random() * 2;
+    mesh.scale.setScalar(0.5 + Math.random() * 1.5);
+}
+createKineticElements();
+// --------------------------------------------
+
+const geo = new THREE.PlaneGeometry(30, 30, 64, 64);
+const mat = new THREE.ShaderMaterial({
+    uniforms: {
+        uTime: { value: 0 },
+        uColorA: { value: new THREE.Color('#221d5c') }, 
+        uColorB: { value: new THREE.Color('#ffffff') } 
+    },
+    vertexShader: `
+        uniform float uTime;
+        varying vec2 vUv;
+        void main() {
+            vUv = uv;
+            vec3 pos = position;
+            pos.z += sin(pos.x * 1.0 + uTime * 0.4) * 0.2;
+            pos.z += cos(pos.y * 1.2 + uTime * 0.3) * 0.2;
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
+        }
+    `,
+    fragmentShader: `
+        varying vec2 vUv;
+        uniform float uTime;
+        uniform vec3 uColorA;
+        uniform vec3 uColorB;
+        void main() {
+            float w = sin(vUv.y * 1.4 + uTime * 0.2) * 0.05;
+            vec3 color = mix(uColorA, uColorB, vUv.x + w);
+            gl_FragColor = vec4(color, 0.08); 
+        }
+    `,
+    transparent: true,
+    side: THREE.DoubleSide
+});
+const liquid = new THREE.Mesh(geo, mat);
+liquid.position.z = -1;
+scene.add(liquid);
+
+let animId;
+function animate(t) {
+    animId = requestAnimationFrame(animate);
+    const time = t * 0.001;
+    mat.uniforms.uTime.value = time;
+
+    // Update particles
+    particles.forEach(p => {
+        p.mesh.position.y += p.speed;
+        p.mesh.position.x += Math.sin(time + p.offset) * p.sway;
+        p.mesh.rotation.z += 0.01;
+        if(p.mesh.position.y > 6) resetParticle(p.mesh);
+    });
+
+    renderer.render(scene, camera);
+}
+animate();
+
+window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    fillDoodles();
+});
+
+let isTransitioning = false;
+function startTransition(event, url) {
+    if (isTransitioning) return;
+    isTransitioning = true;
+
+    const clickedElement = event.currentTarget;
+    const otherZones = document.querySelectorAll('.click-zone');
+    
+    const tl = gsap.timeline({
+        onComplete: () => { 
+            cancelAnimationFrame(animId);
+            renderer.dispose();
+            window.location.href = url; 
+        }
+    });
+
+    tl.to(clickedElement, { 
+        scale: 8, 
+        opacity: 0, 
+        duration: 1.0, 
+        ease: "expo.in" 
+    });
+
+    // Make particles fly away during transition
+    particles.forEach(p => {
+        tl.to(p.mesh.position, { 
+            y: "+=10", 
+            x: (p.mesh.position.x * 2), 
+            duration: 1.0, 
+            ease: "expo.in" 
+        }, 0);
+    });
+
+    otherZones.forEach(zone => {
+        if(zone !== clickedElement) {
+            tl.to(zone, { opacity: 0, duration: 0.3 }, 0);
+        }
+    });
+    
+    tl.to(".doodle-bg", { 
+        scale: 2, 
+        opacity: 0, 
+        duration: 0.8, 
+        ease: "power2.in" 
+    }, 0);
+    
+    tl.to(camera.position, { 
+        z: 1, 
+        duration: 1.0, 
+        ease: "expo.in" 
+    }, 0);
+    
+    tl.to("#transitionOverlay", { 
+        opacity: 1, 
+        duration: 0.5 
+    }, "-=0.3");
+}
+</script>
+<script>
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("/sw.js").catch(err => console.log("SW failed", err));
+}
+</script>
+</body>
+</html>

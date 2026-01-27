@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NHCE - Department of Management Studies (MBA)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.34/dist/lenis.min.js"></script>
+
+    <style>
+        :root {
+            --primary-blue: #221d5c;
+            --accent-red: #ec2024;
+            --light-bg: #f0f2f5;
+            --text-dark: #221d5c;
+            --white: #ffffff;
+            --sidebar-width: 320px;
+            --transition-speed: 0.4s;
+        }
+
+        html.lenis { height: auto; }
+        .lenis.lenis-smooth { scroll-behavior: auto !important; }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--light-bg);
+            color: var(--text-dark);
+            line-height: 1.4;
+            display: flex;
+            min-height: 100vh;
+            width: 100%;
+            overflow-x: hidden;
+        }
+
+        /* --- Background & Watermark --- */
+        .bg-overlay-container {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+            background: var(--light-bg);
+        }
+
+        #bg-hex-canvas {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            opacity: 0.4;
+            z-index: 1;
+        }
+
+        .bubble {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.12;
+            z-index: 0;
+            animation: float-continuous 25s infinite alternate ease-in-out;
+        }
+
+        @keyframes float-continuous {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(5vw, 5vh) scale(1.1); }
+            100% { transform: translate(-5vw, 10vh) scale(1); }
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* --- Sidebar --- */
+        .sidebar {
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: var(--primary-blue);
+            position: fixed;
+            left: 0; top: 0;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+            border-right: 6px solid var(--accent-red);
+        }
+
+        .logo-area { margin-bottom: 40px; text-align: center; }
+        .logo-area img { width: 100%; max-width: 240px; filter: brightness(0) invert(1); }
+
+        .simple-back-arrow {
+            color: white; font-size: 2rem; margin-bottom: 20px;
+            cursor: pointer; transition: 0.3s; display: inline-block;
+        }
+        .simple-back-arrow:hover { color: var(--accent-red); transform: translateX(-5px); }
+
+        .nav-links { list-style: none; flex-grow: 1; }
+        .nav-links li { margin-bottom: 8px; }
+        .nav-links a {
+            color: rgba(255,255,255,0.6); text-decoration: none;
+            font-weight: 700; font-size: 1rem; display: flex;
+            align-items: center; gap: 15px; padding: 12px 20px;
+            border-radius: 15px; transition: all 0.3s ease; cursor: pointer;
+        }
+        .nav-links a:hover, .nav-links a.active {
+            background: rgba(255,255,255,0.1); color: white; padding-left: 25px;
+        }
+
+        /* --- Main Content --- */
+        main {
+            margin-left: var(--sidebar-width);
+            width: calc(100% - var(--sidebar-width));
+            padding: 40px;
+            min-height: 100vh;
+            position: relative;
+            z-index: 1;
+        }
+
+        .tab-content {
+            display: none; opacity: 0; transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        .tab-content.active { display: block; opacity: 1; transform: translateY(0); }
+
+        .dashboard-grid {
+            display: grid; grid-template-columns: repeat(12, 1fr);
+            gap: 25px; max-width: 1600px; margin: 0 auto;
+        }
+
+        .hero-tile {
+            grid-column: span 12;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, #3a348a 100%);
+            border-radius: 30px; padding: 60px; color: white;
+            position: relative; overflow: hidden; min-height: 400px;
+            display: flex; flex-direction: column; justify-content: center;
+            box-shadow: 0 20px 40px rgba(34, 29, 92, 0.2);
+            margin-bottom: 25px;
+        }
+
+        .hero-tile canvas {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1; pointer-events: none;
+        }
+
+        .hero-content { position: relative; z-index: 2; }
+        .hero-content .pre-title { color: var(--accent-red); font-weight: 800; letter-spacing: 4px; font-size: 1rem; margin-bottom: 10px; display: block; }
+        .hero-content h1 { font-size: clamp(2.2rem, 5vw, 3.8rem); font-weight: 800; line-height: 1.1; margin-bottom: 15px; text-transform: uppercase; }
+        .hero-content .sub-title { font-size: 1.2rem; opacity: 0.95; font-weight: 400; max-width: 700px; }
+
+        .card {
+            background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(10px);
+            border-radius: 25px; padding: 35px; border: 1px solid rgba(255,255,255,0.5);
+            height: 100%; box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+
+        .card h3 { color: var(--primary-blue); font-size: 1.6rem; margin-bottom: 20px; border-left: 6px solid var(--accent-red); padding-left: 15px; font-weight: 800; }
+
+        .stat-box {
+            text-align: center; padding: 35px 20px; background: var(--white);
+            border-radius: 25px; border-bottom: 6px solid var(--accent-red);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        }
+        .stat-box h4 { font-size: 2.8rem; color: var(--primary-blue); font-weight: 800; margin-bottom: 5px; }
+        .stat-box p { font-weight: 600; color: #666; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px;}
+
+        .span-4 { grid-column: span 4; }
+        .span-6 { grid-column: span 6; }
+        .span-12 { grid-column: span 12; }
+
+        .list-items { list-style: none; margin-top: 10px; }
+        .list-items li { font-size: 1rem; padding: 12px 0; border-bottom: 1px solid rgba(0,0,0,0.05); display: flex; align-items: center; font-weight: 500; }
+        .list-items li::before { content: "●"; color: var(--accent-red); margin-right: 12px; font-size: 0.8rem; }
+
+        /* Media Layouts */
+        .activities-section-title { grid-column: span 12; font-size: 1.8rem; font-weight: 800; color: var(--primary-blue); margin: 20px 0 10px 0; display: flex; align-items: center; gap: 15px; }
+        .activities-section-title::after { content: ""; height: 2px; flex-grow: 1; background: linear-gradient(90deg, var(--accent-red), transparent); }
+
+        .activity-card { background: #ffffff; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 20px rgba(0,0,0,0.05); display: flex; flex-direction: column; height: 100%; border: 1px solid rgba(0,0,0,0.05); }
+        .activity-img { width: 100%; height: 220px; overflow: hidden; background: #eee; }
+        .activity-img img { width: 100%; height: 100%; object-fit: cover; }
+        .activity-info { padding: 25px; flex-grow: 1; }
+        .activity-info h5 { font-size: 1.2rem; font-weight: 700; color: #221d5c; margin-bottom: 10px; }
+
+        .media-grid-pure { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; padding: 20px 0; width: 100%; }
+        .media-item-pure { width: 100%; height: 300px; border-radius: 15px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        .media-item-pure img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+        @media (max-width: 768px) {
+            .sidebar { width: 100%; height: auto; flex-direction: row; justify-content: space-around; padding: 10px 0; border-right: none; border-bottom: 4px solid var(--accent-red); position: absolute; }
+            main { margin-left: 0; width: 100%; padding-top: 100px; }
+            .span-4, .span-6 { grid-column: span 12; }
+            .media-grid-pure { grid-template-columns: 1fr; }
+            .logo-area, .simple-back-arrow { display: none !important; }
+        }
+		
+		
+				.club-names-list {
+        grid-column: span 12;
+        margin: 20px 0 30px 0;
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+        padding: 5px;
+    }
+
+    .club-item-name {
+        background: rgba(255, 255, 255, 0.6);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(34, 29, 92, 0.1);
+        padding: 10px 22px;
+        border-radius: 50px;
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--primary-blue);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        cursor: default;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+    }
+
+    .club-item-name i {
+        background: var(--accent-red);
+        color: white;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        font-size: 0.7rem;
+        transition: transform 0.4s ease;
+    }
+
+    .club-item-name:hover {
+        background: var(--primary-blue);
+        color: white;
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(34, 29, 92, 0.15);
+        border-color: var(--primary-blue);
+    }
+
+    .club-item-name:hover i {
+        transform: rotate(360deg);
+        background: white;
+        color: var(--accent-red);
+    }
+
+    /* Subtle entry animation for the pills */
+    .club-item-name {
+        animation: slideInUp 0.6s ease backwards;
+    }
+
+    @keyframes slideInUp {
+        from { opacity: 0; transform: translateY(15px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+	
+	
+	/* Header and Action Button */
+.header-flex {
+    grid-column: span 12;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 30px;
+}
+
+.btn-pdf-small {
+    background: var(--accent-red);
+    color: white;
+    padding: 10px 18px;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: 0.3s ease;
+    box-shadow: 0 4px 15px rgba(236, 32, 36, 0.2);
+}
+
+.btn-pdf-small:hover {
+    background: var(--primary-blue);
+    transform: translateY(-2px);
+}
+
+/* Grid for Syllabus Cards */
+.grid-layout {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    width: 100%;
+}
+
+/* Subject Rows */
+.item-row {
+    padding: 12px 15px;
+    background: rgba(34, 29, 92, 0.05);
+    border-radius: 12px;
+    margin-bottom: 10px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.9rem;
+}
+
+.item-row i {
+    color: var(--accent-red);
+    font-size: 0.8rem;
+}
+
+/* Specialty VAP Card */
+.vap-card {
+    background: var(--primary-blue) !important;
+    color: white;
+}
+
+.vap-card .item-row {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+    </style>
+</head>
+<body>
+
+    <div class="bg-overlay-container">
+        <div class="bubble" style="width: 45vw; height: 45vw; background: var(--primary-blue); top: -15%; right: -10%;"></div>
+        <div class="bubble" style="width: 35vw; height: 35vw; background: var(--accent-red); bottom: -10%; left: -10%; animation-delay: -7s;"></div>
+        <canvas id="bg-hex-canvas"></canvas>
+    </div>
+
+    <aside class="sidebar">
+        <a href="programs.html" class="simple-back-arrow"><i class="fa-solid fa-circle-arrow-left"></i></a>
+        <div class="logo-area"><img src="images/logo-2.png" alt="NHCE Logo"></div>
+        <ul class="nav-links">
+            <li><a onclick="switchTab('overview')" id="link-overview" class="active"><i class="fa-solid fa-chart-line"></i> <span>Overview</span></a></li>
+            <li><a onclick="switchTab('academics')" id="link-academics"><i class="fa-solid fa-graduation-cap"></i> <span>Syllabus</span></a></li>
+            <li><a onclick="switchTab('outreach')" id="link-outreach"><i class="fa-solid fa-handshake-angle"></i> <span>Outreach</span></a></li>
+            <li><a onclick="switchTab('activities')" id="link-activities"><i class="fa-solid fa-calendar-check"></i> <span>Life @ MBA</span></a></li>
+			 <li><a onclick="switchTab('placement')" id="link-placement"><i class="fa-solid fa-user-graduate"></i> <span>Placement</span></a></li>
+        </ul>
+    </aside>
+
+    <main id="main-content">
+        <section id="overview" class="tab-content active">
+            <div class="dashboard-grid">
+                <div class="hero-tile">
+                    <canvas id="neural-canvas"></canvas>
+                    <div class="hero-content">
+                        <span class="pre-title">DEPARTMENT OF</span>
+                        <h1>Management <br>Studies (MBA)</h1>
+                        <p class="sub-title">Estd. 2004 | Platinum Ranked Institution by AICTE-CII.</p>
+                    </div>
+                </div>
+                
+                <div class="stat-box span-4"><h4 class="counter" data-target="30" data-suffix="LPA">LPA</h4><p>Highest Package</p></div>
+                <div class="stat-box span-4"><h4 class="counter" data-target="100" data-suffix="%">0+</h4><p>Placement assistance</p></div>
+                <div class="stat-box span-4"><h4 class="counter" data-target="29">0</h4><p>Patents Filed</p></div>
+
+                <div class="card span-12">
+                    <h3>Our Vision &amp; Mission</h3>
+                    <p>To evolve into a globally integrated B-school contributing to management education, consultancy, research leadership, and corporate excellence by providing students with in-depth knowledge of business and managerial concepts. The institution fosters lateral thinking, creativity, and a spirit of enquiry to enable simple and effective solutions to complex business problems, while delivering entrepreneurship-oriented and multidisciplinary learning grounded in strong ethical values and social responsibility.</p>
+                </div>
+
+         
+            </div>
+        </section>
+
+        <section id="academics" class="tab-content">
+            <div class="dashboard-grid">
+                <div class="hero-tile">
+                    <canvas id="academics-canvas"></canvas>
+                    <div class="hero-content">
+                        <span class="pre-title">ACADEMIC EXCELLENCE</span>
+                        <h1>Dual <br>Specialization</h1>
+                        <p class="sub-title">Industry-driven curriculum with a focus on holistic professional development.</p>
+                    </div>
+                </div>
+    <div class="header-flex">
+        <div class="header-text">
+            <h1>MBA Syllabus</h1>
+            <p>2024 - 2026 Academic Cycle</p>
+        </div>
+  
+    </div>
+
+    <div id="academic" class="span-12 section-container">
+        <div class="grid-layout">
+            
+            <div class="card">
+                <h3>1st Year (Core) <i class="fas fa-chart-line" style="float:right; opacity:0.3"></i></h3>
+                <div class="item-row"><i class="fas fa-check"></i> Management Principles & OB</div>
+                <div class="item-row"><i class="fas fa-check"></i> Managerial Economics</div>
+                <div class="item-row"><i class="fas fa-check"></i> Marketing Management</div>
+                <div class="item-row"><i class="fas fa-check"></i> Financial Statement Analysis</div>
+                <div class="item-row"><i class="fas fa-check"></i> Business Research Methods</div>
+            </div>
+
+            <div class="card">
+                <h3>2nd Year (Electives) <i class="fas fa-briefcase" style="float:right; opacity:0.3"></i></h3>
+                <div class="item-row"><i class="fas fa-check"></i> Dual Specialization Electives</div>
+                <div class="item-row"><i class="fas fa-check"></i> Managing Digital Business</div>
+                <div class="item-row"><i class="fas fa-check"></i> International Business</div>
+                <div class="item-row"><i class="fas fa-check"></i> Indian Ethos & Business Ethics</div>
+                <div class="item-row"><i class="fas fa-check"></i> Innovation & Design Thinking</div>
+            </div>
+
+            <div class="card">
+                <h3>Practicum <i class="fas fa-handshake" style="float:right; opacity:0.3"></i></h3>
+                <div class="item-row"><i class="fas fa-check"></i> 6-Week Corporate Internship</div>
+                <div class="item-row"><i class="fas fa-check"></i> Business Immersion Project</div>
+                <div class="item-row"><i class="fas fa-check"></i> Societal Project</div>
+                <div class="item-row"><i class="fas fa-check"></i> Industry-Linked Dissertation</div>
+            </div>
+
+        </div>
+    </div>
+
+<div id="vap" class="span-12 section-container" style="margin-top: 30px;">
+    <h2 style="margin-bottom: 25px; color: var(--primary-blue); font-weight: 800;">Value Added Programs (VAP)</h2>
+    
+    <div class="grid-layout">
+        <div class="card">
+            <h3>Academic Features <i class="fas fa-microchip" style="float:right; opacity:0.3"></i></h3>
+            <div class="item-row"><i class="fas fa-check"></i> Training in SPSS & Advanced Excel</div>
+            <div class="item-row"><i class="fas fa-check"></i> Stock Market Operations Workshop</div>
+            <div class="item-row"><i class="fas fa-check"></i> Entrepreneurship Development Certification</div>
+            <div class="item-row"><i class="fas fa-check"></i> Business Incubation & News Analysis Support</div>
+            <div class="item-row"><i class="fas fa-check"></i> Competency Mapping & Profiling</div>
+            <div class="item-row"><i class="fas fa-check"></i> Specialization Orientation & Industry Analysis</div>
+        </div>
+
+        <div class="card">
+            <h3>Professional Skills <i class="fas fa-user-tie" style="float:right; opacity:0.3"></i></h3>
+            <div class="item-row"><i class="fas fa-check"></i> Outbound Experiential Learning Program</div>
+            <div class="item-row"><i class="fas fa-check"></i> Online English Training & Assessment</div>
+            <div class="item-row"><i class="fas fa-check"></i> Presentation & Case Writing Enhancement</div>
+            <div class="item-row"><i class="fas fa-check"></i> Corporate Support Projects & Report Writing</div>
+            <div class="item-row"><i class="fas fa-check"></i> Guest Lectures by Industry Experts</div>
+            <div class="item-row"><i class="fas fa-check"></i> Membership: AIMA, Alumni Forum, & Clubs</div>
+        </div>
+
+        <div class="card vap-card">
+            <h3 style="color:#fff;">Global Certifications <i class="fas fa-globe" style="float:right; color: gold;"></i></h3>
+            <div class="item-row"><i class="fas fa-star"></i> Capstone Business Simulation</div>
+            <div class="item-row"><i class="fas fa-star"></i> Certifications: Analytics, SCM, Digital Marketing</div>
+            <div class="item-row"><i class="fas fa-star"></i> HR Practices & Financial Market Certification</div>
+            <div class="item-row" style="background: rgba(255,255,255,0.2);"><i class="fas fa-award"></i> IIMBx Certification (IIM Bangalore)</div>
+            <div class="item-row" style="background: rgba(255,255,255,0.2);"><i class="fas fa-award"></i> HBX Certification (Harvard Business School)</div>
+            <div class="item-row"><i class="fas fa-language"></i> Foreign Language (Mandarin/Spanish/French)</div>
+        </div>
+    </div>
+
+        <p style="font-size: 0.85rem; color: var(--primary-blue); font-weight: 600;margin-top:50px;">
+            <i class="fas fa-info-circle" style="color: var(--accent-red);"></i> 
+            <strong>Note:</strong> Pre-placement training (Soft Skills, Quantitative Aptitude, CV Writing) and International Industrial Tours are provided as supplementary features to ensure corporate readiness.
+        </p>
+
+</div>
+
+            </div>
+        </section>
+
+        <section id="outreach" class="tab-content">
+            <div class="dashboard-grid">
+                <div class="hero-tile">
+                    <canvas id="outreach-canvas"></canvas>
+                    <div class="hero-content">
+                        <span class="pre-title">SOCIAL IMPACT</span>
+                        <h1>Community & <br>Extension</h1>
+                        <p class="sub-title">Promoting social awareness and rural development through Unnat Bharat Yojna.</p>
+                    </div>
+                </div>
+
+                <div class="card span-12">
+                    <h3>Unnat Bharat Yojna (UBA) Initiatives</h3>
+                    <ul class="list-items">
+                        <li>Five villages adopted for sustainable development.</li>
+                        <li>Social awareness drives conducted every semester.</li>
+                        <li>Plastic-free campaigns and rural health programs.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="activities" class="tab-content">
+            <div class="dashboard-grid">
+                <div class="hero-tile">
+                    <canvas id="activities-canvas"></canvas>
+                    <div class="hero-content">
+                        <span class="pre-title">LIFE AT MBA</span>
+                        <h1>Experiential <br>Learning</h1>
+                    </div>
+                </div>
+
+                <h4 class="activities-section-title">Key Activities</h4>
+                <div class="span-4 reveal">
+				<a href="results-3.html?cat=12" style="text-decoration: none; color: inherit;">
+                    <div class="activity-card">
+                        <div class="activity-img"><img src="images/img-91.jpg" alt="Outbound"></div>
+                        <div class="activity-info"><h5>Co-Curricular Activities</h5><p>co-curricular activities nurture leadership, teamwork, and practical business skills beyond the classroom.</p></div>
+                    </div>
+					</a>
+                </div>
+                <div class="span-4 reveal">
+				 <a href="results-2.html?cat=19" style="text-decoration: none; color: inherit;">
+                    <div class="activity-card">
+                        <div class="activity-img"><img src="images/img-90.jpg" alt="Industry"></div>
+                        <div class="activity-info"><h5>Industrial Visits</h5><p>Regular visits to leading organizations for practical exposure.</p></div>
+                    </div>
+					</a>
+                </div>
+                <div class="span-4 reveal">
+				<a href="rudraksha.html" style="text-decoration: none; color: inherit;">
+                    <div class="activity-card">
+					    <div class="activity-img"><img src="images/img-3002.jpg" alt="Industry"></div>
+                        <div class="activity-info"><h5>Rudraksh Fest</h5><p>National Level Management Fest hosted by the department.</p></div>
+                    </div>
+					</a>
+                </div>
+				
+				
+				  <div class="span-4 reveal">
+				   <a href="results-2.html?cat=40" style="text-decoration: none; color: inherit;">
+                    <div class="activity-card">
+					<div class="activity-img"><img src="images/img-94.png" alt="Industry"></div>
+                        <div class="activity-info"><h5>Business Conclave</h5><p>National Level Management Fest hosted by the department.</p></div>
+                    </div>
+					</a>
+                </div>
+				
+				
+			 <div class="span-4 reveal">
+			  <a href="results-2.html?cat=15" style="text-decoration: none; color: inherit;">
+                    <div class="activity-card">
+					<div class="activity-img"><img src="images/img-93.jpg" alt="Industry"></div>
+                        <div class="activity-info"><h5>Extra-Curricular</h5><p>Activities that build leadership, teamwork, and communication skills beyond academics.</p></div>
+                    </div>
+					</a>
+                </div>
+				
+		<div class="span-4 reveal">
+    <a href="results.html?cat=26" style="text-decoration: none; color: inherit;">
+        <div class="activity-card">
+            <div class="activity-img"><img src="images/img-95.jpeg" alt="Industry"></div>
+            <div class="activity-info">
+                <h5>Seminar &amp; Workshop</h5>
+                <p>Click to view all seminars and workshops on a new page.</p>
+            </div>
+        </div>
+    </a>
+</div>
+				
+				
+
+                <h4 class="activities-section-title">Professional Memberships</h4>
+                <div class="span-12">
+                    <div class="media-grid-pure">
+                        <div class="card span-12">
+                            <h3>Active MoUs</h3>
+                            <ul class="list-items">
+							<li>Karnataka Management Association(KMA)</li>
+							<li>Federation of Karanataka Chambers Commerce &amp; Industry(FKCCI)</li>
+                                <li>Bangalore Management Association (BMA)</li>
+                                <li>CII - Young Indians (Yi)</li>
+                                <li>All India Management Association (AIMA)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+				 <h4 class="activities-section-title">Club Activities</h4>
+								<div class="club-names-list">
+								<div class="club-item-name" style="animation-delay: 0.1s;">
+									<i class="fa-solid fa-microchip"></i>Business Acumen club
+								</div>
+								<div class="club-item-name" style="animation-delay: 0.2s;">
+									<i class="fa-solid fa-code"></i> ED & Start-up club
+								</div>
+								
+								<div class="club-item-name" style="animation-delay: 0.2s;">
+									<i class="fa-solid fa-code"></i> Data Analytics Club
+								</div>
+								</div>
+								
+								         <div class="span-12 reveal">
+                    <div class="media-grid-pure">
+                        <div class="media-item-pure"><img src="images/img-99.jpg" alt="Club 1"></div>
+                        <div class="media-item-pure"><img src="images/img-98.webp" alt="Club 2"></div>
+                        <div class="media-item-pure"><img src="images/img-63.jpg" alt="Club 3"></div>
+                        <div class="media-item-pure"><img src="images/img-64.jpg" alt="Club 4"></div>
+                        <div class="media-item-pure"><img src="images/img-66.jpg" alt="Club 5"></div>
+                        <div class="media-item-pure"><img src="images/img-67.jpg" alt="Club 6"></div>
+                    </div>
+                </div>
+				
+            </div>
+        </section>
+		
+		      <section id="placement" class="tab-content">
+            <div class="dashboard-grid">
+                <div class="hero-tile">
+                    <canvas id="placement-canvas"></canvas>
+                    <div class="hero-content">
+                        <span class="pre-title">CAREER OPPORTUNITIES</span>
+                        <h1>Placement <br>Records</h1>
+                        <p class="sub-title">Industry-ready engineers leading global innovation.</p>
+                    </div>
+                </div>
+                <div class="stat-box span-4"><h4 class="counter" data-target="30" data-suffix=" LPA">0 LPA</h4><p>Highest Pkg (23-24)</p></div>
+                <div class="stat-box span-4"><h4 class="counter" data-target="7.75" data-suffix=" LPA" data-decimals="2">0 LPA</h4><p>Average Pkg (23-24)</p></div>
+                <div class="stat-box span-4"><h4 class="counter" data-target="89">0</h4><p>Total Offers (23-24)</p></div>
+                <div class="card span-6">
+                    <h3>Placement Stats (2023-24)</h3>
+                    <ul class="list-items">
+                     <li><strong>Placement results:</strong> 100%</li>
+<li><strong>TCS:</strong> 14 Students</li>
+<li><strong>Infosys:</strong> 11 Students</li>
+<li><strong>Wipro:</strong> 9 Students</li>
+<li><strong>Accenture:</strong> 8 Students</li>
+
+                    </ul>
+                </div>
+                <div class="card span-6">
+                    <h3>2024-25 (Ongoing)</h3>
+                    <p style="font-weight: 700; color: var(--primary-blue); margin-bottom: 5px;">Total Placed: <span class="counter" data-target="24">0</span> Students</p>
+                    <ul class="list-items">
+						<li><strong>LTIMindtree:</strong> 8 Students</li>
+						<li><strong>EY (Ernst & Young):</strong> 10 Students</li>
+						<li><strong>GlobalLogic – Product Engineering:</strong> 6 Students</li>
+						
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        const lenis = new Lenis();
+        function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+        requestAnimationFrame(raf);
+
+        const observerOptions = { threshold: 0.15 };
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+        }, observerOptions);
+
+        function initReveal() { document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el)); }
+
+        function animateCounters(container) {
+            const counters = container.querySelectorAll('.counter');
+            counters.forEach(counter => {
+                const target = +counter.getAttribute('data-target');
+                const suffix = counter.getAttribute('data-suffix') || '';
+                const duration = 1500;
+                const startTime = performance.now();
+                function updateCount(currentTime) {
+                    const elapsed = currentTime - startTime;
+                    const progress = Math.min(elapsed / duration, 1);
+                    const easeProgress = 1 - Math.pow(2, -10 * progress);
+                    counter.innerText = Math.floor(easeProgress * target) + suffix;
+                    if (progress < 1) requestAnimationFrame(updateCount);
+                    else counter.innerText = target + suffix;
+                }
+                requestAnimationFrame(updateCount);
+            });
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.nav-links a').forEach(link => link.classList.remove('active'));
+            document.getElementById('link-' + tabId).classList.add('active');
+            document.querySelectorAll('.tab-content').forEach(sec => {
+                sec.classList.remove('active');
+                sec.style.display = 'none';
+            });
+            const activeSec = document.getElementById(tabId);
+            activeSec.style.display = 'block';
+            setTimeout(() => {
+                activeSec.classList.add('active');
+                animateCounters(activeSec);
+                initReveal();
+            }, 10);
+            const activeCanvas = activeSec.querySelector('canvas');
+            if(activeCanvas && activeCanvas.id !== 'bg-hex-canvas') createNeuralEffect(activeCanvas.id);
+        }
+
+        function createNeuralEffect(canvasId) {
+            const canvas = document.getElementById(canvasId);
+            if(!canvas) return;
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+            function resize() { canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight; }
+            resize();
+            function init() {
+                particles = [];
+                for(let i=0; i<50; i++) {
+                    particles.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, vx: (Math.random() - 0.5) * 1, vy: (Math.random() - 0.5) * 1 });
+                }
+            }
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach((p, i) => {
+                    p.x += p.vx; p.y += p.vy;
+                    if(p.x < 0 || p.x > canvas.width) p.vx *= -1;
+                    if(p.y < 0 || p.y > canvas.height) p.vy *= -1;
+                    ctx.fillStyle = 'rgba(255,255,255,0.4)';
+                    ctx.beginPath(); ctx.arc(p.x, p.y, 2, 0, Math.PI*2); ctx.fill();
+                });
+                requestAnimationFrame(animate);
+            }
+            init(); animate();
+        }
+
+        function initHexBg() {
+            const canvas = document.getElementById('bg-hex-canvas');
+            const ctx = canvas.getContext('2d');
+            const hexSize = 30;
+            const hexW = hexSize * Math.sqrt(3);
+            const hexH = hexSize * 1.5;
+            function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+            window.addEventListener('resize', resize);
+            resize();
+            function drawHex(x, y) {
+                ctx.beginPath();
+                for (let i = 0; i < 6; i++) ctx.lineTo(x + hexSize * Math.cos(i * Math.PI / 3), y + hexSize * Math.sin(i * Math.PI / 3));
+                ctx.closePath(); ctx.stroke();
+            }
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.strokeStyle = 'rgba(34, 29, 92, 0.04)';
+                for (let y = 0; y < canvas.height + hexH; y += hexH) {
+                    for (let x = 0; x < canvas.width + hexW; x += hexW) {
+                        let cx = x + (Math.floor(y / hexH) % 2 === 0 ? hexW / 2 : 0);
+                        drawHex(cx, y);
+                    }
+                }
+                requestAnimationFrame(animate);
+            }
+            animate();
+        }
+
+        window.onload = () => {
+            createNeuralEffect('neural-canvas');
+            initHexBg();
+            animateCounters(document.getElementById('overview'));
+            initReveal();
+        };
+		
+    </script>
+	
+
+
+
+<script>
+window.addEventListener('load', () => {
+    // Standard initializations
+    if (typeof createNeuralEffect === "function") createNeuralEffect('neural-canvas');
+    if (typeof initHexBg === "function") initHexBg();
+    initReveal();
+
+    // 1. Get the tab from the URL (?tab=activities)
+    const urlParams = new URLSearchParams(window.location.search);
+    const targetTab = urlParams.get('tab');
+
+    if (targetTab) {
+        // 2. Wait for the specific element to exist before switching
+        const checkExist = setInterval(() => {
+            const element = document.getElementById(targetTab);
+            if (element) {
+                console.log("Found tab, switching to:", targetTab);
+                switchTab(targetTab);
+                clearInterval(checkExist); // Stop looking once found
+            }
+        }, 50); // Checks every 50ms
+
+        // 3. Safety timeout: stop looking after 3 seconds if not found
+        setTimeout(() => clearInterval(checkExist), 3000);
+    } else {
+        // Default startup tab
+        switchTab('overview');
+    }
+});
+</script>
+</body>
+</html>

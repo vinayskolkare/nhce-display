@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MBA - Updates & Seminars</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-blue: #221d5c;
+            --accent-red: #ec2024;
+            --light-bg: #f0f2f5;
+            --white: #ffffff;
+            --sidebar-width: 320px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--light-bg); color: var(--primary-blue); display: flex; min-height: 100vh; overflow-x: hidden; }
+
+        /* Background Effects from Template */
+        .bg-overlay-container { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; background: var(--light-bg); }
+        .bubble { position: absolute; border-radius: 50%; filter: blur(100px); opacity: 0.12; z-index: 0; }
+
+        /* Sidebar from Template */
+        .sidebar { width: var(--sidebar-width); height: 100vh; background: var(--primary-blue); position: fixed; left: 0; top: 0; padding: 40px 20px; border-right: 6px solid var(--accent-red); z-index: 100; }
+        .logo-area { margin-bottom: 40px; text-align: center; }
+        .logo-area img { width: 100%; max-width: 240px; filter: brightness(0) invert(1); }
+        .back-link { color: white; text-decoration: none; font-weight: 700; display: flex; align-items: center; gap: 10px; margin-bottom: 30px; }
+
+        /* Main Content from Template */
+        main { margin-left: var(--sidebar-width); width: calc(100% - var(--sidebar-width)); padding: 40px; position: relative; z-index: 1; }
+        
+        .header-flex { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 40px; }
+        .header-flex h1 { font-size: 2.5rem; font-weight: 800; text-transform: uppercase; border-left: 8px solid var(--accent-red); padding-left: 20px; }
+
+        /* 2-Column Grid Matching Your Style */
+        .updates-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+        }
+
+        .post-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 25px;
+            overflow: hidden;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid rgba(0,0,0,0.05);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+
+        .post-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(34, 29, 92, 0.15); }
+        .post-img { width: 100%; height: 250px; object-fit: cover; }
+        .post-info { padding: 30px; }
+        .post-info h2 { font-size: 1.4rem; font-weight: 800; margin-bottom: 15px; color: var(--primary-blue); line-height: 1.3; }
+        .post-info p { color: #555; font-size: 1rem; line-height: 1.6; margin-bottom: 0; }
+
+        .loader { text-align: center; grid-column: span 2; padding: 100px; font-size: 1.2rem; font-weight: 700; color: var(--primary-blue); }
+
+        @media (max-width: 900px) {
+            .updates-grid { grid-template-columns: 1fr; }
+            .sidebar { width: 0; display: none; }
+            main { margin-left: 0; width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-overlay-container">
+        <div class="bubble" style="width: 40vw; height: 40vw; background: var(--primary-blue); top: -10%; right: -5%;"></div>
+        <div class="bubble" style="width: 30vw; height: 30vw; background: var(--accent-red); bottom: -5%; left: -5%;"></div>
+    </div>
+
+    <aside class="sidebar">
+        <a href="mba.html?tab=activities" class="back-link"><i class="fa-solid fa-circle-arrow-left"></i> <span>Go Back</span></a>
+        <div class="logo-area"><img src="images/logo-2.png" alt="NHCE Logo"></div>
+    </aside>
+
+    <main>
+        <div class="header-flex">
+            <div>
+                <h1 id="category-title">Updates</h1>
+            </div>
+        </div>
+
+        <div id="posts-list" class="updates-grid">
+            <div class="loader"><i class="fa-solid fa-spinner fa-spin"></i> Fetching Data...</div>
+        </div>
+    </main>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const catId = urlParams.get('cat') || '26'; // ID 26 from your earlier discovery
+        const wpBaseUrl = 'https://mba.newhorizoncollegeofengineering.in'; 
+
+        async function loadPosts() {
+            const listElement = document.getElementById('posts-list');
+            const titleElement = document.getElementById('category-title');
+
+            try {
+                // Fetching with _embed to get images
+                const response = await fetch(`${wpBaseUrl}/wp-json/wp/v2/posts?categories=${catId}&_embed&per_page=12`);
+                const posts = await response.json();
+                
+                listElement.innerHTML = ''; 
+
+                if (posts.length === 0) {
+                    listElement.innerHTML = '<div class="loader">No articles found in this section.</div>';
+                    return;
+                }
+
+                posts.forEach(post => {
+                    const img = post._embedded?.['wp:featuredmedia']?.[0]?.source_url 
+                                || 'https://via.placeholder.com/600x400?text=NHCE+MBA';
+
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = post.excerpt.rendered;
+                    const cleanExcerpt = tempDiv.textContent || tempDiv.innerText || "";
+
+                    listElement.innerHTML += `
+                        <a href="${post.link}" target="_blank" class="post-card">
+                            <img src="${img}" class="post-img" alt="">
+                            <div class="post-info">
+                                <h2>${post.title.rendered}</h2>
+                                <p>${cleanExcerpt.substring(0, 150)}...</p>
+                            </div>
+                        </a>
+                    `;
+                });
+            } catch (error) {
+                listElement.innerHTML = '<div class="loader">Failed to connect to the server.</div>';
+            }
+        }
+
+        loadPosts();
+    </script>
+</body>
+</html>

@@ -1,0 +1,1224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NHCE - AI & ML Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.34/dist/lenis.min.js"></script>
+
+    <style>
+        :root {
+            --primary-blue: #221d5c;
+            --accent-red: #ec2024;
+            --light-bg: #f0f2f5;
+            --text-dark: #221d5c;
+            --white: #ffffff;
+            --sidebar-width: 320px;
+            --transition-speed: 0.4s;
+        }
+
+        html.lenis { height: auto; }
+        .lenis.lenis-smooth { scroll-behavior: auto !important; }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--light-bg);
+            color: var(--text-dark);
+            line-height: 1.4;
+            display: flex;
+            min-height: 100vh;
+            width: 100%;
+            overflow-x: hidden;
+        }
+
+        /* --- Refined Background & Watermark --- */
+        .bg-overlay-container {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+            background: var(--light-bg);
+        }
+
+        #bg-hex-canvas {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            opacity: 0.4;
+            z-index: 1;
+        }
+
+        .center-watermark {
+            position: absolute;
+            top: 50%; left: 55%; /* Slightly offset to account for sidebar */
+            transform: translate(-50%, -50%);
+            width: 40vw;
+            max-width: 500px;
+            opacity: 0.04;
+            filter: grayscale(1) brightness(0.5);
+            z-index: 2;
+        }
+
+        .bubble {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.12;
+            z-index: 0;
+            animation: float-continuous 25s infinite alternate ease-in-out;
+        }
+
+        @keyframes float-continuous {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(5vw, 5vh) scale(1.1); }
+            100% { transform: translate(-5vw, 10vh) scale(1); }
+        }
+
+        /* --- Scroll Appear Animation --- */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* --- Sidebar --- */
+        .sidebar {
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: var(--primary-blue);
+            position: fixed;
+            left: 0; top: 0;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+            border-right: 6px solid var(--accent-red);
+        }
+
+        .logo-area { margin-bottom: 40px; text-align: center; }
+        .logo-area img { width: 100%; max-width: 240px; filter: brightness(0) invert(1); }
+
+        .simple-back-arrow {
+            color: white; font-size: 2rem; margin-bottom: 20px;
+            cursor: pointer; transition: 0.3s; display: inline-block;
+        }
+        .simple-back-arrow:hover { color: var(--accent-red); transform: translateX(-5px); }
+
+        .nav-links { list-style: none; flex-grow: 1; }
+        .nav-links li { margin-bottom: 8px; }
+        .nav-links a {
+            color: rgba(255,255,255,0.6); text-decoration: none;
+            font-weight: 700; font-size: 1rem; display: flex;
+            align-items: center; gap: 15px; padding: 12px 20px;
+            border-radius: 15px; transition: all 0.3s ease; cursor: pointer;
+        }
+        .nav-links a:hover, .nav-links a.active {
+            background: rgba(255,255,255,0.1); color: white; padding-left: 25px;
+        }
+
+        /* --- Main Content --- */
+        main {
+            margin-left: var(--sidebar-width);
+            width: calc(100% - var(--sidebar-width));
+            padding: 40px;
+            min-height: 100vh;
+            position: relative;
+            z-index: 1;
+        }
+
+        .tab-content {
+            display: none; opacity: 0; transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        .tab-content.active { display: block; opacity: 1; transform: translateY(0); }
+
+        .dashboard-grid {
+            display: grid; grid-template-columns: repeat(12, 1fr);
+            gap: 25px; max-width: 1600px; margin: 0 auto;
+        }
+
+        .hero-tile {
+            grid-column: span 12;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, #3a348a 100%);
+            border-radius: 30px; padding: 60px; color: white;
+            position: relative; overflow: hidden; min-height: 400px;
+            display: flex; flex-direction: column; justify-content: center;
+            box-shadow: 0 20px 40px rgba(34, 29, 92, 0.2);
+            margin-bottom: 25px;
+        }
+
+        .hero-tile canvas {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1; pointer-events: none;
+        }
+
+        .hero-content { position: relative; z-index: 2; }
+        .hero-content .pre-title { color: var(--accent-red); font-weight: 800; letter-spacing: 4px; font-size: 1rem; margin-bottom: 10px; display: block; }
+        .hero-content h1 { font-size: clamp(2.2rem, 5vw, 3.8rem); font-weight: 800; line-height: 1.1; margin-bottom: 15px; text-transform: uppercase; }
+        .hero-content .sub-title { font-size: 1.2rem; opacity: 0.95; font-weight: 400; max-width: 700px; }
+
+        .card {
+            background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(10px);
+            border-radius: 25px; padding: 35px; border: 1px solid rgba(255,255,255,0.5);
+            height: 100%; box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+
+        .card h3 { color: var(--primary-blue); font-size: 1.6rem; margin-bottom: 20px; border-left: 6px solid var(--accent-red); padding-left: 15px; font-weight: 800; }
+
+        .stat-box {
+            text-align: center; padding: 35px 20px; background: var(--white);
+            border-radius: 25px; border-bottom: 6px solid var(--accent-red);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        }
+        .stat-box h4 { font-size: 2.8rem; color: var(--primary-blue); font-weight: 800; margin-bottom: 5px; }
+        .stat-box p { font-weight: 600; color: #666; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px;}
+
+        .span-4 { grid-column: span 4; }
+        .span-6 { grid-column: span 6; }
+        .span-12 { grid-column: span 12; }
+
+        .list-items { list-style: none; margin-top: 10px; }
+        .list-items li { font-size: 1rem; padding: 12px 0; border-bottom: 1px solid rgba(0,0,0,0.05); display: flex; align-items: center; font-weight: 500; }
+        .list-items li::before { content: "●"; color: var(--accent-red); margin-right: 12px; font-size: 0.8rem; }
+
+        .degree-tag { display: inline-block; background: var(--primary-blue); color: white; padding: 6px 16px; border-radius: 50px; font-size: 0.85rem; margin-bottom: 10px; font-weight: 700; }
+
+        /* --- Activities UI --- */
+        .activities-section-title {
+            grid-column: span 12;
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--primary-blue);
+            margin: 20px 0 10px 0;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .activities-section-title::after {
+            content: "";
+            height: 2px;
+            flex-grow: 1;
+            background: linear-gradient(90deg, var(--accent-red), transparent);
+        }
+
+        .activity-card {
+            background: #ffffff;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .activity-img {
+            width: 100%;
+            height: 350px;
+            overflow: hidden;
+            background: #eee;
+        }
+
+        .activity-img img {
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: cover; 
+            object-position: top;
+            transition: transform 0.5s ease;
+        }
+        .activity-card:hover .activity-img img { transform: scale(1.05); }
+
+        .activity-info { padding: 25px; flex-grow: 1; }
+        .activity-info h5 { font-size: 1.2rem; font-weight: 700; color: #221d5c; margin-bottom: 10px; }
+        .activity-info p { font-size: 0.9rem; color: #666; line-height: 1.5; }
+
+        /* Grid Layouts */
+        .media-grid-pure {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            padding: 20px 0;
+            width: 100%;
+        }
+
+        .media-item-pure {
+            width: 100%;
+            height: 300px;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .media-item-pure img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+        @media (max-width: 992px) {
+            :root { --sidebar-width: 100px; }
+            .nav-links span { display: none; }
+            .logo-area img { max-width: 70px; }
+            .sidebar { align-items: center; padding: 30px 10px; }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar { width: 100%; height: auto; flex-direction: row; justify-content: space-around; padding: 10px 0; border-right: none; border-bottom: 4px solid var(--accent-red); position: absolute; }
+            main { margin-left: 0; width: 100%; padding-top: 100px; }
+            .span-4, .span-6 { grid-column: span 12; }
+            .media-grid-pure { grid-template-columns: 1fr; }
+            .logo-area, .simple-back-arrow { display: none !important; }
+        }
+		
+		.club-names-list {
+        grid-column: span 12;
+        margin: 20px 0 30px 0;
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+        padding: 5px;
+    }
+
+    .club-item-name {
+        background: rgba(255, 255, 255, 0.6);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(34, 29, 92, 0.1);
+        padding: 10px 22px;
+        border-radius: 50px;
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--primary-blue);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        cursor: default;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+    }
+
+    .club-item-name i {
+        background: var(--accent-red);
+        color: white;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        font-size: 0.7rem;
+        transition: transform 0.4s ease;
+    }
+
+    .club-item-name:hover {
+        background: var(--primary-blue);
+        color: white;
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(34, 29, 92, 0.15);
+        border-color: var(--primary-blue);
+    }
+
+    .club-item-name:hover i {
+        transform: rotate(360deg);
+        background: white;
+        color: var(--accent-red);
+    }
+
+    /* Subtle entry animation for the pills */
+    .club-item-name {
+        animation: slideInUp 0.6s ease backwards;
+    }
+
+    @keyframes slideInUp {
+        from { opacity: 0; transform: translateY(15px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+	
+.header-flex {
+    grid-column: span 12;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 30px;
+}	
+	
+/* Grid for Syllabus Cards */
+.grid-layout {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    width: 100%;
+}
+
+/* Subject Rows */
+.item-row {
+    padding: 12px 15px;
+    background: rgba(34, 29, 92, 0.05);
+    border-radius: 12px;
+    margin-bottom: 10px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.9rem;
+}
+
+.item-row i {
+    color: var(--accent-red);
+    font-size: 0.8rem;
+}
+
+/* Specialty VAP Card */
+.vap-card {
+    background: var(--primary-blue) !important;
+    color: white;
+}
+
+.vap-card .item-row {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+
+	.value-added-card {
+        padding: 40px;
+        background: #fff;
+        border-radius: 30px;
+        border: none;
+    }
+
+    .value-header {
+        text-align: center;
+        margin-bottom: 40px;
+        border-bottom: 2px solid #f0f0f0;
+        padding-bottom: 30px;
+    }
+
+    .value-header h2 {
+        color: var(--primary-blue);
+        font-weight: 800;
+        font-size: 2.2rem;
+        margin: 10px 0;
+    }
+
+    .value-header .subtitle {
+        color: #b1933c; /* Matches the golden text in image */
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.9rem;
+    }
+
+    .value-grid {
+        display: grid;
+        grid-template-columns: 1.2fr 1fr;
+        gap: 40px;
+    }
+
+    .col-title {
+        color: var(--primary-blue);
+        font-size: 1.3rem;
+        font-weight: 800;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .feature-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 12px 0;
+        border-bottom: 1px solid #f5f5f5;
+        font-size: 0.95rem;
+        color: #444;
+    }
+
+    .feature-item small {
+        color: var(--accent-red);
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    /* Professional Skill Styling */
+    .highlight-col {
+        background: #fcfaff;
+        padding: 25px;
+        border-radius: 20px;
+        border: 1px dashed #d1c4e9;
+    }
+
+    .expert-note {
+        font-size: 0.8rem;
+        color: #b1933c;
+        margin-top: -15px;
+        margin-bottom: 20px;
+        font-weight: 600;
+    }
+
+    .skill-card {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        background: #fff;
+        padding: 15px;
+        border-radius: 12px;
+        margin-bottom: 10px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+    }
+
+    .skill-card i {
+        color: var(--primary-blue);
+        font-size: 1.2rem;
+    }
+
+    .skill-info h5 {
+        margin: 0;
+        font-size: 0.9rem;
+        font-weight: 700;
+    }
+
+    .skill-info p {
+        margin: 0;
+        font-size: 0.8rem;
+        color: #888;
+    }
+
+    .disclaimer {
+        font-size: 0.75rem;
+        color: #999;
+        margin-top: 15px;
+        font-style: italic;
+    }
+
+    @media (max-width: 992px) {
+        .value-grid { grid-template-columns: 1fr; }
+    }
+    </style>
+</head>
+<body>
+
+    <div class="bg-overlay-container">
+        <div class="bubble" style="width: 45vw; height: 45vw; background: var(--primary-blue); top: -15%; right: -10%;"></div>
+        <div class="bubble" style="width: 35vw; height: 35vw; background: var(--accent-red); bottom: -10%; left: -10%; animation-delay: -7s;"></div>
+        
+        <img src="images/logo-2.png" class="center-watermark" alt="NHCE Watermark">
+        
+        <canvas id="bg-hex-canvas"></canvas>
+    </div>
+
+    <aside class="sidebar">
+        <a href="programs.html" class="simple-back-arrow">
+            <i class="fa-solid fa-circle-arrow-left"></i>
+        </a>
+        <div class="logo-area">
+            <img src="images/logo-2.png" alt="NHCE Logo">
+        </div>
+        <ul class="nav-links">
+            <li><a onclick="switchTab('overview')" id="link-overview" class="active"><i class="fa-solid fa-chart-line"></i> <span>Overview</span></a></li>
+            <li><a onclick="switchTab('academics')" id="link-academics"><i class="fa-solid fa-book"></i> <span>Syllabus</span></a></li>
+            <li><a onclick="switchTab('labs')" id="link-labs"><i class="fa-solid fa-flask"></i> <span>Labs</span></a></li>
+            <li><a onclick="switchTab('coe')" id="link-coe"><i class="fa-solid fa-microchip"></i> <span>CoE</span></a></li>
+            <li><a onclick="switchTab('activities')" id="link-activities"><i class="fa-solid fa-calendar-days"></i> <span>Activities</span></a></li>
+            <li><a onclick="switchTab('placement')" id="link-placement"><i class="fa-solid fa-user-graduate"></i> <span>Placements</span></a></li>
+        </ul>
+    </aside>
+
+    <main id="main-content">
+        <section id="overview" class="tab-content active">
+            <div class="dashboard-grid">
+                <div class="hero-tile">
+                    <canvas id="neural-canvas"></canvas>
+                    <div class="hero-content">
+                        <span class="pre-title">DEPARTMENT OF</span>
+                        <h1>Artificial Intelligence <br>& Machine Learning</h1>
+                        <p class="sub-title">Building the Intelligent Future with Next-Gen Technology and Research.</p>
+                    </div>
+                </div>
+                <div class="stat-box span-4"><h4 class="counter" data-target="28" data-suffix=" LPA">0 LPA</h4><p>Highest Package</p></div>
+                <div class="stat-box span-4"><h4 class="counter" data-target="100" data-suffix="%">0%</h4><p>Placement Assistance</p></div>
+                <div class="stat-box span-4"><h4 class="counter" data-target="14">0</h4><p>Patents Filed</p></div>
+                <div class="card span-6">
+                    <h3>Our Vision &amp; Mission</h3>
+                    <p>To disseminate strong theoretical and practical exposure aligned with emerging industry trends, promote a free-thinking environment that fosters innovative research and effective teaching–learning pedagogy, and develop value-based, socially responsible professionals with a high degree of leadership skills who contribute to the betterment of society.</p>
+                </div>
+                <div class="card span-6">
+                    <h3>HOD Profile</h3>
+                    <p style="font-size: 1.4rem; font-weight: 800; color: var(--primary-blue);">Dr. Uma Reddy NV</p>
+                    <p style="font-weight: 700; color: var(--accent-red); margin-bottom: 10px;">Professor & Head</p>
+                    <ul class="list-items">
+                        <li><span class="counter" data-target="29">0</span> Years Academic Excellence</li>
+                        <li><span class="counter" data-target="14">0</span> Patents Filed | IEEE Senior Member</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="academics" class="tab-content">
+            <div class="dashboard-grid">
+                <div class="hero-tile">
+                    <canvas id="academics-canvas"></canvas>
+                    <div class="hero-content">
+                        <span class="pre-title">ACADEMICS & NEP 2020</span>
+                        <h1>Curriculum <br>Excellence</h1>
+                        <p class="sub-title">Restructuring Indian education to create an equitable and inclusive system providing learning for all.</p>
+                    </div>
+                </div>
+    <div class="header-flex">
+        <div class="header-text">
+            <h1>AIML Syllabus</h1>
+            <p>2024 - 2026 Academic Cycle</p>
+        </div>
+  
+    </div>
+
+    <div id="academic" class="span-12 section-container">
+     
+	 <div class="span-12 reveal" style="margin-bottom: 40px;">
+    <h3 style="color: var(--primary-blue); font-weight: 800; border-left: 6px solid var(--accent-red); padding-left: 15px; margin-bottom: 20px; font-size: 1.6rem;">
+        THIRD SEMESTER <i class="fas fa-chart-line" style="float:right; opacity:0.2"></i>
+    </h3>
+    
+    <div class="card" style="padding: 30px;">
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+            <div style="border-right: 1px solid rgba(34, 29, 92, 0.1); padding-right: 15px;">
+                <div class="item-row"><i class="fas fa-check"></i> Numerical Methods and Probability</div>
+                <div class="item-row"><i class="fas fa-check"></i> Advanced Data Structures</div>
+                <div class="item-row"><i class="fas fa-check"></i> Advanced Data Structures Lab</div>
+                <div class="item-row"><i class="fas fa-check"></i> Data Science</div>
+                <div class="item-row"><i class="fas fa-check"></i> Introduction To Artificial Intelligence</div>
+            </div>
+            <div style="border-right: 1px solid rgba(34, 29, 92, 0.1); padding-right: 15px;">
+                <div class="item-row"><i class="fas fa-check"></i> Software Engineering & PM</div>
+                <div class="item-row"><i class="fas fa-check"></i> Introduction To OpenCV</div>
+                <div class="item-row"><i class="fas fa-check"></i> Golang Programming</div>
+                <div class="item-row"><i class="fas fa-check"></i> Project Management</div>
+                <div class="item-row"><i class="fas fa-check"></i> Data Visualization (Power BI)</div>
+            </div>
+            <div>
+                <div class="item-row"><i class="fas fa-check"></i> Bio Inspired Design</div>
+                <div class="item-row"><i class="fas fa-check"></i> Design Thinking & Fab</div>
+                <div class="item-row"><i class="fas fa-check"></i> Basic Applied Mathematics</div>
+                <div class="item-row"><i class="fas fa-check"></i> National Service Scheme</div>
+                <div class="item-row"><i class="fas fa-check"></i> Yoga / Physical Education</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="span-12 reveal">
+    <h3 style="color: var(--primary-blue); font-weight: 800; border-left: 6px solid var(--accent-red); padding-left: 15px; margin-bottom: 20px; font-size: 1.6rem;">
+        FOURTH SEMESTER <i class="fas fa-briefcase" style="float:right; opacity:0.2"></i>
+    </h3>
+    
+    <div class="card" style="padding: 30px;">
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+            <div style="border-right: 1px solid rgba(34, 29, 92, 0.1); padding-right: 15px;">
+                <div class="item-row"><i class="fas fa-check"></i> Discrete Mathematics and Graph Theory</div>
+                <div class="item-row"><i class="fas fa-check"></i> Object Oriented Programming with Java</div>
+				 <div class="item-row"><i class="fas fa-check"></i> Object Oriented Programming with Java Lab</div>
+                <div class="item-row"><i class="fas fa-check"></i> Machine Learning</div>
+				 <div class="item-row"><i class="fas fa-check"></i> Machine Learning Lab</div>
+                <div class="item-row"><i class="fas fa-check"></i> Database Management Systems</div>
+				 <div class="item-row"><i class="fas fa-check"></i> Ai Ethics For AIML Engineers</div>
+               
+            </div>
+            <div style="border-right: 1px solid rgba(34, 29, 92, 0.1); padding-right: 15px;">
+			     <div class="item-row"><i class="fas fa-check"></i> Computer Networks</div>
+                <div class="item-row"><i class="fas fa-check"></i> Computer Architecture</div>
+                <div class="item-row"><i class="fas fa-check"></i> Introduction To Embedded Systems</div>
+				 <div class="item-row"><i class="fas fa-check"></i> Fundamentals Of Sensor Technology</div>
+                <div class="item-row"><i class="fas fa-check"></i> Exploratory Data Analysis</div>
+				 <div class="item-row"><i class="fas fa-check"></i> Cloud Service Management</div>
+                <div class="item-row"><i class="fas fa-check"></i> Digital Electronics Using</div>
+            </div>
+            <div>
+			   <div class="item-row"><i class="fas fa-check"></i> Typescript Programming</div>
+                <div class="item-row"><i class="fas fa-check"></i> Problem Solving Using Scala</div>
+                <div class="item-row"><i class="fas fa-check"></i> Universal Human Values and Life Skills</div>
+                <div class="item-row"><i class="fas fa-check"></i> Mini Project</div>
+				 <div class="item-row"><i class="fas fa-check"></i> National Service Scheme</div>
+				 <div class="item-row"><i class="fas fa-check"></i> Physical Education and Sports</div>
+				 <div class="item-row"><i class="fas fa-check"></i> Yoga</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="span-12 reveal" style="margin-top: 40px; margin-bottom: 40px;">
+    <h3 style="color: var(--primary-blue); font-weight: 800; border-left: 6px solid var(--accent-red); padding-left: 15px; margin-bottom: 20px; font-size: 1.6rem;">
+        FIFTH SEMESTER <i class="fas fa-brain" style="float:right; opacity:0.2"></i>
+    </h3>
+    
+    <div class="card" style="padding: 30px;">
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+            <div style="border-right: 1px solid rgba(34, 29, 92, 0.1); padding-right: 15px;">
+                <div class="item-row"><i class="fas fa-check"></i> Software Engineering & PM</div>
+                <div class="item-row"><i class="fas fa-check"></i> Machine Learning</div>
+                <div class="item-row"><i class="fas fa-check"></i> Machine Learning Lab</div>
+                <div class="item-row"><i class="fas fa-check"></i> Natural Language Processing</div>
+            </div>
+            <div style="border-right: 1px solid rgba(34, 29, 92, 0.1); padding-right: 15px;">
+                <div class="item-row"><i class="fas fa-check"></i> NLP Lab</div>
+                <div class="item-row"><i class="fas fa-check"></i> Professional Elective Course-I</div>
+                <div class="item-row"><i class="fas fa-check"></i> Research Methodology & IPR</div>
+                <div class="item-row"><i class="fas fa-check"></i> Critical & Creative Thinking</div>
+            </div>
+            <div>
+                <div class="item-row"><i class="fas fa-check"></i> Environmental Studies</div>
+                <div class="item-row"><i class="fas fa-check"></i> Mini Project-II</div>
+                <div class="item-row"><i class="fas fa-check"></i> National Service Scheme</div>
+                <div class="item-row"><i class="fas fa-check"></i> Yoga / Physical Education</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="span-12 reveal" style="margin-top: 40px; margin-bottom: 40px;">
+    <h3 style="color: var(--primary-blue); font-weight: 800; border-left: 6px solid var(--accent-red); padding-left: 15px; margin-bottom: 20px; font-size: 1.6rem;">
+        SIXTH SEMESTER <i class="fas fa-microchip" style="float:right; opacity:0.2"></i>
+    </h3>
+    
+    <div class="card" style="padding: 30px;">
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+            <div style="border-right: 1px solid rgba(34, 29, 92, 0.1); padding-right: 15px;">
+                <div class="item-row"><i class="fas fa-check"></i> Deep Learning</div>
+                <div class="item-row"><i class="fas fa-check"></i> Deep Learning Lab</div>
+                <div class="item-row"><i class="fas fa-check"></i> Big Data & Cloud Tech</div>
+                <div class="item-row"><i class="fas fa-check"></i> Big Data & Cloud Lab</div>
+            </div>
+            <div style="border-right: 1px solid rgba(34, 29, 92, 0.1); padding-right: 15px;">
+                <div class="item-row"><i class="fas fa-check"></i> Ethical Cyber Security</div>
+                <div class="item-row"><i class="fas fa-check"></i> Professional Elective Course-II</div>
+                <div class="item-row"><i class="fas fa-check"></i> Project Phase I</div>
+            </div>
+            <div>
+                <div class="item-row"><i class="fas fa-check"></i> Problem Solving Skills</div>
+                <div class="item-row"><i class="fas fa-check"></i> Ability Enhancement Course–V</div>
+                <div class="item-row"><i class="fas fa-check"></i> National Service Scheme</div>
+                <div class="item-row"><i class="fas fa-check"></i> Yoga / Physical Education</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="span-12 reveal" style="margin-top: 40px; margin-bottom: 40px;">
+    <h3 style="color: var(--primary-blue); font-weight: 800; border-left: 6px solid var(--accent-red); padding-left: 15px; margin-bottom: 20px; font-size: 1.6rem;">
+        SEVENTH SEMESTER <i class="fas fa-robot" style="float:right; opacity:0.2"></i>
+    </h3>
+    
+    <div class="card" style="padding: 30px;">
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+            <div style="border-right: 1px solid rgba(34, 29, 92, 0.1); padding-right: 15px;">
+                <div class="item-row"><i class="fas fa-check"></i> Advanced Machine Learning</div>
+                <div class="item-row"><i class="fas fa-check"></i> Advanced ML Lab</div>
+            </div>
+            <div style="border-right: 1px solid rgba(34, 29, 92, 0.1); padding-right: 15px;">
+                <div class="item-row"><i class="fas fa-check"></i> Generative AI</div>
+                <div class="item-row"><i class="fas fa-check"></i> Generative AI Lab</div>
+            </div>
+            <div>
+                <div class="item-row"><i class="fas fa-check"></i> Reinforcement Learning</div>
+                <div class="item-row"><i class="fas fa-check"></i> Project Work II</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="span-12 reveal" style="margin-top: 40px; margin-bottom: 40px;">
+    <h3 style="color: var(--primary-blue); font-weight: 800; border-left: 6px solid var(--accent-red); padding-left: 15px; margin-bottom: 20px; font-size: 1.6rem;">
+        EIGHTH SEMESTER <i class="fas fa-graduation-cap" style="float:right; opacity:0.2"></i>
+    </h3>
+    
+    <div class="card" style="padding: 30px;">
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+            <div style="border-right: 1px solid rgba(34, 29, 92, 0.1); padding-right: 15px;">
+                <div class="item-row"><i class="fas fa-check"></i> Recommender Systems</div>
+                <div class="item-row"><i class="fas fa-check"></i> Quantum Computing</div>
+                <div class="item-row"><i class="fas fa-check"></i> Agentic AI</div>
+                <div class="item-row"><i class="fas fa-check"></i> Optimization Techniques</div>
+            </div>
+            <div style="border-right: 1px solid rgba(34, 29, 92, 0.1); padding-right: 15px;">
+                <div class="item-row"><i class="fas fa-check"></i> Cryptography & Network Security</div>
+                <div class="item-row"><i class="fas fa-check"></i> AI Ethics for AIML Engineers</div>
+                <div class="item-row"><i class="fas fa-check"></i> Social Network Analysis</div>
+                <div class="item-row"><i class="fas fa-check"></i> Mobile Computing</div>
+            </div>
+            <div>
+                <div class="item-row"><i class="fas fa-check"></i> Pattern Recognition</div>
+                <div class="item-row"><i class="fas fa-check"></i> Block Chain Technology</div>
+                <div class="item-row"><i class="fas fa-check"></i> Internship</div>
+                <div class="item-row"><i class="fas fa-check"></i> Indian Knowledge System</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+    </div>
+
+<div class="span-12 reveal" style="margin-top: 40px;">
+    <div class="card value-added-card">
+        <div class="value-header">
+            <span class="pre-title">Value Added Programs</span>
+            <h2>ARTIFICIAL INTELLIGENCE AND MACHINE LEARNING</h2>
+            <p class="subtitle">Employment Centric Syllabus Designed as per Industry Expectations</p>
+        </div>
+
+        <div class="value-grid">
+            <div class="value-col">
+                <h4 class="col-title"><i class="fas fa-graduation-cap"></i> Academic Features</h4>
+                <div class="feature-list">
+                    <div class="feature-item"><span>B.E Degree (Visvesvaraya Technological University)</span> <small>SEM I-VIII</small></div>
+                    <div class="feature-item"><span>Computer Society of India (CSI) Membership</span> <small>SEM V-VI</small></div>
+                    <div class="feature-item"><span>Indian Society For Technical Education Membership</span> <small>SEM V-VI</small></div>
+                    <div class="feature-item"><span>Industrial Visits & Guest Lectures by Eminent Experts</span> <small>SEM III-VIII</small></div>
+                    <div class="feature-item"><span>Workshops & Seminars on Recent Trends in AI</span> <small>SEM III-VIII</small></div>
+                    <div class="feature-item"><span>Technical Students Symposium / Conferences</span> <small>SEM III-VIII</small></div>
+                    <div class="feature-item"><span>Resume Writing & Industry Oriented Coaching</span> <small>SEM VI</small></div>
+                    <div class="feature-item"><span>Mentoring, Mock Viva-Voce & Professional Counseling</span> <small>SEM I-VIII</small></div>
+                    <div class="feature-item"><span>NPTEL MOOC Certification Courses</span> <small>SEM I-VIII</small></div>
+                    <div class="feature-item"><span>Student Club Activities</span> <small>SEM I-VIII</small></div>
+                </div>
+            </div>
+
+            <div class="value-col highlight-col">
+                <h4 class="col-title"><i class="fas fa-star"></i> Global & Professional Skill Incremental Program</h4>
+                <p class="expert-note">(By Industry Experts)</p>
+                <div class="feature-list">
+                    <div class="skill-card">
+                        <i class="fas fa-code-branch"></i>
+                        <div class="skill-info">
+                            <h5>Certification Program in DevOps</h5>
+                            <p>Semester V-VI</p>
+                        </div>
+                    </div>
+                    <div class="skill-card">
+                        <i class="fas fa-user-shield"></i>
+                        <div class="skill-info">
+                            <h5>Certification Program in Ethical Hacking</h5>
+                            <p>Semester IV-V</p>
+                        </div>
+                    </div>
+                    <div class="skill-card">
+                        <i class="fas fa-ad"></i>
+                        <div class="skill-info">
+                            <h5>Certification Program in Digital Marketing</h5>
+                            <p>Semester VII</p>
+                        </div>
+                    </div>
+                    <div class="skill-card">
+                        <i class="fas fa-cloud"></i>
+                        <div class="skill-info">
+                            <h5>Certification Program in Cloud Computing</h5>
+                            <p>Semester VI</p>
+                        </div>
+                    </div>
+                    <div class="skill-card">
+                        <i class="fas fa-globe-americas"></i>
+                        <div class="skill-info">
+                            <h5>International Student Exchange Program*</h5>
+                            <p>Semester VI</p>
+                        </div>
+                    </div>
+                </div>
+                <p class="disclaimer">* Offered to meritorious students at cost. Credit transfer available for MS programs.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+		
+			 
+			 
+			 
+            </div>
+        </section>
+
+        <section id="labs" class="tab-content">
+            <div class="dashboard-grid">
+                <div class="hero-tile">
+                    <canvas id="labs-canvas"></canvas>
+                    <div class="hero-content">
+                        <span class="pre-title">INFRASTRUCTURE</span>
+                        <h1>Modern Computing <br>Laboratories</h1>
+                        <p class="sub-title">Equipped with high-end systems and industry-standard AI software.</p>
+                    </div>
+                </div>
+                <div class="stat-box span-4"><h4 class="counter" data-target="5">0</h4><p>Total Labs</p></div>
+                <div class="stat-box span-4"><h4 class="counter" data-target="206">0</h4><p>Total Computers</p></div>
+                <div class="stat-box span-4"><h4 class="counter" data-target="8">0</h4><p>Classrooms</p></div>
+                <div class="card span-12">
+                    <h3>Departmental Labs</h3>
+                    <ul class="list-items">
+                        <li>IBM OpenPower Lab | ALTAIR Lab | Oracle Lab | Nvidia AI Lab</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="coe" class="tab-content">
+            <div class="dashboard-grid">
+                <div class="hero-tile">
+                    <canvas id="coe-canvas"></canvas>
+                    <div class="hero-content">
+                        <span class="pre-title">INDUSTRY CONNECT</span>
+                        <h1>Center of <br>Excellence</h1>
+                    </div>
+                </div>
+                <div class="card span-6">
+                    <h3>Industry Partners</h3>
+                    <ul class="list-items">
+                        <li>VMware | HPE | CISCO | SAP Labs | Schneider Electric</li>
+                    </ul>
+                </div>
+                <div class="card span-6">
+                    <h3>Specialized Academies</h3>
+                    <ul class="list-items">
+                        <li>VMware IT Academy | HPE Vertica | CISCO Networking</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="activities" class="tab-content">
+            <div class="dashboard-grid">
+                <div class="hero-tile">
+                    <canvas id="activities-canvas"></canvas>
+                    <div class="hero-content">
+                        <span class="pre-title">HOLISTIC DEVELOPMENT</span>
+                        <h1>Campus Life & <br>Achievements</h1>
+                        <p class="sub-title">Fostering innovation through research, industry interaction, and student clubs.</p>
+                    </div>
+                </div>
+
+                <h4 class="activities-section-title">Academic Activities</h4>
+                
+                <div class="span-4 reveal">
+				<a href="aiml-results-1.html?cat=11&name=Co-curricular" style="text-decoration: none; color: inherit;">
+                    <div class="activity-card">
+                        <div class="activity-img"><img src="images/img-5.webp" alt="Co-curricular"></div>
+                        <div class="activity-info"><h5>Co-curricular Activities</h5><p>Engaging technical competitions, hackathons, and coding challenges held regularly.</p></div>
+                    </div>
+					</a>
+                </div>
+                <div class="span-4 reveal">
+				<a href="aiml-results-1.html?cat=15&name=Seminars" style="text-decoration: none; color: inherit;">
+                    <div class="activity-card">
+                        <div class="activity-img"><img src="images/img-6.webp" alt="Seminars"></div>
+                        <div class="activity-info"><h5>Seminars & Workshops</h5><p>Hands-on sessions on Generative AI, MLOps, and Deep Learning by experts.</p></div>
+                    </div>
+					</a>
+                </div>
+                <div class="span-4 reveal">
+				<a href="aiml-results-1.html?cat=27&name=Alumni" style="text-decoration: none; color: inherit;">
+                    <div class="activity-card">
+                        <div class="activity-img"><img src="images/img-7.webp" alt="Alumni"></div>
+                        <div class="activity-info"><h5>Alumni Talk Series</h5><p>Bridge the gap with industry insights from our successful graduates worldwide.</p></div>
+                    </div>
+					</a>
+                </div>
+
+                <h4 class="activities-section-title">Industry & Social</h4>
+                
+                <div class="span-4 reveal">
+				<a href="aiml-results-1.html?cat=19&name=Outreach" style="text-decoration: none; color: inherit;">
+                    <div class="activity-card">
+                        <div class="activity-img"><img src="images/img-8.jpg" alt="Outreach"></div>
+                        <div class="activity-info"><h5>Outreach & Extension</h5><p>Social responsibility programs and knowledge sharing with the local community.</p></div>
+                    </div>
+					</a>
+                </div>
+                <div class="span-4 reveal">
+				<a href="aiml-innovation.html" style="text-decoration: none; color: inherit;">
+                    <div class="activity-card">
+                        <div class="activity-img"><img src="images/img-9.jpg" alt="Projects"></div>
+                        <div class="activity-info"><h5>Live Projects</h5><p>Real-world problem solving through industry-sponsored capstone projects.</p></div>
+                    </div>
+					</a>
+                </div>
+                <div class="span-4 reveal">
+				<a href="aiml-results-1.html?cat=28&name=Industrial Visits" style="text-decoration: none; color: inherit;">
+                    <div class="activity-card">
+                        <div class="activity-img"><img src="images/img-10.webp" alt="Industrial Visits"></div>
+                        <div class="activity-info"><h5>Industrial Visits</h5><p>Structured Industrial Visits on Practical industrial Knowledge</p></div>
+                    </div>
+					</a>
+                </div>
+
+                <h4 class="activities-section-title">Students Achievements</h4>
+                <div class="span-12">
+				<a href="aiml-results-1.html?cat=8&name=Achievement" style="text-decoration: none; color: inherit;">
+                    <div class="media-grid-pure">
+                        <div class="achievement-container reveal">
+                            <div class="media-item-pure"><img src="images/club-07.webp" alt="SIH"></div>
+                            <ul class="list-items">
+                                <li><strong>Smart India Hackathon:</strong> Multiple Winners</li>
+                                <li><strong>UDAAN Finalists:</strong> Top performers</li>
+                            </ul>
+                        </div>
+                        <div class="achievement-container reveal">
+                            <div class="media-item-pure"><img src="images/ice-01.webp" alt="Research"></div>
+                            <ul class="list-items">
+                                <li><strong>Patents:</strong> Best Research Paper Award</li>
+                                <li><strong>FDP:</strong> Faculty Excellence in Research</li>
+                            </ul>
+                        </div>
+                        <div class="achievement-container reveal">
+                            <div class="media-item-pure"><img src="images/img-02.webp" alt="Global"></div>
+                            <ul class="list-items">
+                                <li><strong>Global Recognition:</strong> State Level Championship</li>
+                                <li><strong>Project Awards:</strong> Excellence in Capstone</li>
+                            </ul>
+                        </div>
+                    </div>
+					</a>
+                </div>
+
+                <h4 class="activities-section-title">Club Activities</h4>
+				<div class="club-names-list">
+    <div class="club-item-name" style="animation-delay: 0.1s;">
+        <i class="fa-solid fa-microchip"></i> Bit Club
+    </div>
+    <div class="club-item-name" style="animation-delay: 0.2s;">
+        <i class="fa-solid fa-code"></i> Mad Club
+    </div>
+    <div class="club-item-name" style="animation-delay: 0.3s;">
+        <i class="fa-solid fa-heart-pulse"></i> Healthxl Club
+    </div>
+</div>
+                <div class="span-12 reveal">
+                    <div class="media-grid-pure">
+                        <div class="media-item-pure"><img src="images/club-01.webp" alt="Club 1"></div>
+                        <div class="media-item-pure"><img src="images/club-02.webp" alt="Club 2"></div>
+                        <div class="media-item-pure"><img src="images/club-03.webp" alt="Club 3"></div>
+                        <div class="media-item-pure"><img src="images/club-04.webp" alt="Club 4"></div>
+                        <div class="media-item-pure"><img src="images/club-05.webp" alt="Club 5"></div>
+                        <div class="media-item-pure"><img src="images/club-06.webp" alt="Club 6"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="placement" class="tab-content">
+            <div class="dashboard-grid">
+                <div class="hero-tile">
+                    <canvas id="placement-canvas"></canvas>
+                    <div class="hero-content">
+                        <span class="pre-title">CAREER OPPORTUNITIES</span>
+                        <h1>Placement <br>Records</h1>
+                        <p class="sub-title">Industry-ready engineers leading global innovation.</p>
+                    </div>
+                </div>
+                <div class="stat-box span-4"><h4 class="counter" data-target="28" data-suffix=" LPA">0 LPA</h4><p>Highest Pkg (23-24)</p></div>
+                <div class="stat-box span-4"><h4 class="counter" data-target="5.74" data-suffix=" LPA" data-decimals="2">0 LPA</h4><p>Average Pkg (23-24)</p></div>
+                <div class="stat-box span-4"><h4 class="counter" data-target="103">0</h4><p>Total Offers (23-24)</p></div>
+                <div class="card span-6">
+                    <h3>Placement Stats (2023-24)</h3>
+                    <ul class="list-items">
+                     <li><strong>Placement results:</strong> 100%</li>
+<li><strong>TCS:</strong> 14 Students</li>
+<li><strong>Infosys:</strong> 11 Students</li>
+<li><strong>Wipro:</strong> 9 Students</li>
+<li><strong>Accenture:</strong> 8 Students</li>
+
+                    </ul>
+                </div>
+                <div class="card span-6">
+                    <h3>2024-25 (Ongoing)</h3>
+                    <p style="font-weight: 700; color: var(--primary-blue); margin-bottom: 5px;">Total Placed: <span class="counter" data-target="24">0</span> Students</p>
+                    <ul class="list-items">
+						<li><strong>LTIMindtree:</strong> 8 Students</li>
+						<li><strong>EY (Ernst & Young):</strong> 10 Students</li>
+						<li><strong>GlobalLogic – Product Engineering:</strong> 6 Students</li>
+						
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        const lenis = new Lenis();
+        function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+        requestAnimationFrame(raf);
+
+        // Intersection Observer for Reveal Animations
+        const observerOptions = { threshold: 0.15 };
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        function initReveal() {
+            document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+        }
+
+        function animateCounters(container) {
+            const counters = container.querySelectorAll('.counter');
+            counters.forEach(counter => {
+                const target = +counter.getAttribute('data-target');
+                const suffix = counter.getAttribute('data-suffix') || '';
+                const prefix = counter.getAttribute('data-prefix') || '';
+                const decimals = +counter.getAttribute('data-decimals') || 0;
+                const duration = 1500;
+                const startTime = performance.now();
+                function updateCount(currentTime) {
+                    const elapsed = currentTime - startTime;
+                    const progress = Math.min(elapsed / duration, 1);
+                    const easeProgress = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+                    const currentValue = (easeProgress * target).toFixed(decimals);
+                    counter.innerText = prefix + currentValue + suffix;
+                    if (progress < 1) requestAnimationFrame(updateCount);
+                }
+                requestAnimationFrame(updateCount);
+            });
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.nav-links a').forEach(link => link.classList.remove('active'));
+            document.getElementById('link-' + tabId).classList.add('active');
+            document.querySelectorAll('.tab-content').forEach(sec => {
+                sec.classList.remove('active');
+                sec.style.display = 'none';
+            });
+            const activeSec = document.getElementById(tabId);
+            activeSec.style.display = 'block';
+            setTimeout(() => {
+                activeSec.classList.add('active');
+                animateCounters(activeSec);
+                initReveal(); // Re-init reveal animations for new tab
+            }, 10);
+            const activeCanvas = activeSec.querySelector('canvas');
+            if(activeCanvas && activeCanvas.id !== 'bg-hex-canvas') createNeuralEffect(activeCanvas.id);
+        }
+
+        function createNeuralEffect(canvasId) {
+            const canvas = document.getElementById(canvasId);
+            if(!canvas) return;
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+            function resize() {
+                canvas.width = canvas.offsetWidth;
+                canvas.height = canvas.offsetHeight;
+            }
+            window.addEventListener('resize', resize);
+            resize();
+            function init() {
+                particles = [];
+                for(let i=0; i<60; i++) {
+                    particles.push({
+                        x: Math.random() * canvas.width,
+                        y: Math.random() * canvas.height,
+                        vx: (Math.random() - 0.5) * 1.2,
+                        vy: (Math.random() - 0.5) * 1.2
+                    });
+                }
+            }
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach((p, i) => {
+                    p.x += p.vx; p.y += p.vy;
+                    if(p.x < 0 || p.x > canvas.width) p.vx *= -1;
+                    if(p.y < 0 || p.y > canvas.height) p.vy *= -1;
+                    ctx.fillStyle = 'rgba(255,255,255,0.5)';
+                    ctx.beginPath(); ctx.arc(p.x, p.y, 2, 0, Math.PI*2); ctx.fill();
+                    for(let j=i+1; j<particles.length; j++) {
+                        let d = Math.hypot(p.x - particles[j].x, p.y - particles[j].y);
+                        if(d < 100) {
+                            ctx.strokeStyle = `rgba(255,255,255,${0.15 - d/500})`;
+                            ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(particles[j].x, particles[j].y); ctx.stroke();
+                        }
+                    }
+                });
+                requestAnimationFrame(animate);
+            }
+            init(); animate();
+        }
+
+        function initHexBg() {
+            const canvas = document.getElementById('bg-hex-canvas');
+            const ctx = canvas.getContext('2d');
+            const hexSize = 30;
+            const hexW = hexSize * Math.sqrt(3);
+            const hexH = hexSize * 1.5;
+            function resize() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            window.addEventListener('resize', resize);
+            resize();
+            function drawHex(x, y) {
+                ctx.beginPath();
+                for (let i = 0; i < 6; i++) {
+                    ctx.lineTo(x + hexSize * Math.cos(i * Math.PI / 3), y + hexSize * Math.sin(i * Math.PI / 3));
+                }
+                ctx.closePath(); ctx.stroke();
+            }
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.strokeStyle = 'rgba(34, 29, 92, 0.04)';
+                for (let y = 0; y < canvas.height + hexH; y += hexH) {
+                    for (let x = 0; x < canvas.width + hexW; x += hexW) {
+                        let cx = x + (Math.floor(y / hexH) % 2 === 0 ? hexW / 2 : 0);
+                        drawHex(cx, y);
+                    }
+                }
+                requestAnimationFrame(animate);
+            }
+            animate();
+        }
+
+        window.onload = () => {
+            createNeuralEffect('neural-canvas');
+            initHexBg();
+            animateCounters(document.getElementById('overview'));
+            initReveal();
+        };
+    </script>
+	
+	
+	<script>
+window.addEventListener('load', () => {
+    // Standard initializations
+    if (typeof createNeuralEffect === "function") createNeuralEffect('neural-canvas');
+    if (typeof initHexBg === "function") initHexBg();
+    initReveal();
+
+    // 1. Get the tab from the URL (?tab=activities)
+    const urlParams = new URLSearchParams(window.location.search);
+    const targetTab = urlParams.get('tab');
+
+    if (targetTab) {
+        // 2. Wait for the specific element to exist before switching
+        const checkExist = setInterval(() => {
+            const element = document.getElementById(targetTab);
+            if (element) {
+                console.log("Found tab, switching to:", targetTab);
+                switchTab(targetTab);
+                clearInterval(checkExist); // Stop looking once found
+            }
+        }, 50); // Checks every 50ms
+
+        // 3. Safety timeout: stop looking after 3 seconds if not found
+        setTimeout(() => clearInterval(checkExist), 3000);
+    } else {
+        // Default startup tab
+        switchTab('overview');
+    }
+});
+</script>
+</body>
+</html>

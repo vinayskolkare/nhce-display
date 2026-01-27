@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NHC - Placements Elite</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-blue: #221d5c;
+            --accent-red: #ec2024;
+            --white: #ffffff;
+            --overlay: rgba(255, 255, 255, 0.96);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f4f7f9;
+            color: var(--primary-blue);
+            overflow-x: hidden;
+            line-height: 1.7;
+        }
+
+        /* --- HIGH-INTENSITY KINETIC BACKGROUND --- */
+        #bg-container {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -2;
+            background: #f4f7f9;
+        }
+
+        .floating-element {
+            position: absolute;
+            opacity: 0.18; /* Increased visibility */
+            pointer-events: none;
+            filter: blur(1px);
+        }
+
+        .float-bubble { border-radius: 50%; }
+        .float-hex { clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%); }
+
+        /* --- CENTERED BODY LOGO --- */
+        .body-watermark {
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50%;
+            opacity: 0.05;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* --- LAYOUT --- */
+        .main-wrapper {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 20px;
+            position: relative;
+        }
+
+        .top-nav {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 15px;
+        }
+
+        .back-nav {
+            background: var(--white);
+            color: var(--primary-blue);
+            text-decoration: none;
+            padding: 8px 18px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid rgba(34, 29, 92, 0.1);
+            transition: 0.3s;
+        }
+
+        .content-card {
+            background: var(--overlay);
+            backdrop-filter: blur(20px);
+            border-radius: 40px;
+            padding: 50px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.06);
+            border: 1px solid #fff;
+        }
+
+        h1 { font-size: 3rem; text-align: center; font-weight: 800; letter-spacing: -1.5px; }
+        .assistance-text { text-align: center; color: var(--accent-red); font-weight: 800; font-size: 1.2rem; margin-bottom: 40px; letter-spacing: 1px; }
+
+        /* --- FULL WIDTH DEPT SLIDERS --- */
+        .department-slider-wrapper { margin-bottom: 40px; }
+        .dept-label {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: #fff;
+            background: var(--primary-blue);
+            width: fit-content;
+            padding: 8px 25px;
+            border-radius: 20px 20px 0 0;
+            margin-left: 20px;
+        }
+
+        .full-slider {
+            width: 100%;
+            height: 380px;
+            border-radius: 30px;
+            overflow: hidden;
+            position: relative;
+            background: #fff;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            border: 5px solid #fff;
+        }
+
+        .slider-track { display: flex; height: 100%; transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
+        .slide { min-width: 100%; position: relative; }
+        .slide img { width: 100%; height: 100%; object-fit: cover; }
+        .slide-info {
+            position: absolute;
+            bottom: 0; width: 100%;
+            padding: 30px;
+            background: linear-gradient(transparent, rgba(34, 29, 92, 0.95));
+            color: #fff;
+            text-align: center;
+        }
+
+        /* --- RECRUITERS --- */
+        .recruiters-marquee {
+            background: rgba(34, 29, 92, 0.04);
+            padding: 30px;
+            border-radius: 25px;
+            margin-top: 30px;
+            border: 1px solid rgba(34, 29, 92, 0.1);
+        }
+        .recruiters-marquee h3 { font-size: 1.4rem; margin-bottom: 20px; text-align: center; }
+        .tags-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
+        .company-tag { background: #fff; padding: 10px 20px; border-radius: 12px; font-weight: 700; color: var(--primary-blue); border: 1px solid #eee; }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-top: 40px;
+            border-top: 1px solid #eee;
+            padding-top: 30px;
+        }
+        .stat-row { background: #f8fafc; padding: 18px 25px; border-radius: 15px; display: flex; justify-content: space-between; font-weight: 700; }
+        .stat-row strong { color: var(--accent-red); font-size: 1.2rem; }
+
+        @media (max-width: 800px) {
+            .stat-grid { grid-template-columns: 1fr; }
+            .full-slider { height: 280px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="bg-container"></div>
+    <img src="https://newhorizoncollege.co.in/wp-content/uploads/2021/01/nhc-logo.png" class="body-watermark" alt="Logo">
+
+    <div class="main-wrapper">
+        <nav class="top-nav">
+            <a href="index-3.html" class="back-nav"><i class="fa-solid fa-arrow-left"></i> Back</a>
+        </nav>
+
+        <main class="content-card">
+            <h1>Placement</h1>
+            <div class="assistance-text"><i class="fa-solid fa-star"></i> 100% PLACEMENT ASSISTANCE</div>
+
+            <div class="department-slider-wrapper">
+                <div class="dept-label">BBA DEPARTMENT</div>
+                <div class="full-slider">
+                    <div class="slider-track" id="track-bba">
+                        <div class="slide"><img src="images/img-301.jpg"><div class="slide-info">BBA Student Placements</div></div>
+                        <div class="slide"><img src="images/img-302.jpg"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="department-slider-wrapper">
+                <div class="dept-label">B.COM DEPARTMENT</div>
+                <div class="full-slider">
+                    <div class="slider-track" id="track-bcom">
+                        <div class="slide"><img src="images/img-307.jpg"><div class="slide-info">Excellence in Finance, Auditing, and Taxation</div></div>
+                        <div class="slide"><img src="images/img-305.jpg"><div class="slide-info">Top Tier Accounting Roles at Deloitte & KPMG</div></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="department-slider-wrapper">
+                <div class="dept-label">BCA DEPARTMENT</div>
+                <div class="full-slider">
+                    <div class="slider-track" id="track-bca">
+                        <div class="slide"><img src="images/img-10.jpg"><div class="slide-info">Student Placemnt in IT Firms</div></div>
+                        <div class="slide"><img src="images/img-261.jpg"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="recruiters-marquee">
+                <h3>Top Recruiting Companies</h3>
+                <div class="tags-container">
+                    <span class="company-tag">Infosys</span><span class="company-tag">TCS</span><span class="company-tag">Wipro</span>
+                    <span class="company-tag">Cognizant</span><span class="company-tag">Capgemini</span><span class="company-tag">Accenture</span><span class="company-tag">IBM</span>
+                </div>
+            </div>
+
+            <div class="stat-grid">
+                <div class="stat-row">Highest Package <strong>₹7.8 LPA</strong></div>
+                <div class="stat-row">Average Package <strong>₹4 - 8 LPA</strong></div>
+                <div class="stat-row">Placement Rate <strong>~100%</strong></div>
+                <div class="stat-row">Placement Eligibility <strong>5th Sem</strong></div>
+            </div>
+        </main>
+    </div>
+
+<script>
+    /* --- HIGH-INTENSITY KINETIC ENGINE --- */
+    const bg = document.getElementById('bg-container');
+    const elements = [];
+    const count = 18;
+
+    class KineticElement {
+        constructor() {
+            this.el = document.createElement('div');
+            this.type = Math.random() > 0.5 ? 'float-bubble' : 'float-hex';
+            this.el.className = `floating-element ${this.type}`;
+            this.size = Math.random() * 100 + 50;
+            this.x = Math.random() * window.innerWidth;
+            this.y = Math.random() * window.innerHeight;
+            this.vx = (Math.random() - 0.5) * 3; // High intensity speed
+            this.vy = (Math.random() - 0.5) * 3;
+            this.el.style.width = this.size + 'px';
+            this.el.style.height = this.size + 'px';
+            this.el.style.backgroundColor = Math.random() > 0.5 ? '#221d5c' : '#ec2024';
+            bg.appendChild(this.el);
+        }
+        move() {
+            this.x += this.vx; this.y += this.vy;
+            if(this.x < -100 || this.x > window.innerWidth + 100) this.vx *= -1;
+            if(this.y < -100 || this.y > window.innerHeight + 100) this.vy *= -1;
+            this.el.style.transform = `translate(${this.x}px, ${this.y}px) rotate(${this.x/2}deg)`;
+        }
+    }
+
+    for(let i=0; i<count; i++) elements.push(new KineticElement());
+    function animate() { elements.forEach(e => e.move()); requestAnimationFrame(animate); }
+    animate();
+
+    /* --- SLIDER LOGIC --- */
+    let pos = 0;
+    setInterval(() => {
+        pos = pos === 0 ? -100 : 0;
+        document.getElementById('track-bba').style.transform = `translateX(${pos}%)`;
+        document.getElementById('track-bcom').style.transform = `translateX(${pos}%)`;
+        document.getElementById('track-bca').style.transform = `translateX(${pos}%)`;
+    }, 4500);
+</script>
+</body>
+</html>

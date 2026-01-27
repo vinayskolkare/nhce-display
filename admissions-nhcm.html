@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NHCE - Template</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-blue: #221d5c;
+            --accent-red: #ec2024;
+            --light-bg: #f0f2f5;
+            --white: #ffffff;
+            --text-dark: #221d5c;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--light-bg);
+            color: var(--text-dark);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* --- BACKGROUND SYSTEM --- */
+        .bg-overlay-container {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+            background: radial-gradient(circle at 50% 50%, #ffffff 0%, #f0f2f5 100%);
+        }
+
+        #bg-hex-canvas {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            opacity: 0.5;
+            z-index: 1;
+        }
+
+        .center-watermark {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 35vw;
+            max-width: 500px;
+            opacity: 0.04;
+            z-index: 2;
+        }
+
+        .floating-element {
+            position: absolute;
+            opacity: 0.1;
+            z-index: 0;
+        }
+
+        .float-bubble { border-radius: 50%; filter: blur(40px); }
+        .float-hex { clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); }
+
+
+/* --- BACK BUTTON WITH TEXT AND ARROW --- */
+.back-nav-container {
+    position: fixed;
+    top: 30px;
+    right: 40px; /* Positioned on the right as per your template style */
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    z-index: 10000;
+    transition: all 0.3s ease;
+}
+
+.back-btn-circle {
+    width: 45px;
+    height: 45px;
+    background-color: var(--primary-blue); /* From your template root */
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 10px rgba(34, 29, 92, 0.2);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.back-text {
+    color: var(--primary-blue);
+    font-weight: 700;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: color 0.3s ease;
+}
+
+/* Hover State */
+.back-nav-container:hover .back-btn-circle {
+    background-color: var(--accent-red); /* Changes to red on hover */
+    transform: translateX(-5px); /* Arrow nudges left to prompt the 'back' action */
+}
+
+.back-nav-container:hover .back-text {
+    color: var(--accent-red);
+}
+
+/* Mobile Adjustments */
+@media (max-width: 768px) {
+    .back-nav-container {
+        top: 20px;
+        right: 20px;
+    }
+    .back-text {
+        display: none; /* Hides text on very small screens to save space */
+    }
+}
+
+.page-content-inner {
+        padding: 40px 60px;
+        max-width: 1300px;
+        margin: 0 auto;
+    }
+
+    .page-header {
+        text-align: center;
+        margin-bottom: 70px;
+        animation: fadeInDown 0.8s ease-out;
+    }
+    .page-header h1 {
+        font-size: clamp(2.2rem, 4.5vw, 3.2rem);
+        color: var(--primary-blue);
+        text-transform: uppercase;
+        font-weight: 800;
+        margin-top: 10px;
+    }
+    .page-header p {
+        color: var(--accent-red);
+        font-weight: 700;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+    }
+
+    .course-section-title {
+        color: var(--primary-blue);
+        border-left: 6px solid var(--accent-red);
+        padding-left: 20px;
+        margin: 50px 0 30px 0;
+        font-size: 1.8rem;
+        font-weight: 800;
+    }
+
+    .course-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 35px;
+        margin-bottom: 30px;
+    }
+
+    .course-card {
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(12px);
+        padding: 45px;
+        border-radius: 30px;
+        border: 1px solid rgba(34, 29, 92, 0.08);
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        line-height: 1.6; /* Improved general line height */
+    }
+
+    .course-card:hover {
+        transform: translateY(-12px);
+        box-shadow: 0 25px 50px rgba(34, 29, 92, 0.15);
+        border-color: var(--accent-red);
+    }
+
+    .course-card i {
+        font-size: 2.8rem;
+        color: var(--accent-red);
+        margin-bottom: 25px;
+    }
+
+    .course-card h3 {
+        color: var(--primary-blue);
+        font-size: 1.7rem;
+        margin-bottom: 12px;
+        line-height: 1.2;
+    }
+
+    .course-card .duration {
+        font-weight: 700;
+        color: #777;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        margin-bottom: 20px;
+        display: block;
+    }
+
+    /* --- Refined Badges/Tags --- */
+    .tag-container {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-top: 15px;
+    }
+
+    .tag {
+        background: var(--primary-blue);
+        color: white;
+        /* Added vertical padding for "free space" top and bottom */
+        padding: 8px 18px; 
+        border-radius: 50px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        box-shadow: 0 4px 10px rgba(34, 29, 92, 0.1);
+    }
+
+    /* --- Lower Sections --- */
+    .value-section {
+        display: grid;
+        grid-template-columns: 1.2fr 1fr;
+        gap: 50px;
+        margin-top: 60px;
+    }
+    .value-box {
+        background: linear-gradient(135deg, var(--primary-blue) 0%, #3a347a 100%);
+        color: white;
+        padding: 50px;
+        border-radius: 35px;
+    }
+    .requirements-box {
+        background: white;
+        padding: 50px;
+        border-radius: 35px;
+        border: 1px solid rgba(34, 29, 92, 0.1);
+    }
+
+    @keyframes fadeInDown {
+        from { opacity: 0; transform: translateY(-40px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 1100px) {
+        .page-content-inner { padding: 40px 20px; }
+        .value-section { grid-template-columns: 1fr; }
+    }
+    </style>
+</head>
+<body>
+
+    <div class="bg-overlay-container" id="bg-container">
+        <canvas id="bg-hex-canvas"></canvas>
+        <img src="images/logo-1.png" class="center-watermark" alt="Watermark">
+    </div>
+
+    <main class="page-content">
+        </main>
+
+
+    <script>
+        const container = document.getElementById('bg-container');
+        const hexCanvas = document.getElementById('bg-hex-canvas');
+        const ctx = hexCanvas.getContext('2d');
+        let width, height;
+        const hexSize = 30;
+        const hexW = hexSize * Math.sqrt(3);
+        const hexH = hexSize * 1.5;
+
+        function resize() {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            hexCanvas.width = width;
+            hexCanvas.height = height;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        function drawGrid() {
+            ctx.clearRect(0, 0, width, height);
+            ctx.strokeStyle = 'rgba(34, 29, 92, 0.03)';
+            ctx.lineWidth = 1;
+            for (let y = 0; y < height + hexH; y += hexH) {
+                for (let x = 0; x < width + hexW; x += hexW) {
+                    let cx = x + (Math.floor(y / hexH) % 2 === 0 ? hexW / 2 : 0);
+                    ctx.beginPath();
+                    for (let i = 0; i < 6; i++) {
+                        ctx.lineTo(cx + hexSize * Math.cos(i * Math.PI / 3), y + hexSize * Math.sin(i * Math.PI / 3));
+                    }
+                    ctx.closePath();
+                    ctx.stroke();
+                }
+            }
+        }
+
+        const particles = [];
+        const colors = ['#221d5c', '#ec2024'];
+
+        class Particle {
+            constructor(type) {
+                this.type = type;
+                this.reset();
+            }
+            reset() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.size = Math.random() * 50 + 15;
+                this.speedX = (Math.random() - 0.5) * 0.3;
+                this.speedY = (Math.random() - 0.5) * 0.3;
+                this.color = colors[Math.floor(Math.random() * colors.length)];
+                this.rotation = Math.random() * 360;
+                this.rotSpeed = (Math.random() - 0.2) * 0.2;
+                if (!this.el) {
+                    this.el = document.createElement('div');
+                    container.appendChild(this.el);
+                }
+                this.el.className = `floating-element ${this.type === 'bubble' ? 'float-bubble' : 'float-hex'}`;
+                this.el.style.backgroundColor = this.color;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                this.rotation += this.rotSpeed;
+                if (this.x < -60) this.x = width + 30;
+                if (this.x > width + 60) this.x = -30;
+                if (this.y < -60) this.y = height + 30;
+                if (this.y > height + 60) this.y = -30;
+                this.el.style.width = `${this.size}px`;
+                this.el.style.height = this.type === 'hex' ? `${this.size * 1.1}px` : `${this.size}px`;
+                this.el.style.transform = `translate(${this.x}px, ${this.y}px) rotate(${this.rotation}deg)`;
+            }
+        }
+
+        for (let i = 0; i < 8; i++) particles.push(new Particle('bubble'));
+        for (let i = 0; i < 7; i++) particles.push(new Particle('hex'));
+
+        function animate() {
+            drawGrid();
+            particles.forEach(p => p.update());
+            requestAnimationFrame(animate);
+        }
+        animate();
+    </script>
+<div class="page-content-inner">
+<a href="index-3.html" class="back-nav-container">
+    <div class="back-btn-circle">
+        <i class="fa-solid fa-arrow-left"></i>
+    </div>
+    <span class="back-text">Back to Home</span>
+</a>
+    <header class="page-header">
+        <p>New Horizon College - Marathahalli</p>
+        <h1>Admissions</h1>
+    </header>
+
+    <h2 class="course-section-title">Undergraduate Programs</h2>
+    <div class="course-grid">
+        <div class="course-card">
+            <i class="fa-solid fa-briefcase"></i>
+            <h3>BBA</h3>
+            <span class="duration">3 Years • 6 Semesters</span>
+            <p>Industry-ready curriculum focusing on management acumen and entrepreneurship for science, commerce, and arts students.</p>
+            <div class="tag-container">
+                <span class="tag">Global Certification</span>
+                <span class="tag">Executive</span>
+                <span class="tag">Professional</span>
+            </div>
+        </div>
+
+        <div class="course-card">
+            <i class="fa-solid fa-calculator"></i>
+            <h3>B.Com</h3>
+            <span class="duration">3 Years • 6 Semesters</span>
+            <p>A strong foundation in finance, accounting, and taxation designed for evolving global financial trends.</p>
+            <div class="tag-container">
+                <span class="tag">Executive</span>
+                <span class="tag">Professional</span>
+                <span class="tag">Global Certification</span>
+            </div>
+        </div>
+
+        <div class="course-card">
+            <i class="fa-solid fa-laptop-code"></i>
+            <h3>BCA</h3>
+            <span class="duration">3 Years • 6 Semesters</span>
+            <p>Master technical skills in AI, Cloud Computing, and Cybersecurity to lead in the digital transformation era.</p>
+            <div class="tag-container">
+                <span class="tag">Data Science</span>
+                <span class="tag">AI & ML</span>
+                <span class="tag">Software Engineering</span>
+            </div>
+        </div>
+    </div>
+
+    <h2 class="course-section-title">Postgraduate Programs</h2>
+    <div class="course-grid">
+        <div class="course-card">
+            <i class="fa-solid fa-server"></i>
+            <h3>M.Com</h3>
+            <span class="duration">2 Years • 4 Semesters</span>
+            <p>postgraduate program focused on advanced studies in commerce, finance, accounting, economics, and business management.</p>
+            <div class="tag-container">
+                <span class="tag">Postgraduate</span>
+                <span class="tag">IT Excellence</span>
+                <span class="tag">Tech Leadership</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="value-section">
+        <div class="value-box">
+            <h2>Why Choose NHCM?</h2>
+            <p style="margin-bottom: 30px; opacity: 0.9; line-height: 1.8;">We provide a dynamic environment with expert faculty, international study tours, and top-tier placements in leading multinational corporations.</p>
+            <div style="display: flex; flex-direction: column; gap: 20px;">
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <i class="fa-solid fa-trophy" style="color: var(--accent-red);"></i>
+                    <span>Best Placements in BBA, B.Com & BCA</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <i class="fa-solid fa-users-gear" style="color: var(--accent-red);"></i>
+                    <span>Industry Integrated Workshops</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="requirements-box">
+            <h2 style="color: var(--primary-blue)">Eligibility</h2>
+            <p style="line-height: 1.6; color: #444; margin-bottom: 20px;">
+                Applicants must have passed the 12th standard (2nd PUC Karnataka or equivalent) as recognized by Bangalore North University. Admissions are subject to University approval.
+            </p>
+            <ul style="list-style: none; padding: 0;">
+                <li style="margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+                    <i class="fa-solid fa-circle-check" style="color: var(--accent-red);"></i> 
+                    <span>Merit-Based Selection</span>
+                </li>
+                <li style="margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+                    <i class="fa-solid fa-circle-check" style="color: var(--accent-red);"></i> 
+                    <span>Bangalore North University Affiliated</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+</body>
+</html>

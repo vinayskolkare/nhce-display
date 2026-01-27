@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIML - Projects & Innovation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-blue: #221d5c;
+            --accent-red: #ec2024;
+            --light-bg: #f0f2f5;
+            --white: #ffffff;
+            --sidebar-width: 320px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--light-bg); color: var(--primary-blue); display: flex; min-height: 100vh; overflow-x: hidden; }
+
+        /* Background Effects */
+        .bg-overlay-container { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; background: var(--light-bg); }
+        .bubble { position: absolute; border-radius: 50%; filter: blur(100px); opacity: 0.12; z-index: 0; }
+
+        /* Sidebar */
+        .sidebar { width: var(--sidebar-width); height: 100vh; background: var(--primary-blue); position: fixed; left: 0; top: 0; padding: 40px 20px; border-right: 6px solid var(--accent-red); z-index: 100; }
+        .logo-area { margin-bottom: 40px; text-align: center; }
+        .logo-area img { width: 100%; max-width: 240px; filter: brightness(0) invert(1); }
+        .back-link { color: white; text-decoration: none; font-weight: 700; display: flex; align-items: center; gap: 10px; margin-bottom: 30px; transition: 0.3s; }
+        .back-link:hover { color: var(--accent-red); }
+
+        /* Main Content */
+        main { margin-left: var(--sidebar-width); width: calc(100% - var(--sidebar-width)); padding: 40px; position: relative; z-index: 1; }
+        
+        .header-section { margin-bottom: 40px; border-left: 8px solid var(--accent-red); padding-left: 20px; }
+        .header-section h1 { font-size: 2.5rem; font-weight: 800; text-transform: uppercase; }
+        .header-section p { color: #555; font-size: 1.1rem; margin-top: 5px; }
+
+        /* Project Cards Grid */
+        .dashboard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; margin-bottom: 50px; }
+        .activity-card { background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.05); transition: 0.3s; }
+        .activity-card:hover { transform: translateY(-10px); }
+        .activity-img { width: 100%; height: 200px; overflow: hidden; }
+        .activity-img img { width: 100%; height: 100%; object-fit: cover; }
+        .activity-info { padding: 25px; }
+        .activity-info h5 { font-size: 1.25rem; font-weight: 800; margin-bottom: 10px; }
+        .tag { color: var(--accent-red); font-weight: 800; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* VAP Section Styling */
+        .vap-card { background: var(--primary-blue); color: white; border-radius: 30px; padding: 40px; margin-top: 40px; }
+        .vap-title { font-size: 1.8rem; font-weight: 800; margin-bottom: 25px; display: flex; align-items: center; gap: 15px; }
+        .vap-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+        .item-row { background: rgba(255, 255, 255, 0.1); padding: 15px 20px; border-radius: 15px; margin-bottom: 12px; font-weight: 600; display: flex; align-items: center; gap: 15px; }
+        .item-row i { color: #fbbf24; } /* Golden checkmarks */
+
+        @media (max-width: 1100px) { .dashboard-grid { grid-template-columns: 1fr 1fr; } .vap-grid { grid-template-columns: 1fr; } }
+        @media (max-width: 768px) { .sidebar { width: 0; display: none; } main { margin-left: 0; padding: 20px; } .dashboard-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+
+    <div class="bg-overlay-container">
+        <div class="bubble" style="width: 40vw; height: 40vw; background: var(--primary-blue); top: -10%; right: -5%;"></div>
+        <div class="bubble" style="width: 30vw; height: 30vw; background: var(--accent-red); bottom: -5%; left: -5%;"></div>
+    </div>
+
+    <aside class="sidebar">
+        <a href="aiml.html?tab=activities" class="back-link"><i class="fa-solid fa-circle-arrow-left"></i> <span>Go Back</span></a>
+        <div class="logo-area"><img src="images/logo-2.png" alt="NHCE Logo"></div>
+    </aside>
+
+    <main>
+        <div class="header-section">
+            <h1>Projects & Innovation</h1>
+            <p>Live industry projects and research initiatives by AIML students.</p>
+        </div>
+
+        <div class="dashboard-grid">
+            <div class="activity-card">
+                <div class="activity-img"><img src="https://images.unsplash.com/photo-1555255707-c07966485bc4?w=800" alt="Drone"></div>
+                <div class="activity-info">
+                    <span class="tag">Computer Vision</span>
+                    <h5>Autonomous Navigation</h5>
+                    <p style="color: #666; font-size: 0.9rem;">SLAM-based indoor drone navigation using LiDAR and real-time depth mapping.</p>
+                </div>
+            </div>
+
+            <div class="activity-card">
+                <div class="activity-img"><img src="https://images.unsplash.com/photo-1576086213369-97a306d36557?w=800" alt="Med-AI"></div>
+                <div class="activity-info">
+                    <span class="tag">Healthcare</span>
+                    <h5>Medical Imaging Diagnostics</h5>
+                    <p style="color: #666; font-size: 0.9rem;">CNN architectures for detecting retinal anomalies from high-res medical scans.</p>
+                </div>
+            </div>
+
+            <div class="activity-card">
+                <div class="activity-img"><img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=800" alt="Cyber"></div>
+                <div class="activity-info">
+                    <span class="tag">Cyber Security</span>
+                    <h5>Threat Intelligence AI</h5>
+                    <p style="color: #666; font-size: 0.9rem;">Developing reinforcement learning agents for network anomaly detection.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="vap-card">
+            <div class="vap-title"><i class="fa-solid fa-bolt-lightning"></i> VALUE ADDED PROGRAMMES</div>
+            <p style="margin-bottom: 30px; opacity: 0.9;">Employment-centric features designed as per industry expectations.</p>
+            
+            <div class="vap-grid">
+                <div>
+                    <div class="item-row"><i class="fas fa-check-circle"></i> Industrial Visits (Sem III-VIII)</div>
+                    <div class="item-row"><i class="fas fa-check-circle"></i> CSI & ISTE Memberships</div>
+                    <div class="item-row"><i class="fas fa-check-circle"></i> Guest Lectures & Seminars</div>
+                    <div class="item-row"><i class="fas fa-check-circle"></i> Resume Writing Workshops (Sem VI)</div>
+                </div>
+                <div>
+                    <div class="item-row"><i class="fas fa-certificate"></i> DevOps Certification (Sem V-VI)</div>
+                    <div class="item-row"><i class="fas fa-certificate"></i> Ethical Hacking (Sem IV-V)</div>
+                    <div class="item-row"><i class="fas fa-certificate"></i> Cloud Computing (Sem VI)</div>
+                    <div class="item-row"><i class="fas fa-certificate"></i> Digital Marketing (Sem VII)</div>
+                </div>
+            </div>
+
+            <div style="margin-top: 30px; background: rgba(0,0,0,0.2); padding: 20px; border-radius: 15px; font-size: 0.9rem;">
+                <i class="fa-solid fa-globe-americas"></i> <strong>International Student Exchange:</strong> Available in Semester VI for meritorious students with credit transfer options for MS programs.
+            </div>
+        </div>
+    </main>
+
+</body>
+</html>

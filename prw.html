@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Academic Hub | 3D Kinetic Doodle Grid</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --blue: #231d5d;
+            --red: #c01c28;
+            --white: #ffffff;
+            --bg-grey: #e2e8f0;
+            
+            --h-w: clamp(145px, 17vw, 260px); 
+            --h-h: calc(var(--h-w) * 1.1);
+            --grid-gap: clamp(15px, 3vw, 35px);
+            --ease-puffer: cubic-bezier(0.47, 1.64, 0.41, 0.8);
+        }
+
+        body, html {
+            margin: 0; padding: 0;
+            width: 100%; height: 100vh;
+            background-color: var(--bg-grey);
+            display: flex; justify-content: center; align-items: center;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            overflow: hidden;
+        }
+
+        /* --- BACKGROUND ELEMENTS --- */
+        #bg-canvas {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1; pointer-events: none;
+        }
+
+        /* Bigger, More Visible Watermark */
+        .watermark {
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 65vw; opacity: 0.15; /* Increased visibility */
+            z-index: 2; pointer-events: none;
+            filter: grayscale(1);
+        }
+
+        .halftone-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: radial-gradient(#64748b 1.5px, transparent 1.5px);
+            background-size: 25px 25px;
+            opacity: 0.2;
+            z-index: 3;
+            pointer-events: none;
+        }
+
+        /* Doodle Icons Floating */
+        .doodle {
+            position: absolute;
+            font-size: 2rem;
+            color: rgba(35, 29, 93, 0.15);
+            z-index: 2;
+            pointer-events: none;
+            animation: floatDoodle 20s infinite linear;
+        }
+
+        @keyframes floatDoodle {
+            0% { transform: translate(0, 0) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translate(100px, -100vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* --- GRID & PUFFER ANIMATION --- */
+        .grid-container {
+            position: relative;
+            display: flex; flex-direction: column;
+            align-items: center;
+            gap: calc(var(--grid-gap) * -1.2);
+            z-index: 10;
+        }
+
+        .row { display: flex; justify-content: center; gap: var(--grid-gap); }
+        .row-top { transform: translateY(10%); }
+
+        .hex-wrap {
+            position: relative;
+            filter: drop-shadow(0 20px 40px rgba(0,0,0,0.25));
+            opacity: 0;
+            transform: scale(0.3);
+            animation: pufferAppear 0.8s var(--ease-puffer) forwards;
+        }
+
+        /* Staggered Puffer Entry */
+        .hex-wrap:nth-child(1) { animation-delay: 0.1s; }
+        .hex-wrap:nth-child(2) { animation-delay: 0.2s; }
+        .hex-wrap:nth-child(3) { animation-delay: 0.3s; }
+        .row:nth-child(2) .hex-wrap:nth-child(1) { animation-delay: 0.4s; }
+        .row:nth-child(2) .hex-wrap:nth-child(2) { animation-delay: 0.5s; }
+        .row:nth-child(2) .hex-wrap:nth-child(3) { animation-delay: 0.6s; }
+        .row:nth-child(2) .hex-wrap:nth-child(4) { animation-delay: 0.7s; }
+
+        @keyframes pufferAppear {
+            0% { opacity: 0; transform: scale(0.3) rotate(-10deg); }
+            70% { transform: scale(1.1) rotate(2deg); }
+            100% { opacity: 1; transform: scale(1) rotate(0deg); }
+        }
+
+        .hex {
+            width: var(--h-w);
+            height: var(--h-h);
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            text-decoration: none;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            /* Deep 3D Bevel */
+            box-shadow: 
+                inset 8px 8px 15px rgba(255,255,255,0.2),
+                inset -8px -8px 15px rgba(0,0,0,0.4);
+            animation: breathe 4s infinite ease-in-out;
+        }
+
+        .blue { background: linear-gradient(145deg, #2b2470, #141035); }
+        .red { background: linear-gradient(145deg, #d4202d, #7c1017); }
+        .white { background: linear-gradient(145deg, #ffffff, #cbd5e1); border: 1px solid #94a3b8; }
+
+        .hex i { font-size: clamp(2.3rem, 4vw, 4.5rem); color: white; margin-bottom: 8px; filter: drop-shadow(0 5px 8px rgba(0,0,0,0.5)); }
+        .hex span { 
+            color: white; font-weight: 800; font-size: clamp(0.8rem, 1vw, 1.2rem); 
+            text-transform: uppercase; text-align: center; padding: 0 10%; line-height: 1.1;
+            text-shadow: 0 3px 6px rgba(0,0,0,0.4);
+        }
+
+        .white i, .white span { color: var(--blue); text-shadow: none; }
+
+        @keyframes breathe {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        .hex-wrap:hover {
+            transform: scale(1.1) translateY(-15px) !important;
+            z-index: 100;
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="bg-canvas"></canvas>
+    <div class="halftone-overlay"></div>
+    <img src="images/logofiles-01.png" class="watermark" alt="logo">
+
+    <div class="grid-container">
+        <div class="row row-top">
+            <div class="hex-wrap">
+                <a href="#" class="hex blue">
+                    <i class="fa-solid fa-brain"></i>
+                    <span>Artificial Intelligence & ML</span>
+                </a>
+            </div>
+            <div class="hex-wrap">
+                <a href="#" class="hex white">
+                    <i class="fa-solid fa-atom"></i>
+                    <span>Applied Sciences</span>
+                </a>
+            </div>
+            <div class="hex-wrap">
+                <a href="#" class="hex red">
+                    <i class="fa-solid fa-laptop-code"></i>
+                    <span>Computer Science & Engg</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="hex-wrap">
+                <a href="#" class="hex blue">
+                    <i class="fa-solid fa-tower-broadcast"></i>
+                    <span>Electronics & Comm</span>
+                </a>
+            </div>
+            <div class="hex-wrap">
+                <a href="#" class="hex red">
+                    <i class="fa-solid fa-bolt"></i>
+                    <span>Electrical & Electronics</span>
+                </a>
+            </div>
+            <div class="hex-wrap">
+                <a href="#" class="hex blue">
+                    <i class="fa-solid fa-chart-line"></i>
+                    <span>MBA</span>
+                </a>
+            </div>
+            <div class="hex-wrap">
+                <a href="#" class="hex white">
+                    <i class="fa-solid fa-code"></i>
+                    <span>MCA</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        const doodles = ['fa-book', 'fa-graduation-cap', 'fa-lightbulb', 'fa-pencil', 'fa-microscope', 'fa-brain'];
+        let particles = [];
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        // Create Education Doodles in Background
+        function spawnDoodle() {
+            const d = document.createElement('i');
+            d.className = `fa-solid ${doodles[Math.floor(Math.random()*doodles.length)]} doodle`;
+            d.style.left = Math.random() * 100 + 'vw';
+            d.style.top = '110vh';
+            d.style.fontSize = (Math.random() * 20 + 20) + 'px';
+            document.body.appendChild(d);
+            setTimeout(() => d.remove(), 20000);
+        }
+        setInterval(spawnDoodle, 1500);
+
+        class Particle {
+            constructor() { this.init(); }
+            init() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 4 + 1;
+                this.speedX = (Math.random() - 0.5) * 0.5;
+                this.speedY = (Math.random() - 0.5) * 0.5;
+                this.opacity = Math.random() * 0.5;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if(this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+                if(this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.globalAlpha = this.opacity;
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = '#ffffff';
+                ctx.shadowBlur = 15;
+                ctx.shadowColor = "white";
+                ctx.fill();
+            }
+        }
+
+        for(let i=0; i<50; i++) particles.push(new Particle());
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => { p.update(); p.draw(); });
+            requestAnimationFrame(animate);
+        }
+        animate();
+    </script>
+</body>
+</html>

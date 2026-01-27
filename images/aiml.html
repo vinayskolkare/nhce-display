@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NHCE - AI & ML Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.34/dist/lenis.min.js"></script>
+
+    <style>
+        :root {
+            --primary-blue: #221d5c;
+            --accent-red: #ec2024;
+            --light-bg: #f0f2f5;
+            --text-dark: #221d5c;
+            --white: #ffffff;
+            --sidebar-width: 320px;
+            --transition-speed: 0.4s;
+        }
+
+        html.lenis { height: auto; }
+        .lenis.lenis-smooth { scroll-behavior: auto !important; }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--light-bg);
+            color: var(--text-dark);
+            line-height: 1.4;
+            display: flex;
+            min-height: 100vh;
+            width: 100%;
+            overflow-x: hidden;
+        }
+
+        /* --- Background & Watermark --- */
+        .bg-overlay-container {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+            background: var(--light-bg);
+        }
+
+        #bg-hex-canvas {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            opacity: 0.5;
+            z-index: 1;
+        }
+
+        .center-watermark {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40vw;
+            max-width: 600px;
+            opacity: 0.05;
+            filter: grayscale(1);
+            z-index: 2;
+        }
+
+        .bubble {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.15;
+            z-index: 0;
+            animation: float-continuous 20s infinite alternate ease-in-out;
+        }
+
+        @keyframes float-continuous {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(10vw, 10vh) scale(1.2); }
+        }
+
+        /* --- Sidebar --- */
+        .sidebar {
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: var(--primary-blue);
+            position: fixed;
+            left: 0; top: 0;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+            border-right: 6px solid var(--accent-red);
+        }
+
+        .logo-area { margin-bottom: 40px; text-align: center; }
+        .logo-area img { width: 100%; max-width: 240px; filter: brightness(0) invert(1); }
+
+        .simple-back-arrow {
+            color: white; font-size: 2rem; margin-bottom: 20px;
+            cursor: pointer; transition: 0.3s; display: inline-block;
+        }
+        .simple-back-arrow:hover { color: var(--accent-red); transform: translateX(-5px); }
+
+        .nav-links { list-style: none; flex-grow: 1; }
+        .nav-links li { margin-bottom: 8px; }
+        .nav-links a {
+            color: rgba(255,255,255,0.6); text-decoration: none;
+            font-weight: 700; font-size: 1rem; display: flex;
+            align-items: center; gap: 15px; padding: 12px 20px;
+            border-radius: 15px; transition: all 0.3s ease; cursor: pointer;
+        }
+        .nav-links a:hover, .nav-links a.active {
+            background: rgba(255,255,255,0.1); color: white; padding-left: 25px;
+        }
+
+        /* --- Main Content --- */
+        main {
+            margin-left: var(--sidebar-width);
+            width: calc(100% - var(--sidebar-width));
+            padding: 40px;
+            min-height: 100vh;
+            position: relative;
+            z-index: 1;
+        }
+
+        .tab-content {
+            display: none; opacity: 0; transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        .tab-content.active { display: block; opacity: 1; transform: translateY(0); }
+
+        .dashboard-grid {
+            display: grid; grid-template-columns: repeat(12, 1fr);
+            gap: 25px; max-width: 1600px; margin: 0 auto;
+        }
+
+        .hero-tile {
+            grid-column: span 12;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, #3a348a 100%);
+            border-radius: 30px; padding: 60px; color: white;
+            position: relative; overflow: hidden; min-height: 400px;
+            display: flex; flex-direction: column; justify-content: center;
+            box-shadow: 0 20px 40px rgba(34, 29, 92, 0.2);
+        }
+
+        .hero-tile canvas {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1; pointer-events: none;
+        }
+
+        .hero-content { position: relative; z-index: 2; }
+        .hero-content .pre-title { color: var(--accent-red); font-weight: 800; letter-spacing: 4px; font-size: 1rem; margin-bottom: 10px; display: block; }
+        .hero-content h1 { font-size: clamp(2.2rem, 5vw, 3.8rem); font-weight: 800; line-height: 1.1; margin-bottom: 15px; text-transform: uppercase; }
+        .hero-content .sub-title { font-size: 1.2rem; opacity: 0.95; font-weight: 400; max-width: 700px; }
+
+        .card {
+            background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(10px);
+            border-radius: 25px; padding: 35px; border: 1px solid rgba(255,255,255,0.5);
+            height: 100%; box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+
+        .card h3 { color: var(--primary-blue); font-size: 1.6rem; margin-bottom: 20px; border-left: 6px solid var(--accent-red); padding-left: 15px; font-weight: 800; }
+
+        .stat-box {
+            text-align: center; padding: 35px 20px; background: var(--white);
+            border-radius: 25px; border-bottom: 6px solid var(--accent-red);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        }
+        .stat-box h4 { font-size: 2.8rem; color: var(--primary-blue); font-weight: 800; margin-bottom: 5px; }
+        .stat-box p { font-weight: 600; color: #666; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px;}
+
+        .span-4 { grid-column: span 4; }
+        .span-6 { grid-column: span 6; }
+        .span-12 { grid-column: span 12; }
+
+        .list-items { list-style: none; margin-top: 10px; }
+        .list-items li { font-size: 1rem; padding: 12px 0; border-bottom: 1px solid rgba(0,0,0,0.05); display: flex; align-items: center; font-weight: 500; }
+        .list-items li::before { content: "●"; color: var(--accent-red); margin-right: 12px; font-size: 0.8rem; }
+
+        .degree-tag { display: inline-block; background: var(--primary-blue); color: white; padding: 6px 16px; border-radius: 50px; font-size: 0.85rem; margin-bottom: 10px; font-weight: 700; }
+
+        @media (max-width: 1200px) {
+            .nav-links a span { font-size: 0.9rem; }
+            .nav-links a { padding: 12px 10px; }
+        }
+
+        @media (max-width: 992px) {
+            :root { --sidebar-width: 100px; }
+            .nav-links span { display: none; }
+            .logo-area img { max-width: 70px; }
+            .sidebar { align-items: center; padding: 30px 10px; }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar { width: 100%; height: auto; flex-direction: row; justify-content: space-around; padding: 10px 0; border-right: none; border-bottom: 4px solid var(--accent-red); position: absolute; }
+            main { margin-left: 0; width: 100%; padding-top: 100px; }
+            .span-4, .span-6 { grid-column: span 12; }
+            .nav-links { display: flex; width: 100%; justify-content: space-around; flex-wrap: wrap; }
+            .logo-area, .simple-back-arrow { display: none !important; }
+            .hero-tile { padding: 40px 25px; min-height: 350px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-overlay-container">
+        <div class="bubble" style="width: 40vw; height: 40vw; background: var(--primary-blue); top: -10%; right: -10%;"></div>
+        <div class="bubble" style="width: 30vw; height: 30vw; background: var(--accent-red); bottom: -10%; left: -10%; animation-delay: -5s;"></div>
+        
+        <canvas id="bg-hex-canvas"></canvas>
+        <img src="images/logo-2.png" class="center-watermark" alt="Watermark">
+    </div>
+
+    <aside class="sidebar">
+        <a href="programs.html" class="simple-back-arrow">
+            <i class="fa-solid fa-circle-arrow-left"></i>
+        </a>
+        <div class="logo-area">
+            <img src="images/logo-2.png" alt="NHCE Logo">
+        </div>
+        <ul class="nav-links">
+            <li><a onclick="switchTab('overview')" id="link-overview" class="active"><i class="fa-solid fa-chart-line"></i> <span>Overview</span></a></li>
+            <li><a onclick="switchTab('academics')" id="link-academics"><i class="fa-solid fa-book"></i> <span>Academics</span></a></li>
+            <li><a onclick="switchTab('labs')" id="link-labs"><i class="fa-solid fa-flask"></i> <span>Labs</span></a></li>
+            <li><a onclick="switchTab('coe')" id="link-coe"><i class="fa-solid fa-microchip"></i> <span>CoE</span></a></li>
+            <li><a onclick="switchTab('activities')" id="link-activities"><i class="fa-solid fa-calendar-days"></i> <span>Activities</span></a></li>
+            <li><a onclick="switchTab('placement')" id="link-placement"><i class="fa-solid fa-user-graduate"></i> <span>Placements</span></a></li>
+        </ul>
+    </aside>
+
+    <main id="main-content">
+        <section id="overview" class="tab-content active">
+            <div class="dashboard-grid">
+                <div class="hero-tile">
+                    <canvas id="neural-canvas"></canvas>
+                    <div class="hero-content">
+                        <span class="pre-title">DEPARTMENT OF</span>
+                        <h1>Artificial Intelligence <br>& Machine Learning</h1>
+                        <p class="sub-title">Building the Intelligent Future with Next-Gen Technology and Research.</p>
+                    </div>
+                </div>
+
+                <div class="stat-box span-4"><h4 class="counter" data-target="28" data-suffix=" LPA">0 LPA</h4><p>Highest Package</p></div>
+                <div class="stat-box span-4"><h4 class="counter" data-target="92" data-suffix="%">0%</h4><p>Placement Rate</p></div>
+                <div class="stat-box span-4"><h4 class="counter" data-target="14">0</h4><p>Patents Filed</p></div>
+
+                <div class="card span-6">
+                    <h3>Our Vision</h3>
+                    <p>To develop outstanding AI and ML professionals with profound practical, research & managerial skills to meet the global challenges of the industry.</p>
+                </div>
+                <div class="card span-6">
+                    <h3>HOD Profile</h3>
+                    <p style="font-size: 1.4rem; font-weight: 800; color: var(--primary-blue);">Dr. Uma Reddy NV</p>
+                    <p style="font-weight: 700; color: var(--accent-red); margin-bottom: 10px;">Professor & Head</p>
+                    <ul class="list-items">
+                        <li><span class="counter" data-target="29">0</span> Years Academic Excellence</li>
+                        <li><span class="counter" data-target="11">0</span> Patents Filed | IEEE Senior Member</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="academics" class="tab-content">
+            <div class="dashboard-grid">
+                <div class="hero-tile">
+                    <canvas id="academics-canvas"></canvas>
+                    <div class="hero-content">
+                        <span class="pre-title">ACADEMICS & NEP 2020</span>
+                        <h1>Curriculum <br>Excellence</h1>
+                        <p class="sub-title">Restructuring Indian education to create an equitable and inclusive system providing learning for all.</p>
+                    </div>
+                </div>
+
+                <div class="card span-6">
+                    <h3>NEP & Scheme (2024-25)</h3>
+                    <p style="font-size: 0.9rem; margin-bottom: 15px; opacity: 0.8;">The NEP aims to restructure regulation and governance to create an inclusive system providing learning for all.</p>
+                    <ul class="list-items">
+                        <li><strong>2nd Year:</strong> <span class="counter" data-target="160">0</span> Credits (2022 scheme)</li>
+                        <li><strong>3rd Year:</strong> <span class="counter" data-target="160">0</span> Credits (2021 scheme)</li>
+                        <li><strong>4th Year:</strong> <span class="counter" data-target="160">0</span> Credits (Current scheme)</li>
+                    </ul>
+                </div>
+
+                <div class="card span-6">
+                    <h3>Degree Programs</h3>
+                    <div class="degree-container">
+                        <span class="degree-tag">Major Degree</span> 
+                        <p style="margin-bottom: 10px;"><span class="counter" data-target="160">0</span> Credits as per NEP</p>
+                        
+                        <span class="degree-tag">Minor Degree</span> 
+                        <p style="margin-bottom: 10px;"><span class="counter" data-target="18">0</span> Credits (Cross-branch selection: e.g. Mechanical students opting for CS scheme)</p>
+                        
+                        <span class="degree-tag">Honours Degree</span> 
+                        <p><span class="counter" data-target="18">0</span> Credits (Specialized Research)</p>
+                    </div>
+                </div>
+
+                <div class="card span-6">
+                    <h3>Global Program (AI & ML)</h3>
+                    <ul class="list-items">
+                        <li><strong>Core Focus:</strong> Full Stack Python Development</li>
+                        <li><strong>Visualization:</strong> Mastery in Tableau</li>
+                        <li><strong>MLOps Formula:</strong> ML + DEV + OPS</li>
+                    </ul>
+                </div>
+
+                <div class="card span-6">
+                    <h3>Career Lifecycle</h3>
+                    <ul class="list-items">
+                        <li><strong>Experiment:</strong> Data Acquisition & Modeling</li>
+                        <li><strong>Develop:</strong> Testing & Deployment</li>
+                        <li><strong>Operate:</strong> Monitoring & Feedback</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="labs" class="tab-content">
+            <div class="dashboard-grid">
+                <div class="hero-tile">
+                    <canvas id="labs-canvas"></canvas>
+                    <div class="hero-content">
+                        <span class="pre-title">INFRASTRUCTURE</span>
+                        <h1>Modern Computing <br>Laboratories</h1>
+                        <p class="sub-title">Equipped with high-end systems and industry-standard AI software.</p>
+                    </div>
+                </div>
+
+                <div class="stat-box span-4"><h4 class="counter" data-target="5">0</h4><p>Total Labs</p></div>
+                <div class="stat-box span-4"><h4 class="counter" data-target="206">0</h4><p>Total Computers</p></div>
+                <div class="stat-box span-4"><h4 class="counter" data-target="8">0</h4><p>Classrooms (75 cap.)</p></div>
+
+                <div class="card span-6">
+                    <h3>Departmental Labs</h3>
+                    <ul class="list-items">
+                        <li>IBM OpenPower Lab-1</li>
+                        <li>IBM OpenPower Lab-2</li>
+                        <li>ALTAIR Lab</li>
+                        <li>Oracle Lab</li>
+                        <li>Nvidia AI Lab</li>
+                    </ul>
+                </div>
+
+                <div class="card span-6">
+                    <h3>Infrastructure</h3>
+                    <ul class="list-items">
+                        <li>8 Smart Classrooms (75 Seating each)</li>
+                        <li>1 Seminar Hall (250 Seating Capacity)</li>
+                        <li>High Speed Internet Connectivity</li>
+                        <li>Research & Development Zone</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="coe" class="tab-content">
+            <div class="dashboard-grid">
+                <div class="hero-tile">
+                    <canvas id="coe-canvas"></canvas>
+                    <div class="hero-content">
+                        <span class="pre-title">INDUSTRY CONNECT</span>
+                        <h1>Center of <br>Excellence</h1>
+                        <p class="sub-title">Industry Institute Interaction to bridge the gap between academia and corporate world.</p>
+                    </div>
+                </div>
+
+                <div class="card span-6">
+                    <h3>Industry Partners</h3>
+                    <ul class="list-items">
+                        <li>VMware Software India Private Limited</li>
+                        <li>Hewlett-Packard (HPE)</li>
+                        <li>CISCO Systems</li>
+                        <li>SAP Labs India</li>
+                        <li>Quest Global</li>
+                        <li>Schneider Electric</li>
+                    </ul>
+                </div>
+
+                <div class="card span-6">
+                    <h3>Specialized Academies</h3>
+                    <ul class="list-items">
+                        <li>VMware IT Academy</li>
+                        <li>HPE Vertica CoE</li>
+                        <li>CISCO Networking Academy</li>
+                        <li>SAP Next Gen Lab</li>
+                        <li>IIOT & Schneider Electric CoE</li>
+                        <li>Study Abroad Program (France)</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="activities" class="tab-content">
+            <div class="dashboard-grid">
+                <div class="hero-tile">
+                    <canvas id="activities-canvas"></canvas>
+                    <div class="hero-content">
+                        <span class="pre-title">HOLISTIC DEVELOPMENT</span>
+                        <h1>Department <br>Activities</h1>
+                        <p class="sub-title">Engaging students through co-curricular and outreach programs.</p>
+                    </div>
+                </div>
+
+                <div class="card span-6">
+                    <h3>Academic Activities</h3>
+                    <ul class="list-items">
+                        <li>Co-curricular Activities</li>
+                        <li>Seminars and Workshops</li>
+                        <li>Alumni Talk Series</li>
+                        <li>FDP (Faculty Development)</li>
+                        <li>Club Activities</li>
+                    </ul>
+                </div>
+
+                <div class="card span-6">
+                    <h3>Industry & Social</h3>
+                    <ul class="list-items">
+                        <li>Outreach Programmes</li>
+                        <li>Extension Programmes</li>
+                        <li>Live Projects</li>
+                        <li>Summer/Winter Internships</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="placement" class="tab-content">
+            <div class="dashboard-grid">
+                <div class="hero-tile">
+                    <canvas id="placement-canvas"></canvas>
+                    <div class="hero-content">
+                        <span class="pre-title">CAREER OPPORTUNITIES</span>
+                        <h1>Placement <br>Records</h1>
+                        <p class="sub-title">Industry-ready engineers leading global innovation.</p>
+                    </div>
+                </div>
+                
+                <div class="stat-box span-4"><h4 class="counter" data-target="28" data-suffix=" LPA">0 LPA</h4><p>Highest Pkg (23-24)</p></div>
+                <div class="stat-box span-4"><h4 class="counter" data-target="5.74" data-suffix=" LPA" data-decimals="2">0 LPA</h4><p>Average Pkg (23-24)</p></div>
+                <div class="stat-box span-4"><h4 class="counter" data-target="103">0</h4><p>Total Offers (23-24)</p></div>
+
+                <div class="card span-6">
+                    <h3>Placement Stats (2023-24)</h3>
+                    <ul class="list-items">
+                        <li><strong>Students Placed:</strong> 92%</li>
+                        <li><strong>Carelon:</strong> 10 Students</li>
+                        <li><strong>Capgemini:</strong> 9 Students</li>
+                        <li><strong>IBM:</strong> 5 Students</li>
+                    </ul>
+                </div>
+
+                <div class="card span-6">
+                    <h3>2024-25 (Ongoing)</h3>
+                    <p style="font-weight: 700; color: var(--primary-blue); margin-bottom: 5px;">Total Placed: <span class="counter" data-target="36">0</span> Students</p>
+                    <ul class="list-items">
+                        <li><strong>Unisys:</strong> 6 Students</li>
+                        <li><strong>Infosys:</strong> 3 Students</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Initialize Lenis
+        const lenis = new Lenis();
+        function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+        requestAnimationFrame(raf);
+
+        // Counter Animation Logic
+        function animateCounters(container) {
+            const counters = container.querySelectorAll('.counter');
+            counters.forEach(counter => {
+                const target = +counter.getAttribute('data-target');
+                const suffix = counter.getAttribute('data-suffix') || '';
+                const prefix = counter.getAttribute('data-prefix') || '';
+                const decimals = +counter.getAttribute('data-decimals') || 0;
+                const duration = 1500;
+                const startTime = performance.now();
+
+                function updateCount(currentTime) {
+                    const elapsed = currentTime - startTime;
+                    const progress = Math.min(elapsed / duration, 1);
+                    const easeProgress = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+                    const currentValue = (easeProgress * target).toFixed(decimals);
+                    counter.innerText = prefix + currentValue + suffix;
+                    if (progress < 1) requestAnimationFrame(updateCount);
+                    else counter.innerText = prefix + target + suffix;
+                }
+                requestAnimationFrame(updateCount);
+            });
+        }
+
+        // Tab Switcher
+        function switchTab(tabId) {
+            document.querySelectorAll('.nav-links a').forEach(link => link.classList.remove('active'));
+            document.getElementById('link-' + tabId).classList.add('active');
+
+            document.querySelectorAll('.tab-content').forEach(sec => {
+                sec.classList.remove('active');
+                sec.style.display = 'none';
+            });
+
+            const activeSec = document.getElementById(tabId);
+            activeSec.style.display = 'block';
+            setTimeout(() => {
+                activeSec.classList.add('active');
+                animateCounters(activeSec);
+            }, 10);
+            
+            const activeCanvas = activeSec.querySelector('canvas');
+            if(activeCanvas) createNeuralEffect(activeCanvas.id);
+        }
+
+        // Neural Effect Implementation
+        function createNeuralEffect(canvasId) {
+            const canvas = document.getElementById(canvasId);
+            if(!canvas) return;
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+            function resize() {
+                canvas.width = canvas.offsetWidth;
+                canvas.height = canvas.offsetHeight;
+            }
+            window.addEventListener('resize', resize);
+            resize();
+            function init() {
+                particles = [];
+                for(let i=0; i<80; i++) {
+                    particles.push({
+                        x: Math.random() * canvas.width,
+                        y: Math.random() * canvas.height,
+                        vx: (Math.random() - 0.5) * 1.5,
+                        vy: (Math.random() - 0.5) * 1.5
+                    });
+                }
+            }
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach((p, i) => {
+                    p.x += p.vx; p.y += p.vy;
+                    if(p.x < 0 || p.x > canvas.width) p.vx *= -1;
+                    if(p.y < 0 || p.y > canvas.height) p.vy *= -1;
+                    ctx.fillStyle = 'rgba(255,255,255,0.8)';
+                    ctx.beginPath(); ctx.arc(p.x, p.y, 2, 0, Math.PI*2); ctx.fill();
+                    for(let j=i+1; j<particles.length; j++) {
+                        let d = Math.hypot(p.x - particles[j].x, p.y - particles[j].y);
+                        if(d < 120) {
+                            ctx.strokeStyle = `rgba(255,255,255,${0.2 - d/600})`;
+                            ctx.lineWidth = 0.8;
+                            ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(particles[j].x, particles[j].y); ctx.stroke();
+                        }
+                    }
+                });
+                requestAnimationFrame(animate);
+            }
+            init(); animate();
+        }
+
+        // Hexagon Background
+        function initHexBg() {
+            const canvas = document.getElementById('bg-hex-canvas');
+            const ctx = canvas.getContext('2d');
+            const hexSize = 30;
+            const hexW = hexSize * Math.sqrt(3);
+            const hexH = hexSize * 1.5;
+            function resize() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            window.addEventListener('resize', resize);
+            resize();
+            function drawHex(x, y) {
+                ctx.beginPath();
+                for (let i = 0; i < 6; i++) {
+                    ctx.lineTo(x + hexSize * Math.cos(i * Math.PI / 3), y + hexSize * Math.sin(i * Math.PI / 3));
+                }
+                ctx.closePath(); ctx.stroke();
+            }
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.strokeStyle = 'rgba(34, 29, 92, 0.05)';
+                for (let y = 0; y < canvas.height + hexH; y += hexH) {
+                    for (let x = 0; x < canvas.width + hexW; x += hexW) {
+                        let cx = x + (Math.floor(y / hexH) % 2 === 0 ? hexW / 2 : 0);
+                        drawHex(cx, y);
+                    }
+                }
+                requestAnimationFrame(animate);
+            }
+            animate();
+        }
+
+        window.onload = () => {
+            createNeuralEffect('neural-canvas');
+            initHexBg();
+            animateCounters(document.getElementById('overview'));
+        };
+    </script>
+</body>
+</html>

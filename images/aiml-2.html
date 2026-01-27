@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NHCE - AI & ML Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.34/dist/lenis.min.js"></script>
+
+    <style>
+        :root {
+            --primary-blue: #221d5c;
+            --accent-red: #ec2024;
+            --light-bg: #f0f2f5;
+            --text-dark: #221d5c;
+            --white: #ffffff;
+            --sidebar-width: 320px;
+            --transition-speed: 0.4s;
+        }
+
+        html.lenis { height: auto; }
+        .lenis.lenis-smooth { scroll-behavior: auto !important; }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--light-bg);
+            color: var(--text-dark);
+            line-height: 1.4;
+            display: flex;
+            min-height: 100vh;
+            width: 100%;
+            overflow-x: hidden;
+        }
+
+        /* --- Background & Watermark --- */
+        .bg-overlay-container {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+            background: var(--light-bg);
+        }
+
+        #bg-hex-canvas {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            opacity: 0.5;
+            z-index: 1;
+        }
+
+        .center-watermark {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40vw;
+            max-width: 600px;
+            opacity: 0.05;
+            filter: grayscale(1);
+            z-index: 2;
+        }
+
+        .bubble {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.15;
+            z-index: 0;
+            animation: float-continuous 20s infinite alternate ease-in-out;
+        }
+
+        @keyframes float-continuous {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(10vw, 10vh) scale(1.2); }
+        }
+
+        /* --- Sidebar --- */
+        .sidebar {
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: var(--primary-blue);
+            position: fixed;
+            left: 0; top: 0;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+            border-right: 6px solid var(--accent-red);
+        }
+
+        .logo-area { margin-bottom: 40px; text-align: center; }
+        .logo-area img { width: 100%; max-width: 240px; filter: brightness(0) invert(1); }
+
+        .simple-back-arrow {
+            color: white; font-size: 2rem; margin-bottom: 20px;
+            cursor: pointer; transition: 0.3s; display: inline-block;
+        }
+        .simple-back-arrow:hover { color: var(--accent-red); transform: translateX(-5px); }
+
+        .nav-links { list-style: none; flex-grow: 1; }
+        .nav-links li { margin-bottom: 8px; }
+        .nav-links a {
+            color: rgba(255,255,255,0.6); text-decoration: none;
+            font-weight: 700; font-size: 1rem; display: flex;
+            align-items: center; gap: 15px; padding: 12px 20px;
+            border-radius: 15px; transition: all 0.3s ease; cursor: pointer;
+        }
+        .nav-links a:hover, .nav-links a.active {
+            background: rgba(255,255,255,0.1); color: white; padding-left: 25px;
+        }
+
+        /* --- Main Content --- */
+        main {
+            margin-left: var(--sidebar-width);
+            width: calc(100% - var(--sidebar-width));
+            padding: 40px;
+            min-height: 100vh;
+            position: relative;
+            z-index: 1;
+        }
+
+        .tab-content {
+            display: none; opacity: 0; transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        .tab-content.active { display: block; opacity: 1; transform: translateY(0); }
+
+        .dashboard-grid {
+            display: grid; grid-template-columns: repeat(12, 1fr);
+            gap: 25px; max-width: 1600px; margin: 0 auto;
+        }
+
+        .hero-tile {
+            grid-column: span 12;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, #3a348a 100%);
+            border-radius: 30px; padding: 60px; color: white;
+            position: relative; overflow: hidden; min-height: 400px;
+            display: flex; flex-direction: column; justify-content: center;
+            box-shadow: 0 20px 40px rgba(34, 29, 92, 0.2);
+            margin-bottom: 25px;
+        }
+
+        .hero-tile canvas {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1; pointer-events: none;
+        }
+
+        .hero-content { position: relative; z-index: 2; }
+        .hero-content .pre-title { color: var(--accent-red); font-weight: 800; letter-spacing: 4px; font-size: 1rem; margin-bottom: 10px; display: block; }
+        .hero-content h1 { font-size: clamp(2.2rem, 5vw, 3.8rem); font-weight: 800; line-height: 1.1; margin-bottom: 15px; text-transform: uppercase; }
+        .hero-content .sub-title { font-size: 1.2rem; opacity: 0.95; font-weight: 400; max-width: 700px; }
+
+        .card {
+            background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(10px);
+            border-radius: 25px; padding: 35px; border: 1px solid rgba(255,255,255,0.5);
+            height: 100%; box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+
+        .card h3 { color: var(--primary-blue); font-size: 1.6rem; margin-bottom: 20px; border-left: 6px solid var(--accent-red); padding-left: 15px; font-weight: 800; }
+
+        .stat-box {
+            text-align: center; padding: 35px 20px; background: var(--white);
+            border-radius: 25px; border-bottom: 6px solid var(--accent-red);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        }
+        .stat-box h4 { font-size: 2.8rem; color: var(--primary-blue); font-weight: 800; margin-bottom: 5px; }
+        .stat-box p { font-weight: 600; color: #666; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px;}
+
+        .span-4 { grid-column: span 4; }
+        .span-6 { grid-column: span 6; }
+        .span-12 { grid-column: span 12; }
+
+        .list-items { list-style: none; margin-top: 10px; }
+        .list-items li { font-size: 1rem; padding: 12px 0; border-bottom: 1px solid rgba(0,0,0,0.05); display: flex; align-items: center; font-weight: 500; }
+        .list-items li::before { content: "●"; color: var(--accent-red); margin-right: 12px; font-size: 0.8rem; }
+
+        .degree-tag { display: inline-block; background: var(--primary-blue); color: white; padding: 6px 16px; border-radius: 50px; font-size: 0.85rem; margin-bottom: 10px; font-weight: 700; }
+
+        /* --- Activities Specific UI --- */
+        .activities-section-title {
+            grid-column: span 12;
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--primary-blue);
+            margin: 20px 0 10px 0;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .activities-section-title::after {
+            content: "";
+            height: 2px;
+            flex-grow: 1;
+            background: linear-gradient(90deg, var(--accent-red), transparent);
+        }
+
+        /* Container for the 3-column items */
+.span-4 {
+    grid-column: span 4;
+}
+
+/* The Card Structure */
+.activity-card {
+    background: #ffffff;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    border: 1px solid rgba(0,0,0,0.05);
+}
+
+/* Image Container - Fixed 350px Height */
+.activity-img {
+    width: 100%;
+    height: 350px;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+    display: block; /* Removes any inline-block spacing */
+    background: #fff;
+}
+
+/* The Image Fix: Removes top space and fills the area */
+.activity-img img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    /* 'cover' ensures no white gaps. Image starts at the very top. */
+    object-fit: cover; 
+    object-position: top; 
+}
+
+/* Info Section below image */
+.activity-info {
+    padding: 25px;
+    flex-grow: 1;
+}
+
+.activity-info h5 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #221d5c; /* Your primary blue */
+    margin-bottom: 10px;
+}
+
+.activity-info p {
+    font-size: 0.9rem;
+    color: #666;
+    line-height: 1.5;
+}
+		
+
+        @media (max-width: 992px) {
+            :root { --sidebar-width: 100px; }
+            .nav-links span { display: none; }
+            .logo-area img { max-width: 70px; }
+            .sidebar { align-items: center; padding: 30px 10px; }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar { width: 100%; height: auto; flex-direction: row; justify-content: space-around; padding: 10px 0; border-right: none; border-bottom: 4px solid var(--accent-red); position: absolute; }
+            main { margin-left: 0; width: 100%; padding-top: 100px; }
+            .span-4, .span-6 { grid-column: span 12; }
+            .nav-links { display: flex; width: 100%; justify-content: space-around; flex-wrap: wrap; }
+            .logo-area, .simple-back-arrow { display: none !important; }
+            .hero-tile { padding: 40px 25px; min-height: 350px; }
+        }
+		
+		/* Container for the 3-column layout */
+.media-grid-pure {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* Exactly 3 columns */
+    gap: 25px;
+    padding: 20px 0;
+    width: 100%;
+}
+
+.media-item-pure {
+    width: 100%;
+    height: 300px; /* Fixed height as requested */
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.media-item-pure img {
+    width: 100%;
+    height: 100%;
+    /* Use 'contain' to see the FULL image without cropping */
+    /* Use 'cover' if you want it to fill the box completely (might crop edges) */
+    display: block;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+    .media-grid-pure {
+        grid-template-columns: repeat(2, 1fr); /* 2 columns on tablets */
+    }
+}
+
+@media (max-width: 600px) {
+    .media-grid-pure {
+        grid-template-columns: 1fr; /* 1 column on mobile */
+        height: auto;
+    }
+    .media-item-pure {
+        height: 250px;
+    }
+}
+
+.achievement-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Ensure images fill their containers properly without distortion */
+.media-item-pure img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* This prevents the "cut" look from before */
+    display: block;
+}
+
+/* Fixes list items appearing too large or overlapping */
+.achievement-container .list-items li {
+    font-size: 0.85rem;
+    line-height: 1.3;
+    padding: 8px 0;
+}
+    </style>
+</head>
+<body>
+
+    <div class="bg-overlay-container">
+        <div class="bubble" style="width: 40vw; height: 40vw; background: var(--primary-blue); top: -10%; right: -10%;"></div>
+        <div class="bubble" style="width: 30vw; height: 30vw; background: var(--accent-red); bottom: -10%; left: -10%; animation-delay: -5s;"></div>
+        <canvas id="bg-hex-canvas"></canvas>
+    </div>
+
+    <aside class="sidebar">
+        <a href="programs.html" class="simple-back-arrow">
+            <i class="fa-solid fa-circle-arrow-left"></i>
+        </a>
+        <div class="logo-area">
+            <img src="images/logo-2.png" alt="NHCE Logo">
+        </div>
+        <ul class="nav-links">
+            <li><a onclick="switchTab('overview')" id="link-overview" class="active"><i class="fa-solid fa-chart-line"></i> <span>Overview</span></a></li>
+            <li><a onclick="switchTab('academics')" id="link-academics"><i class="fa-solid fa-book"></i> <span>Academics</span></a></li>
+            <li><a onclick="switchTab('labs')" id="link-labs"><i class="fa-solid fa-flask"></i> <span>Labs</span></a></li>
+            <li><a onclick="switchTab('coe')" id="link-coe"><i class="fa-solid fa-microchip"></i> <span>CoE</span></a></li>
+            <li><a onclick="switchTab('activities')" id="link-activities"><i class="fa-solid fa-calendar-days"></i> <span>Activities</span></a></li>
+            <li><a onclick="switchTab('placement')" id="link-placement"><i class="fa-solid fa-user-graduate"></i> <span>Placements</span></a></li>
+        </ul>
+    </aside>
+
+    <main id="main-content">
+        <section id="overview" class="tab-content active">
+            <div class="dashboard-grid">
+                <div class="hero-tile">
+                    <canvas id="neural-canvas"></canvas>
+                    <div class="hero-content">
+                        <span class="pre-title">DEPARTMENT OF</span>
+                        <h1>Artificial Intelligence <br>& Machine Learning</h1>
+                        <p class="sub-title">Building the Intelligent Future with Next-Gen Technology and Research.</p>
+                    </div>
+                </div>
+                <div class="stat-box span-4"><h4 class="counter" data-target="28" data-suffix=" LPA">0 LPA</h4><p>Highest Package</p></div>
+                <div class="stat-box span-4"><h4 class="counter" data-target="92" data-suffix="%">0%</h4><p>Placement Rate</p></div>
+                <div class="stat-box span-4"><h4 class="counter" data-target="14">0</h4><p>Patents Filed</p></div>
+                <div class="card span-6">
+                    <h3>Our Vision</h3>
+                    <p>To develop outstanding AI and ML professionals with profound practical, research & managerial skills to meet the global challenges of the industry.</p>
+                </div>
+                <div class="card span-6">
+                    <h3>HOD Profile</h3>
+                    <p style="font-size: 1.4rem; font-weight: 800; color: var(--primary-blue);">Dr. Uma Reddy NV</p>
+                    <p style="font-weight: 700; color: var(--accent-red); margin-bottom: 10px;">Professor & Head</p>
+                    <ul class="list-items">
+                        <li><span class="counter" data-target="29">0</span> Years Academic Excellence</li>
+                        <li><span class="counter" data-target="11">0</span> Patents Filed | IEEE Senior Member</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="academics" class="tab-content">
+            <div class="dashboard-grid">
+                <div class="hero-tile">
+                    <canvas id="academics-canvas"></canvas>
+                    <div class="hero-content">
+                        <span class="pre-title">ACADEMICS & NEP 2020</span>
+                        <h1>Curriculum <br>Excellence</h1>
+                        <p class="sub-title">Restructuring Indian education to create an equitable and inclusive system providing learning for all.</p>
+                    </div>
+                </div>
+                <div class="card span-6">
+                    <h3>NEP & Scheme (2024-25)</h3>
+                    <ul class="list-items">
+                        <li><strong>2nd Year:</strong> <span class="counter" data-target="160">0</span> Credits (2022 scheme)</li>
+                        <li><strong>3rd Year:</strong> <span class="counter" data-target="160">0</span> Credits (2021 scheme)</li>
+                        <li><strong>4th Year:</strong> <span class="counter" data-target="160">0</span> Credits (Current scheme)</li>
+                    </ul>
+                </div>
+                <div class="card span-6">
+                    <h3>Degree Programs</h3>
+                       <div class="degree-container">
+                        <span class="degree-tag">Major Degree</span> 
+                        <p style="margin-bottom: 10px;"><span class="counter" data-target="160">0</span> Credits as per NEP</p>
+                        
+                        <span class="degree-tag">Minor Degree</span> 
+                        <p style="margin-bottom: 10px;"><span class="counter" data-target="18">0</span> Credits (Cross-branch selection: e.g. Mechanical students opting for CS scheme)</p>
+                        
+                        <span class="degree-tag">Honours Degree</span> 
+                        <p><span class="counter" data-target="18">0</span> Credits (Specialized Research)</p>
+                    </div>
+                </div>
+				
+				     <div class="card span-6">
+                    <h3>Global Program (AI & ML)</h3>
+                    <ul class="list-items">
+                        <li><strong>Core Focus:</strong> Full Stack Python Development</li>
+                        <li><strong>Visualization:</strong> Mastery in Tableau</li>
+                        <li><strong>MLOps Formula:</strong> ML + DEV + OPS</li>
+                    </ul>
+                </div>
+
+                <div class="card span-6">
+                    <h3>Career Lifecycle</h3>
+                    <ul class="list-items">
+                        <li><strong>Experiment:</strong> Data Acquisition & Modeling</li>
+                        <li><strong>Develop:</strong> Testing & Deployment</li>
+                        <li><strong>Operate:</strong> Monitoring & Feedback</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="labs" class="tab-content">
+            <div class="dashboard-grid">
+                <div class="hero-tile">
+                    <canvas id="labs-canvas"></canvas>
+                    <div class="hero-content">
+                        <span class="pre-title">INFRASTRUCTURE</span>
+                        <h1>Modern Computing <br>Laboratories</h1>
+                        <p class="sub-title">Equipped with high-end systems and industry-standard AI software.</p>
+                    </div>
+                </div>
+                <div class="stat-box span-4"><h4 class="counter" data-target="5">0</h4><p>Total Labs</p></div>
+                <div class="stat-box span-4"><h4 class="counter" data-target="206">0</h4><p>Total Computers</p></div>
+                <div class="stat-box span-4"><h4 class="counter" data-target="8">0</h4><p>Classrooms</p></div>
+                <div class="card span-12">
+                    <h3>Departmental Labs</h3>
+                    <ul class="list-items">
+                        <li>IBM OpenPower Lab | ALTAIR Lab | Oracle Lab | Nvidia AI Lab</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="coe" class="tab-content">
+            <div class="dashboard-grid">
+                <div class="hero-tile">
+                    <canvas id="coe-canvas"></canvas>
+                    <div class="hero-content">
+                        <span class="pre-title">INDUSTRY CONNECT</span>
+                        <h1>Center of <br>Excellence</h1>
+                    </div>
+                </div>
+                <div class="card span-6">
+                    <h3>Industry Partners</h3>
+                    <ul class="list-items">
+                        <li>VMware | HPE | CISCO | SAP Labs | Schneider Electric</li>
+                    </ul>
+                </div>
+                <div class="card span-6">
+                    <h3>Specialized Academies</h3>
+                    <ul class="list-items">
+                        <li>VMware IT Academy | HPE Vertica | CISCO Networking</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="activities" class="tab-content">
+            <div class="dashboard-grid">
+                <div class="hero-tile">
+                    <canvas id="activities-canvas"></canvas>
+                    <div class="hero-content">
+                        <span class="pre-title">HOLISTIC DEVELOPMENT</span>
+                        <h1>Campus Life & <br>Achievements</h1>
+                        <p class="sub-title">Fostering innovation through research, industry interaction, and student clubs.</p>
+                    </div>
+                </div>
+
+                <h4 class="activities-section-title">Academic Activities</h4>
+                
+         <div class="span-4">
+    <div class="activity-card">
+        <div class="activity-img">
+            <img src="images/img-5.webp" alt="Co-curricular Activities">
+        </div>
+        <div class="activity-info">
+            <h5>Co-curricular Activities</h5>
+            <p>Engaging technical competitions, hackathons, and coding challenges held regularly.</p>
+        </div>
+    </div>
+</div>
+
+<div class="span-4">
+    <div class="activity-card">
+        <div class="activity-img">
+            <img src="images/img-6.webp" alt="Seminars & Workshops">
+        </div>
+        <div class="activity-info">
+            <h5>Seminars & Workshops</h5>
+            <p>Hands-on sessions on Generative AI, MLOps, and Deep Learning by experts.</p>
+        </div>
+    </div>
+</div>
+
+<div class="span-4">
+    <div class="activity-card">
+        <div class="activity-img">
+            <img src="images/img-7.webp" alt="Alumni Talk Series">
+        </div>
+        <div class="activity-info">
+            <h5>Alumni Talk Series</h5>
+            <p>Bridge the gap with industry insights from our successful graduates worldwide.</p>
+        </div>
+    </div>
+</div>
+
+                <h4 class="activities-section-title">Industry & Social</h4>
+                
+                <div class="span-4">
+                    <div class="activity-card">
+                        <div class="activity-img">
+						<img src="images/img-8.jpg" alt="Alumni Talk Series">
+						</div>
+                        <div class="activity-info">
+                            <h5>Outreach & Extension</h5>
+                            <p>Social responsibility programs and knowledge sharing with the local community.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="span-4">
+                    <div class="activity-card">
+                        <div class="activity-img">
+						<img src="images/img-9.jpg" alt="Alumni Talk Series">
+						</div>
+                        <div class="activity-info">
+                            <h5>Live Projects</h5>
+                            <p>Real-world problem solving through industry-sponsored capstone projects.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="span-4">
+                    <div class="activity-card">
+                        <div class="activity-img">
+						<img src="images/img-10.webp" alt="Alumni Talk Series">
+						</div>
+                        <div class="activity-info">
+                            <h5>Industrial Visits</h5>
+                            <p>Structured Industrial Visits on Practical industrial Knowledge</p>
+                        </div>
+                    </div>
+                </div>
+
+                <h4 class="activities-section-title">Students Achievements</h4>
+				
+				
+<div class="span-12">
+    <div class="media-grid-pure">
+        <div class="achievement-container">
+            <div class="media-item-pure">
+                <img src="images/club-07.webp" alt="Smart India Hackathon">
+            </div>
+            <ul class="list-items">
+                <li><strong>Smart India Hackathon:</strong> Multiple Team Winners</li>
+                <li><strong>UDAAN Finalists:</strong> Top performers from AIML Department</li>
+            </ul>
+        </div>
+
+        <div class="achievement-container">
+            <div class="media-item-pure">
+                <img src="images/ice-01.webp" alt="Research & Patents">
+            </div>
+            <ul class="list-items">
+                <li><strong>Patents:</strong> Best Research Paper Award</li>
+                <li><strong>FDP:</strong> Consistent Faculty Excellence in Research</li>
+            </ul>
+        </div>
+
+        <div class="achievement-container">
+            <div class="media-item-pure">
+                <img src="images/img-02.webp" alt="Global Recognition">
+            </div>
+            <ul class="list-items">
+                <li><strong>Global Recognition:</strong> Participation in State Level Championship</li>
+                <li><strong>Project Awards:</strong> Excellence in Capstone projects</li>
+            </ul>
+        </div>
+    </div>
+</div>
+          
+
+                <h4 class="activities-section-title">Club Activities</h4>
+      
+	  <div class="span-12">
+    <div class="media-grid-pure">
+        <div class="media-item-pure">
+            <img src="images/club-01.webp" alt="Activity 1">
+        </div>
+        <div class="media-item-pure">
+            <img src="images/club-02.webp" alt="Activity 2">
+        </div>
+        <div class="media-item-pure">
+            <img src="images/club-03.webp" alt="Activity 3">
+        </div>
+		<div class="media-item-pure">
+            <img src="images/club-04.webp" alt="Activity 3">
+        </div>
+		<div class="media-item-pure">
+            <img src="images/club-05.webp" alt="Activity 3">
+        </div>
+	 <div class="media-item-pure">
+            <img src="images/club-06.webp" alt="Activity 3">
+        </div>
+        </div>
+</div>
+	  
+	  
+            </div>
+        </section>
+
+       <section id="placement" class="tab-content">
+            <div class="dashboard-grid">
+                <div class="hero-tile">
+                    <canvas id="placement-canvas"></canvas>
+                    <div class="hero-content">
+                        <span class="pre-title">CAREER OPPORTUNITIES</span>
+                        <h1>Placement <br>Records</h1>
+                        <p class="sub-title">Industry-ready engineers leading global innovation.</p>
+                    </div>
+                </div>
+                
+                <div class="stat-box span-4"><h4 class="counter" data-target="28" data-suffix=" LPA">0 LPA</h4><p>Highest Pkg (23-24)</p></div>
+                <div class="stat-box span-4"><h4 class="counter" data-target="5.74" data-suffix=" LPA" data-decimals="2">0 LPA</h4><p>Average Pkg (23-24)</p></div>
+                <div class="stat-box span-4"><h4 class="counter" data-target="103">0</h4><p>Total Offers (23-24)</p></div>
+
+                <div class="card span-6">
+                    <h3>Placement Stats (2023-24)</h3>
+                    <ul class="list-items">
+                        <li><strong>Students Placed:</strong> 92%</li>
+                        <li><strong>Carelon:</strong> 10 Students</li>
+                        <li><strong>Capgemini:</strong> 9 Students</li>
+                        <li><strong>IBM:</strong> 5 Students</li>
+                    </ul>
+                </div>
+
+                <div class="card span-6">
+                    <h3>2024-25 (Ongoing)</h3>
+                    <p style="font-weight: 700; color: var(--primary-blue); margin-bottom: 5px;">Total Placed: <span class="counter" data-target="36">0</span> Students</p>
+                    <ul class="list-items">
+                        <li><strong>Unisys:</strong> 6 Students</li>
+                        <li><strong>Infosys:</strong> 3 Students</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        const lenis = new Lenis();
+        function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+        requestAnimationFrame(raf);
+
+        function animateCounters(container) {
+            const counters = container.querySelectorAll('.counter');
+            counters.forEach(counter => {
+                const target = +counter.getAttribute('data-target');
+                const suffix = counter.getAttribute('data-suffix') || '';
+                const prefix = counter.getAttribute('data-prefix') || '';
+                const decimals = +counter.getAttribute('data-decimals') || 0;
+                const duration = 1500;
+                const startTime = performance.now();
+                function updateCount(currentTime) {
+                    const elapsed = currentTime - startTime;
+                    const progress = Math.min(elapsed / duration, 1);
+                    const easeProgress = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+                    const currentValue = (easeProgress * target).toFixed(decimals);
+                    counter.innerText = prefix + currentValue + suffix;
+                    if (progress < 1) requestAnimationFrame(updateCount);
+                }
+                requestAnimationFrame(updateCount);
+            });
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.nav-links a').forEach(link => link.classList.remove('active'));
+            document.getElementById('link-' + tabId).classList.add('active');
+            document.querySelectorAll('.tab-content').forEach(sec => {
+                sec.classList.remove('active');
+                sec.style.display = 'none';
+            });
+            const activeSec = document.getElementById(tabId);
+            activeSec.style.display = 'block';
+            setTimeout(() => {
+                activeSec.classList.add('active');
+                animateCounters(activeSec);
+            }, 10);
+            const activeCanvas = activeSec.querySelector('canvas');
+            if(activeCanvas && activeCanvas.id !== 'bg-hex-canvas') createNeuralEffect(activeCanvas.id);
+        }
+
+        function createNeuralEffect(canvasId) {
+            const canvas = document.getElementById(canvasId);
+            if(!canvas) return;
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+            function resize() {
+                canvas.width = canvas.offsetWidth;
+                canvas.height = canvas.offsetHeight;
+            }
+            window.addEventListener('resize', resize);
+            resize();
+            function init() {
+                particles = [];
+                for(let i=0; i<60; i++) {
+                    particles.push({
+                        x: Math.random() * canvas.width,
+                        y: Math.random() * canvas.height,
+                        vx: (Math.random() - 0.5) * 1.2,
+                        vy: (Math.random() - 0.5) * 1.2
+                    });
+                }
+            }
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach((p, i) => {
+                    p.x += p.vx; p.y += p.vy;
+                    if(p.x < 0 || p.x > canvas.width) p.vx *= -1;
+                    if(p.y < 0 || p.y > canvas.height) p.vy *= -1;
+                    ctx.fillStyle = 'rgba(255,255,255,0.5)';
+                    ctx.beginPath(); ctx.arc(p.x, p.y, 2, 0, Math.PI*2); ctx.fill();
+                    for(let j=i+1; j<particles.length; j++) {
+                        let d = Math.hypot(p.x - particles[j].x, p.y - particles[j].y);
+                        if(d < 100) {
+                            ctx.strokeStyle = `rgba(255,255,255,${0.15 - d/500})`;
+                            ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(particles[j].x, particles[j].y); ctx.stroke();
+                        }
+                    }
+                });
+                requestAnimationFrame(animate);
+            }
+            init(); animate();
+        }
+
+        function initHexBg() {
+            const canvas = document.getElementById('bg-hex-canvas');
+            const ctx = canvas.getContext('2d');
+            const hexSize = 30;
+            const hexW = hexSize * Math.sqrt(3);
+            const hexH = hexSize * 1.5;
+            function resize() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            window.addEventListener('resize', resize);
+            resize();
+            function drawHex(x, y) {
+                ctx.beginPath();
+                for (let i = 0; i < 6; i++) {
+                    ctx.lineTo(x + hexSize * Math.cos(i * Math.PI / 3), y + hexSize * Math.sin(i * Math.PI / 3));
+                }
+                ctx.closePath(); ctx.stroke();
+            }
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.strokeStyle = 'rgba(34, 29, 92, 0.03)';
+                for (let y = 0; y < canvas.height + hexH; y += hexH) {
+                    for (let x = 0; x < canvas.width + hexW; x += hexW) {
+                        let cx = x + (Math.floor(y / hexH) % 2 === 0 ? hexW / 2 : 0);
+                        drawHex(cx, y);
+                    }
+                }
+                requestAnimationFrame(animate);
+            }
+            animate();
+        }
+
+        window.onload = () => {
+            createNeuralEffect('neural-canvas');
+            initHexBg();
+            animateCounters(document.getElementById('overview'));
+        };
+    </script>
+</body>
+</html>

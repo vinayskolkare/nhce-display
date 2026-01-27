@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NHCE - Premium Events</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-blue: #221d5c;
+            --accent-red: #ec2024;
+            --light-bg: #f0f2f5;
+            --white: #ffffff;
+            --text-dark: #221d5c;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--light-bg);
+            color: var(--text-dark);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* --- BACK BUTTON --- */
+        .back-btn {
+            position: fixed;
+            top: 25px;
+            left: 25px;
+            width: 50px;
+            height: 50px;
+            background: var(--white);
+            color: var(--primary-blue);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none;
+            z-index: 1000;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        .back-btn:hover { transform: scale(1.1); background: var(--primary-blue); color: white; }
+
+        /* --- BACKGROUND SYSTEM --- */
+        .bg-overlay-container {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+            background: radial-gradient(circle at 50% 50%, #ffffff 0%, #f0f2f5 100%);
+        }
+
+        #bg-hex-canvas {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            opacity: 0.5;
+            z-index: 1;
+        }
+
+        .center-watermark {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 35vw;
+            max-width: 500px;
+            opacity: 0.04;
+            z-index: 2;
+        }
+
+        .floating-element {
+            position: absolute;
+            opacity: 0.15;
+            z-index: 0;
+        }
+
+        .float-bubble { border-radius: 50%; filter: blur(40px); }
+        .float-hex { clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); }
+
+        /* --- UI CONTENT --- */
+        .page-content {
+            position: relative;
+            z-index: 10;
+            padding: 60px 5%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header { text-align: center; margin-bottom: 60px; }
+        .pre-title { color: var(--accent-red); font-weight: 800; letter-spacing: 5px; text-transform: uppercase; font-size: 0.85rem; display: block; margin-bottom: 15px; }
+        h1 { font-size: clamp(2.5rem, 6vw, 4.5rem); font-weight: 900; color: var(--primary-blue); text-transform: uppercase; line-height: 0.9; margin-bottom: 40px; }
+
+        .filter-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            background: rgba(255, 255, 255, 0.5);
+            padding: 10px;
+            border-radius: 100px;
+            width: fit-content;
+            margin: 0 auto 50px;
+            backdrop-filter: blur(10px);
+            border: 1px solid white;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+
+        .tab-btn {
+            padding: 12px 28px;
+            border: none;
+            background: transparent;
+            color: var(--primary-blue);
+            font-weight: 700;
+            cursor: pointer;
+            border-radius: 100px;
+            transition: 0.4s;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+        }
+
+        .tab-btn.active { background: var(--primary-blue); color: white; }
+
+        .events-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 30px;
+        }
+
+        .event-card {
+            background: white;
+            border-radius: 30px;
+            padding: 15px;
+            border: 1px solid rgba(255,255,255,0.8);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.04);
+            transition: all 0.5s;
+            position: relative;
+            cursor: pointer;
+            display: none;
+        }
+
+        .event-card.show { display: block; }
+
+        /* --- SLIDESHOW STYLES --- */
+        .img-wrapper {
+            width: 100%;
+            height: 240px;
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .img-wrapper img {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out;
+        }
+
+        .img-wrapper img.active { opacity: 1; }
+
+        .tag {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 6px 16px;
+            border-radius: 100px;
+            font-size: 0.65rem;
+            font-weight: 800;
+            color: var(--accent-red);
+            text-transform: uppercase;
+            z-index: 10;
+        }
+
+        .event-meta { padding: 25px 15px 15px; }
+        .event-meta h3 { font-size: 1.6rem; font-weight: 800; color: var(--primary-blue); margin-bottom: 10px; }
+        .event-meta p { font-size: 0.95rem; color: #556677; line-height: 1.6; }
+
+        .page-footer { text-align: center; padding: 100px 0 40px; opacity: 0.3; font-weight: 800; font-size: 0.8rem; letter-spacing: 5px; text-transform: uppercase; }
+
+        @media (max-width: 768px) {
+            .filter-tabs { flex-direction: column; border-radius: 20px; width: 100%; }
+            .tab-btn { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <a href="index-2.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
+
+    <div class="bg-overlay-container" id="bg-container">
+        <canvas id="bg-hex-canvas"></canvas>
+        <img src="images/logo-1.png" class="center-watermark" alt="Watermark">
+    </div>
+
+    <main class="page-content">
+        <header>
+            <span class="pre-title">Unforgettable Moments</span>
+            <h1>NHCE Campus <span style="color:var(--accent-red)">Events</span></h1>
+        </header>
+
+        <nav class="filter-tabs">
+            <button class="tab-btn active" onclick="filterData('all', this)">Overview</button>
+            <button class="tab-btn" onclick="filterData('college', this)">College Fests</button>
+            <button class="tab-btn" onclick="filterData('traditional', this)">Traditional</button>
+            <button class="tab-btn" onclick="filterData('national', this)">National</button>
+        </nav>
+
+        <div class="events-grid" id="main-grid">
+		
+		         <div class="event-card show slideshow" data-cat="college">
+                <div class="img-wrapper">
+                    <img src="images/img-121.jpeg" class="active" alt="Sargam 1">
+                    <img src="images/img-122.jpg" alt="Sargam 2">
+                    <span class="tag">Flagship Fest</span>
+                </div>
+                <div class="event-meta">
+                    <h3>Silver Jubilee Year</h3>
+                    <p>New Horizon College of Engineering (NHCE) celebrated Founder’s Day, marking 25 years of excellence.</p>
+                </div>
+            </div>
+			
+			
+            <div class="event-card show slideshow" data-cat="college">
+                <div class="img-wrapper">
+                    <img src="images/img-123.jpg" class="active" alt="Sargam 1">
+                    <img src="images/img-124.jpg" alt="Sargam 2">
+                    <span class="tag">Flagship Fest</span>
+                </div>
+                <div class="event-meta">
+                    <h3>Sargam 2025</h3>
+                    <p>The cultural pulse of Karnataka. A mega-fest bringing together thousands of students for a week of glory.</p>
+                </div>
+            </div>
+
+            <div class="event-card show slideshow" data-cat="college">
+                <div class="img-wrapper">
+                    <img src="images/img-125.jpg" class="active" alt="Hackathon 1">
+                    <img src="images/img-126.jpg" alt="Hackathon 2">
+                    <span class="tag">Engineering</span>
+                </div>
+                <div class="event-meta">
+                    <h3>Hackathon</h3>
+                    <p>Testing the limits of logic and creativity in a 24-hour non-stop sprint to solve real-world problems.</p>
+                </div>
+            </div>
+
+            <div class="event-card show slideshow" data-cat="college">
+                <div class="img-wrapper">
+                    <img src="images/img-127.jpg" class="active" alt="Revelation">
+					  <img src="images/img-128.jpg" alt="Revelation">
+                    <span class="tag">Ethnic</span>
+                </div>
+                <div class="event-meta">
+                    <h3>Revelation</h3>
+                    <p>A futuristic technical symposium showcasing robotics, AI, and industrial innovations by students.</p>
+                </div>
+            </div>
+
+            <div class="event-card show slideshow" data-cat="traditional">
+                <div class="img-wrapper">
+                    <img src="images/img-129.jpg" class="active" alt="Ethnic Day">
+					 <img src="images/img-130.jpg" alt="Ethnic Day">
+                    <span class="tag">Cultural Pride</span>
+                </div>
+                <div class="event-meta">
+                    <h3>Ethnic Day</h3>
+                    <p>A colorful celebration of Indian diversity where every student represents their cultural heritage.</p>
+                </div>
+            </div>
+
+            <div class="event-card show slideshow" data-cat="traditional">
+                <div class="img-wrapper">
+                    <img src="images/img-131.jpg" class="active" alt="Deepotsava">
+					<img src="images/img-132.jpg"  alt="Deepotsava">
+                    <span class="tag">Spiritual</span>
+                </div>
+                <div class="event-meta">
+                    <h3>Deepotsava</h3>
+                    <p>Celebrating the triumph of light over darkness with a mesmerizing display of thousands of clay lamps.</p>
+                </div>
+            </div>
+
+            <div class="event-card show slideshow" data-cat="traditional">
+                <div class="img-wrapper">
+                    <img src="images/img-133.jpg" class="active" alt="Garba">
+					<img src="images/img-134.jpg"  alt="Garba">
+					<img src="images/img-135.jpg"  alt="Garba">
+                    <span class="tag">Festivities</span>
+                </div>
+                <div class="event-meta">
+                    <h3>Garba Night</h3>
+                    <p>Dandiya and Garba rhythms take over the campus for a high-energy night of music and dance.</p>
+                </div>
+            </div>
+
+            <div class="event-card show slideshow" data-cat="national">
+                <div class="img-wrapper">
+                    <img src="images/img-137.jpg" class="active" alt="Yoga Day">
+					<img src="images/img-136.jpg"  alt="Yoga Day">
+                    <span class="tag">Wellness</span>
+                </div>
+                <div class="event-meta">
+                    <h3>World Yoga Day</h3>
+                    <p>Promoting mindfulness and physical health through a massive campus-wide synchronized yoga session.</p>
+                </div>
+            </div>
+
+            <div class="event-card show" data-cat="national">
+                <div class="img-wrapper">
+                    <img src="images/img-138.jpg" class="active" alt="Rajyotsava">
+                    <span class="tag">Statehood</span>
+                </div>
+                <div class="event-meta">
+                    <h3>Rajyotsava</h3>
+                    <p>Honoring the rich heritage, language, and culture of Karnataka with grand student performances.</p>
+                </div>
+            </div>
+
+            <div class="event-card show slideshow" data-cat="national">
+                <div class="img-wrapper">
+                    <img src="images/img-140.jpg" class="active" alt="Independence">
+					<img src="images/img-141.jpg"  alt="Independence">
+					<img src="images/img-142.jpg"  alt="Independence">
+                    <span class="tag">Nationalism</span>
+                </div>
+                <div class="event-meta">
+                    <h3>Independence Day</h3>
+                    <p>Commemorating the national spirit with flag hoisting and tribute to our freedom fighters.</p>
+                </div>
+            </div>
+        </div>
+
+        <footer class="page-footer">NHCE • HORIZONS • 2026</footer>
+    </main>
+
+    <script>
+        // --- SLIDESHOW LOGIC ---
+        function initSlideshows() {
+            const containers = document.querySelectorAll('.slideshow');
+            containers.forEach(container => {
+                const imgs = container.querySelectorAll('.img-wrapper img');
+                if (imgs.length <= 1) return;
+                let current = 0;
+                setInterval(() => {
+                    imgs[current].classList.remove('active');
+                    current = (current + 1) % imgs.length;
+                    imgs[current].classList.add('active');
+                }, 3500);
+            });
+        }
+        window.addEventListener('load', initSlideshows);
+
+        function filterData(cat, btn) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            const cards = document.querySelectorAll('.event-card');
+            cards.forEach(card => {
+                if (cat === 'all' || card.dataset.cat === cat) {
+                    card.classList.add('show');
+                } else {
+                    card.classList.remove('show');
+                }
+            });
+        }
+
+        const container = document.getElementById('bg-container');
+        const hexCanvas = document.getElementById('bg-hex-canvas');
+        const ctx = hexCanvas.getContext('2d');
+        let width, height;
+        const hexSize = 30;
+
+        function resize() {
+            width = window.innerWidth; height = window.innerHeight;
+            hexCanvas.width = width; hexCanvas.height = height;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        function drawGrid() {
+            ctx.clearRect(0, 0, width, height);
+            ctx.strokeStyle = 'rgba(34, 29, 92, 0.03)';
+            const hexW = hexSize * Math.sqrt(3);
+            const hexH = hexSize * 1.5;
+            for (let y = 0; y < height + hexH; y += hexH) {
+                for (let x = 0; x < width + hexW; x += hexW) {
+                    let cx = x + (Math.floor(y / hexH) % 2 === 0 ? hexW / 2 : 0);
+                    ctx.beginPath();
+                    for (let i = 0; i < 6; i++) {
+                        ctx.lineTo(cx + hexSize * Math.cos(i * Math.PI / 3), y + hexSize * Math.sin(i * Math.PI / 3));
+                    }
+                    ctx.closePath(); ctx.stroke();
+                }
+            }
+        }
+
+        const particles = [];
+        const colors = ['#221d5c', '#ec2024'];
+
+        class Particle {
+            constructor(type) { this.type = type; this.el = document.createElement('div'); container.appendChild(this.el); this.reset(); }
+            reset() {
+                this.x = Math.random() * width;
+                this.y = height + 100; // Start from bottom
+                this.size = Math.random() * 50 + 20;
+                this.speedY = -(Math.random() * 0.8 + 0.4); // Move up
+                this.speedX = (Math.random() - 0.5) * 0.2;
+                this.color = colors[Math.floor(Math.random() * colors.length)];
+                this.el.className = `floating-element ${this.type === 'bubble' ? 'float-bubble' : 'float-hex'}`;
+                this.el.style.backgroundColor = this.color;
+            }
+            update() {
+                this.y += this.speedY; this.x += this.speedX;
+                if (this.y < -150) this.reset();
+                this.el.style.transform = `translate(${this.x}px, ${this.y}px)`;
+                this.el.style.width = `${this.size}px`;
+                this.el.style.height = this.type === 'hex' ? `${this.size * 1.1}px` : `${this.size}px`;
+            }
+        }
+
+        for (let i = 0; i < 10; i++) particles.push(new Particle('bubble'));
+        for (let i = 0; i < 8; i++) particles.push(new Particle('hex'));
+
+        function animate() {
+            drawGrid();
+            particles.forEach(p => p.update());
+            requestAnimationFrame(animate);
+        }
+        animate();
+    </script>
+</body>
+</html>

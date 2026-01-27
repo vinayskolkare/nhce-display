@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NHCE - Computing Laboratories</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-blue: #221d5c;
+            --accent-red: #ec2024;
+            --light-bg: #f0f2f5;
+            --white: #ffffff;
+            --text-dark: #221d5c;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--light-bg);
+            color: var(--text-dark);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* --- Sophisticated Background Animation --- */
+        .bg-overlay-container {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+            background: radial-gradient(circle at 50% 50%, #ffffff 0%, #f0f2f5 100%);
+        }
+
+        #bg-hex-canvas {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            opacity: 0.5;
+            z-index: 1;
+        }
+
+        .center-watermark {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 35vw;
+            max-width: 500px;
+            opacity: 0.04;
+            z-index: 2;
+        }
+
+        .floating-element {
+            position: absolute;
+            opacity: 0.1;
+            z-index: 0;
+        }
+
+        .float-bubble { border-radius: 50%; filter: blur(40px); }
+        .float-hex { clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); }
+
+        /* --- Header --- */
+        header {
+            padding: 60px 5% 30px;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        .back-nav {
+            position: absolute;
+            top: 30px;
+            left: 5%;
+            text-decoration: none;
+            color: var(--primary-blue);
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: 0.3s;
+            background: white;
+            padding: 10px 20px;
+            border-radius: 50px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            font-size: 0.85rem;
+        }
+
+        .back-nav:hover { color: var(--accent-red); transform: translateX(-5px); }
+
+        .pre-title { 
+            color: var(--accent-red); 
+            font-weight: 800; 
+            letter-spacing: 5px; 
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        h1 { 
+            font-size: clamp(2rem, 4vw, 3rem); 
+            font-weight: 800; 
+            color: var(--primary-blue);
+            line-height: 1.1;
+            text-transform: uppercase;
+        }
+
+        /* --- Infrastructure Overview Section --- */
+        .infra-overview {
+            max-width: 1100px;
+            margin: 0 auto 50px;
+            padding: 0 5%;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        .infra-text {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #4a5568;
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.03);
+        }
+
+        .infra-text strong {
+            color: var(--primary-blue);
+            font-weight: 700;
+        }
+
+        .infra-stats {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 800;
+            color: var(--primary-blue);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+        }
+
+        .stat-item i {
+            color: var(--accent-red);
+            font-size: 1.2rem;
+        }
+
+        /* --- Proportional Balanced Grid --- */
+        .labs-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 25px;
+            max-width: 1400px;
+            margin: 0 auto 80px;
+            padding: 0 5%;
+            position: relative;
+            z-index: 10;
+        }
+
+        .lab-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.04);
+            border: 1px solid rgba(255,255,255,0.6);
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .lab-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(34, 29, 92, 0.1);
+            border-color: var(--accent-red);
+        }
+
+        /* Proportional Grid Spans */
+        .span-12 { grid-column: span 12; display: flex; flex-direction: row; align-items: stretch; }
+        .span-6 { grid-column: span 6; }
+        .span-4 { grid-column: span 4; }
+
+        .lab-img {
+            width: 100%;
+            height: 240px;
+            overflow: hidden;
+            background: #fdfdfd;
+        }
+
+        /* Large card specific adjustment */
+        .span-12 .lab-img { width: 55%; height: 380px; }
+        .span-12 .lab-info { width: 45%; }
+
+        .lab-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.8s ease;
+        }
+
+        .lab-card:hover .lab-img img { transform: scale(1.08); }
+
+        /* Content Area */
+        .lab-info {
+            padding: 25px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .lab-info h3 {
+            font-size: 1.25rem;
+            color: var(--primary-blue);
+            margin-bottom: 12px;
+            font-weight: 800;
+            border-left: 4px solid var(--accent-red);
+            padding-left: 12px;
+            text-transform: uppercase;
+        }
+
+        .lab-info p {
+            font-size: 0.9rem;
+            color: #556677;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .lab-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            list-style: none;
+            margin-top: auto;
+        }
+
+        .lab-tags li {
+            font-size: 0.65rem;
+            background: rgba(34, 29, 92, 0.05);
+            color: var(--primary-blue);
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-weight: 700;
+            text-transform: uppercase;
+            border: 1px solid rgba(34, 29, 92, 0.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .span-4 { grid-column: span 6; }
+            .span-12 { flex-direction: column; }
+            .span-12 .lab-img, .span-12 .lab-info { width: 100%; }
+            .span-12 .lab-img { height: 280px; }
+            .infra-stats { gap: 20px; }
+        }
+
+        @media (max-width: 768px) {
+            .span-12, .span-6, .span-4 { grid-column: span 12; }
+            header { padding-top: 100px; }
+            .infra-text { padding: 25px; font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-overlay-container" id="bg-container">
+        <canvas id="bg-hex-canvas"></canvas>
+        <img src="images/logo-1.png" class="center-watermark" alt="Watermark">
+    </div>
+
+    <header>
+        <a href="index-2.html" class="back-nav">
+            <i class="fa-solid fa-arrow-left"></i> <span>BACK</span>
+        </a>
+        <span class="pre-title">Academic Infrastructure</span>
+        <h1>Specialized Laboratories</h1>
+    </header>
+
+    <section class="infra-overview">
+        <div class="infra-text">
+            With over <strong>2000+ computers and laptops</strong>, NHCE ensures seamless access to cutting-edge technology for students and faculty alike. Our <strong>60+ labs</strong>, including <strong>15+ industry-sponsored labs</strong>, are equipped with custom-configured systems, each housing nearly 35 high-performance machines. 
+            <br><br>
+            Campus-wide <strong>high-speed uninterrupted internet</strong> ensures lightning-fast connectivity for research and development.
+            
+            <div class="infra-stats">
+                <div class="stat-item"><i class="fa-solid fa-microchip"></i> 2000+ Systems</div>
+                <div class="stat-item"><i class="fa-solid fa-flask"></i> 60+ Modern Labs</div>
+                <div class="stat-item"><i class="fa-solid fa-wifi"></i> Gigabit Internet</div>
+            </div>
+        </div>
+    </section>
+
+    <div class="labs-grid">
+        
+        <div class="lab-card span-12">
+            <div class="lab-img">
+                <img src="images/nvidia-1.webp" alt="Nvidia AI Lab">
+            </div>
+            <div class="lab-info">
+                <h3>NVIDIA AI Learning & Research</h3>
+                <p>Equipped with industry-leading GPU architecture, this lab serves as the flagship hub for deep learning, computer vision, and neural network training.</p>
+                <ul class="lab-tags">
+                    <li>GPU Computing</li>
+                    <li>AI Research</li>
+                    <li>Deep Learning</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="lab-card span-6">
+            <div class="lab-img">
+                <img src="images/ibm.webp" alt="IBM Lab">
+            </div>
+            <div class="lab-info">
+                <h3>IBM OpenPower Lab</h3>
+                <p>Focused on AI infrastructure and system architecture using IBM's Power processors, bridging software and hardware development.</p>
+                <ul class="lab-tags">
+                    <li>Enterprise AI</li>
+                    <li>Architecture</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="lab-card span-6">
+            <div class="lab-img">
+                <img src="images/altair.webp" alt="Altair Lab">
+            </div>
+            <div class="lab-info">
+                <h3>ALTAIR Lab</h3>
+                <p>Dedicated to simulation-driven innovation and data analytics, providing industry-standard tools for predictive modeling.</p>
+                <ul class="lab-tags">
+                    <li>Simulations</li>
+                    <li>Data Analytics</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="lab-card span-4">
+            <div class="lab-img">
+                <img src="images/oracle.webp" alt="Oracle Lab">
+            </div>
+            <div class="lab-info">
+                <h3>Oracle Lab</h3>
+                <p>Advanced database management systems and enterprise cloud computing solutions for data scientists.</p>
+                <ul class="lab-tags">
+                    <li>Cloud DB</li>
+                    <li>Big Data</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="lab-card span-4">
+            <div class="lab-img">
+                <img src="images/schinder.webp" alt="Computing Lab">
+            </div>
+            <div class="lab-info">
+                <h3>Schnider Lab</h3>
+                <p>Providing a high-performance environment for industrial-scale software research and automation.</p>
+                <ul class="lab-tags">
+                    <li>Development</li>
+                    <li>Algorithms</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="lab-card span-4">
+            <div class="lab-img">
+                <img src="images/sap.webp" alt="Intelligent Systems">
+            </div>
+            <div class="lab-info">
+                <h3>SAP Next-Gen Lab</h3>
+                <p>Specialized for robotics and IoT-based applications with seamless hardware-to-software integration.</p>
+                <ul class="lab-tags">
+                    <li>Robotics</li>
+                    <li>IoT</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="lab-card span-4">
+            <div class="lab-img">
+                <img src="images/powerlab.webp" alt="Big Data">
+            </div>
+            <div class="lab-info">
+                <h3>Power System and Simulation Lab</h3>
+                <p>Specialized facility for the modeling, simulation, and optimization of power systems, equipped with SCADA systems </p>
+                <ul class="lab-tags">
+                    <li>Hadoop</li>
+                    <li>Analytics</li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const container = document.getElementById('bg-container');
+        const hexCanvas = document.getElementById('bg-hex-canvas');
+        const ctx = hexCanvas.getContext('2d');
+        let width, height;
+        const hexSize = 30;
+        const hexW = hexSize * Math.sqrt(3);
+        const hexH = hexSize * 1.5;
+
+        function resize() {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            hexCanvas.width = width;
+            hexCanvas.height = height;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        function drawGrid() {
+            ctx.clearRect(0, 0, width, height);
+            ctx.strokeStyle = 'rgba(34, 29, 92, 0.03)';
+            ctx.lineWidth = 1;
+            for (let y = 0; y < height + hexH; y += hexH) {
+                for (let x = 0; x < width + hexW; x += hexW) {
+                    let cx = x + (Math.floor(y / hexH) % 2 === 0 ? hexW / 2 : 0);
+                    ctx.beginPath();
+                    for (let i = 0; i < 6; i++) {
+                        ctx.lineTo(cx + hexSize * Math.cos(i * Math.PI / 3), y + hexSize * Math.sin(i * Math.PI / 3));
+                    }
+                    ctx.closePath();
+                    ctx.stroke();
+                }
+            }
+        }
+
+        const particles = [];
+        const colors = ['#221d5c', '#ec2024'];
+
+        class Particle {
+            constructor(type) {
+                this.type = type;
+                this.reset();
+            }
+            reset() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.size = Math.random() * 50 + 15;
+                this.speedX = (Math.random() - 0.5) * 0.3;
+                this.speedY = (Math.random() - 0.5) * 0.3;
+                this.color = colors[Math.floor(Math.random() * colors.length)];
+                this.rotation = Math.random() * 360;
+                this.rotSpeed = (Math.random() - 0.5) * 0.2;
+                if (!this.el) {
+                    this.el = document.createElement('div');
+                    container.appendChild(this.el);
+                }
+                this.el.className = `floating-element ${this.type === 'bubble' ? 'float-bubble' : 'float-hex'}`;
+                this.el.style.backgroundColor = this.color;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                this.rotation += this.rotSpeed;
+                if (this.x < -60) this.x = width + 30;
+                if (this.x > width + 60) this.x = -30;
+                if (this.y < -60) this.y = height + 30;
+                if (this.y > height + 60) this.y = -30;
+                this.el.style.width = `${this.size}px`;
+                this.el.style.height = this.type === 'hex' ? `${this.size * 1.1}px` : `${this.size}px`;
+                this.el.style.transform = `translate(${this.x}px, ${this.y}px) rotate(${this.rotation}deg)`;
+            }
+        }
+
+        for (let i = 0; i < 8; i++) particles.push(new Particle('bubble'));
+        for (let i = 0; i < 7; i++) particles.push(new Particle('hex'));
+
+        function animate() {
+            drawGrid();
+            particles.forEach(p => p.update());
+            requestAnimationFrame(animate);
+        }
+        animate();
+    </script>
+</body>
+</html>

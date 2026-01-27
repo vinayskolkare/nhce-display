@@ -784,5 +784,35 @@
             initReveal();
         };
     </script>
+					<script>
+window.addEventListener('load', () => {
+    // Standard initializations
+    if (typeof createNeuralEffect === "function") createNeuralEffect('neural-canvas');
+    if (typeof initHexBg === "function") initHexBg();
+    initReveal();
+
+    // 1. Get the tab from the URL (?tab=activities)
+    const urlParams = new URLSearchParams(window.location.search);
+    const targetTab = urlParams.get('tab');
+
+    if (targetTab) {
+        // 2. Wait for the specific element to exist before switching
+        const checkExist = setInterval(() => {
+            const element = document.getElementById(targetTab);
+            if (element) {
+                console.log("Found tab, switching to:", targetTab);
+                switchTab(targetTab);
+                clearInterval(checkExist); // Stop looking once found
+            }
+        }, 50); // Checks every 50ms
+
+        // 3. Safety timeout: stop looking after 3 seconds if not found
+        setTimeout(() => clearInterval(checkExist), 3000);
+    } else {
+        // Default startup tab
+        switchTab('overview');
+    }
+});
+</script>
 </body>
 </html>

@@ -154,9 +154,9 @@
                     <p>Fostering creativity and leadership through various hobby and academic clubs.</p>
                 </div>
                 <div class="image-grid-3col">
-                    <div class="grid-item"><img src="images/img-1050.jpg" alt="Club activity 1"></div>
-                    <div class="grid-item"><img src="images/img-1051.jpg" alt="Club activity 2"></div>
-                    <div class="grid-item"><img src="images/img-1052.jpg" alt="Club activity 3"></div>
+                    <a href="nhcm-results-3.html?cat=27&name=Club Activities" style="text-decoration: none; color: inherit;"><div class="grid-item"><img src="images/img-1050.jpg" alt="Club activity 1"></div></a>
+                    <a href="nhcm-results-3.html?cat=27&name=Club Activities" style="text-decoration: none; color: inherit;"><div class="grid-item"><img src="images/img-1051.jpg" alt="Club activity 2"></div></a>
+                    <a href="nhcm-results-3.html?cat=27&name=Club Activities" style="text-decoration: none; color: inherit;"><div class="grid-item"><img src="images/img-1052.jpg" alt="Club activity 3"></div></a>
                 </div>
             </section>
 
@@ -166,9 +166,9 @@
                     <p>Engaging with the community through social service and impact programs.</p>
                 </div>
                 <div class="image-grid-3col">
-                    <div class="grid-item"><img src="images/img-1045.jpg" alt="Outreach activity 1"></div>
-                    <div class="grid-item"><img src="images/img-1048.jpg" alt="Outreach activity 2"></div>
-                    <div class="grid-item"><img src="images/img-1049.png" alt="Outreach activity 3"></div>
+                    <a href="nhcm-results-3.html?cat=16&name=Extension and Outreach activities" style="text-decoration: none; color: inherit;"><div class="grid-item"><img src="images/img-1045.jpg" alt="Outreach activity 1"></div></a>
+                    <a href="nhcm-results-3.html?cat=16&name=Extension and Outreach activities" style="text-decoration: none; color: inherit;"><div class="grid-item"><img src="images/img-1048.jpg" alt="Outreach activity 2"></div></a>
+                    <a href="nhcm-results-3.html?cat=16&name=Extension and Outreach activities" style="text-decoration: none; color: inherit;"><div class="grid-item"><img src="images/img-1049.png" alt="Outreach activity 3"></div></a>
                 </div>
             </section>
 
@@ -178,9 +178,9 @@
                     <p>Learning beyond the classroom with industrial visits and study trips.</p>
                 </div>
                 <div class="image-grid-3col">
-                    <div class="grid-item"><img src="images/img-1041.jpg" alt="Educational tour 1"></div>
-                    <div class="grid-item"><img src="images/img-1042.jpeg" alt="Educational tour 2"></div>
-                    <div class="grid-item"><img src="images/img-1043.jpg" alt="Educational tour 3"></div>
+                    <a href="nhcm-results-3.html?cat=37&name=Educational Tour" style="text-decoration: none; color: inherit;"><div class="grid-item"><img src="images/img-1041.jpg" alt="Educational tour 1"></div></a>
+                    <a href="nhcm-results-3.html?cat=37&name=Educational Tour" style="text-decoration: none; color: inherit;"><div class="grid-item"><img src="images/img-1042.jpeg" alt="Educational tour 2"></div></a>
+                    <a href="nhcm-results-3.html?cat=37&name=Educational Tour" style="text-decoration: none; color: inherit;"><div class="grid-item"><img src="images/img-1043.jpg" alt="Educational tour 3"></div></a>
                 </div>
             </section>
 
@@ -190,9 +190,9 @@
                     <p>Enhancing professional skills with specialized certification tracks.</p>
                 </div>
                 <div class="image-grid-3col">
-                    <div class="grid-item"><img src="images/img-1056.jpg" alt="Value added program 1"></div>
-                    <div class="grid-item"><img src="images/img-1057.jpg" alt="Value added program 2"></div>
-                    <div class="grid-item"><img src="images/img-1059.webp" alt="Value added program 3"></div>
+                    <a href="nhcm-results-3.html?cat=57&name=Value Added Program" style="text-decoration: none; color: inherit;"><div class="grid-item"><img src="images/img-1056.jpg" alt="Value added program 1"></div></a>
+                    <a href="nhcm-results-3.html?cat=57&name=Value Added Program" style="text-decoration: none; color: inherit;"><div class="grid-item"><img src="images/img-1057.jpg" alt="Value added program 2"></div></a>
+                    <a href="nhcm-results-3.html?cat=57&name=Value Added Program" style="text-decoration: none; color: inherit;"><div class="grid-item"><img src="images/img-1059.webp" alt="Value added program 3"></div></a>
                 </div>
             </section>
 
@@ -239,7 +239,35 @@
     for(let i=0; i<15; i++) elements.push(new KineticElement());
     function animate() { elements.forEach(e => e.move()); requestAnimationFrame(animate); }
     animate();
-</script>
+    window.addEventListener('load', () => {
+        // Standard initializations
+        if (typeof createNeuralEffect === "function") createNeuralEffect('neural-canvas');
+        if (typeof initHexBg === "function") initHexBg();
+        initReveal();
+
+        // 1. Get the tab from the URL (?tab=activities)
+        const urlParams = new URLSearchParams(window.location.search);
+        const targetTab = urlParams.get('tab');
+
+        if (targetTab) {
+            // 2. Wait for the specific element to exist before switching
+            const checkExist = setInterval(() => {
+                const element = document.getElementById(targetTab);
+                if (element) {
+                    console.log("Found tab, switching to:", targetTab);
+                    switchTab(targetTab);
+                    clearInterval(checkExist); // Stop looking once found
+                }
+            }, 50); // Checks every 50ms
+
+            // 3. Safety timeout: stop looking after 3 seconds if not found
+            setTimeout(() => clearInterval(checkExist), 3000);
+        } else {
+            // Default startup tab
+            switchTab('overview');
+        }
+    });
+    </script>
 
 </body>
 </html>

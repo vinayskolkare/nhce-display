@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NHCE - Research & PhD Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.34/dist/lenis.min.js"></script>
+
+    <style>
+        /* CSS variables inherited from your template */
+        :root {
+            --primary-blue: #221d5c;
+            --accent-red: #ec2024;
+            --light-bg: #f0f2f5;
+            --text-dark: #221d5c;
+            --white: #ffffff;
+            --sidebar-width: 320px;
+            --transition-speed: 0.4s;
+        }
+
+        html.lenis { height: auto; }
+        .lenis.lenis-smooth { scroll-behavior: auto !important; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--light-bg);
+            color: var(--text-dark);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* --- Sidebar Update --- */
+        .sidebar {
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: var(--primary-blue);
+            position: fixed;
+            left: 0; top: 0;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+            border-right: 6px solid var(--accent-red);
+        }
+
+        .logo-area { margin-bottom: 40px; text-align: center; }
+        .logo-area .logo-placeholder { 
+            font-size: 2.5rem; font-weight: 800; color: white; border: 3px solid var(--accent-red); padding: 10px;
+        }
+
+        .simple-back-arrow {
+            color: white; font-size: 2rem; margin-bottom: 20px;
+            cursor: pointer; transition: 0.3s;
+        }
+
+        .nav-links { list-style: none; flex-grow: 1; }
+        .nav-links a {
+            color: rgba(255,255,255,0.6); text-decoration: none;
+            font-weight: 700; font-size: 1rem; display: flex;
+            align-items: center; gap: 15px; padding: 15px 20px;
+            border-radius: 15px; transition: all 0.3s ease; cursor: pointer;
+        }
+        .nav-links a.active { background: rgba(255,255,255,0.1); color: white; border-left: 5px solid var(--accent-red); }
+
+        /* --- Main Content Area --- */
+        main {
+            margin-left: var(--sidebar-width);
+            width: calc(100% - var(--sidebar-width));
+            padding: 40px;
+        }
+
+        .dashboard-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 25px; }
+
+        .hero-tile {
+            grid-column: span 12;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, #3a348a 100%);
+            border-radius: 30px; padding: 60px; color: white; margin-bottom: 30px;
+        }
+
+        .card {
+            background: white; border-radius: 25px; padding: 35px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05); height: 100%;
+        }
+
+        /* WordPress Content Styling */
+        #wp-content-area { line-height: 1.8; font-size: 1.05rem; }
+        #wp-content-area table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        #wp-content-area th, #wp-content-area td { border: 1px solid #eee; padding: 12px; }
+        #wp-content-area th { background: #f8f9fa; color: var(--primary-blue); }
+
+        /* Shuffle Grid */
+        .post-card {
+            background: white; border-radius: 15px; overflow: hidden;
+            text-decoration: none; color: inherit; display: block;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        .post-card:hover { transform: translateY(-5px); }
+        .post-img { width: 100%; height: 180px; object-fit: cover; }
+        .post-info { padding: 20px; }
+		
+		     .logo-area { margin-bottom: 40px; text-align: center; }
+        .logo-area img { width: 100%; max-width: 240px; filter: brightness(0) invert(1); }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <a href="admissions.html" class="simple-back-arrow"><i class="fa-solid fa-circle-arrow-left"></i></a>
+        <div class="logo-area"><img src="images/logo-2.png" width="100%"></div>
+        <ul class="nav-links">
+            <li><a onclick="switchTab('research')" id="link-research" class="active"><i class="fa-solid fa-microscope"></i> <span>PhD Details</span></a></li>
+          
+        </ul>
+    </aside>
+
+    <main>
+        <div id="research" class="tab-content active">
+            <div class="hero-tile">
+                <span style="color:var(--accent-red); font-weight:800; letter-spacing:3px;">RESEARCH REPOSITORY</span>
+                <h1 id="page-title">Loading PhD Details...</h1>
+            </div>
+            <div class="card">
+                <div id="wp-content-area">Fetching content from NHCE server...</div>
+            </div>
+        </div>
+
+        <div id="shuffled" class="tab-content" style="display:none;">
+            <div class="header-flex">
+                <h2 style="color:var(--primary-blue); font-weight:800; font-size:2rem; margin-bottom:20px;">
+                    Departmental Updates <span style="font-size:0.8rem; color:var(--accent-red); cursor:pointer;" onclick="renderShuffledPosts()">(SHUFFLE)</span>
+                </h2>
+            </div>
+            <div id="posts-list" style="display:grid; grid-template-columns: repeat(3, 1fr); gap:20px;">
+                </div>
+        </div>
+    </main>
+
+    <div id="pdf-modal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2000; display: none; flex-direction: column;">
+        <div style="background: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-weight: 700; color: var(--primary-blue);">PhD_Guidelines_2026.pdf</span>
+            <button onclick="closePDF()" style="background: var(--accent-red); color: white; border: none; padding: 10px 25px; border-radius: 8px; cursor: pointer;">CLOSE</button>
+        </div>
+        <iframe src="https://newhorizoncollegeofengineering.in/wp-content/uploads/2026/01/Batch-2022-2026-OE-syllabus.pdf" style="flex-grow: 1; border: none;"></iframe>
+    </div>
+
+    <script>
+        const wpBaseUrl = 'https://department-of-computer-science-engineering.newhorizoncollegeofengineering.in/';
+        const phdPageId = '3101'; // From newhorizoncollegeofengineering.in
+        let fetchedPosts = [];
+
+        // Tab Switching Logic
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
+            document.querySelectorAll('.nav-links a').forEach(l => l.classList.remove('active'));
+            document.getElementById(tabId).style.display = 'block';
+            document.getElementById('link-' + tabId).classList.add('active');
+            if(tabId === 'shuffled' && fetchedPosts.length === 0) loadUpdates();
+        }
+
+        // Logic 1: Fetch Specific PhD Page Content
+        async function fetchPhDDetails() {
+            try {
+                // Note: Using the main domain for this specific ID as requested
+                const response = await fetch(`https://newhorizoncollegeofengineering.in/wp-json/wp/v2/pages/${phdPageId}`);
+                const data = await response.json();
+                document.getElementById('page-title').innerText = data.title.rendered;
+                document.getElementById('wp-content-area').innerHTML = data.content.rendered;
+            } catch (e) {
+                document.getElementById('wp-content-area').innerHTML = "Error loading research data.";
+            }
+        }
+
+        // Logic 2: Fetch and Shuffle Updates
+        async function loadUpdates() {
+            const listElement = document.getElementById('posts-list');
+            try {
+                const response = await fetch(`${wpBaseUrl}/wp-json/wp/v2/posts?categories=13&_embed&per_page=20`);
+                fetchedPosts = await response.json();
+                renderShuffledPosts();
+            } catch (e) { listElement.innerHTML = "Error loading updates."; }
+        }
+
+        function renderShuffledPosts() {
+            const listElement = document.getElementById('posts-list');
+            const shuffled = [...fetchedPosts].sort(() => 0.5 - Math.random()).slice(0, 6);
+            listElement.innerHTML = shuffled.map(post => `
+                <a href="${post.link}" target="_blank" class="post-card">
+                    <img src="${post._embedded?.['wp:featuredmedia']?.[0]?.source_url || 'https://via.placeholder.com/400x250'}" class="post-img">
+                    <div class="post-info">
+                        <h4 style="color:var(--primary-blue); margin-bottom:10px;">${post.title.rendered}</h4>
+                        <p style="font-size:0.85rem; color:#666;">${post.excerpt.rendered.substring(0, 100)}...</p>
+                    </div>
+                </a>
+            `).join('');
+        }
+
+        // PDF Functions
+        function openPDF() { document.getElementById('pdf-modal').style.display = 'flex'; }
+        function closePDF() { document.getElementById('pdf-modal').style.display = 'none'; }
+
+        window.onload = () => { fetchPhDDetails(); };
+    </script>
+</body>
+</html>

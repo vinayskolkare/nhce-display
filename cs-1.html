@@ -529,6 +529,7 @@
             <li><a onclick="switchTab('coe')" id="link-coe"><i class="fa-solid fa-microchip"></i> <span>CoE</span></a></li>
             <li><a onclick="switchTab('activities')" id="link-activities"><i class="fa-solid fa-calendar-days"></i> <span>Activities</span></a></li>
             <li><a onclick="switchTab('placement')" id="link-placement"><i class="fa-solid fa-user-graduate"></i> <span>Placements</span></a></li>
+            <li><a onclick="switchTab('testimonials')" id="link-testimonials"><i class="fa-solid fa-comment-dots"></i> <span>Testimonials</span></a></li>
         </ul>
     </aside>
 
@@ -922,11 +923,11 @@
                 <div class="card span-6">
                     <h3>Placement Stats (2023-24)</h3>
                     <ul class="list-items">
-                                           <li><strong>Placement results:</strong> 100%</li>
-<li><strong>TCS:</strong> 14 Students</li>
-<li><strong>Infosys:</strong> 11 Students</li>
-<li><strong>Wipro:</strong> 9 Students</li>
-<li><strong>Accenture:</strong> 8 Students</li>
+                        <li><strong>Placement results:</strong> 100%</li>
+                        <li><strong>TCS:</strong> 14 Students</li>
+                        <li><strong>Infosys:</strong> 11 Students</li>
+                        <li><strong>Wipro:</strong> 9 Students</li>
+                        <li><strong>Accenture:</strong> 8 Students</li>
                     </ul>
                 </div>
                 <div class="card span-6">
@@ -939,6 +940,94 @@
 						<li><strong>EY (Ernst & Young):</strong> 10 Students</li>
 						<li><strong>GlobalLogic:</strong> 6 Students</li>
                     </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="testimonials" class="tab-content">
+            <div class="dashboard-grid">
+                <div class="hero-tile">
+                    <canvas id="placement-canvas"></canvas>
+                    <div class="hero-content">
+                        <span class="pre-title">Testimonials</span>
+                        <h1>Testimonials</h1>
+                        <p class="sub-title">What our students say about us.</p>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div class="card span-12 reveal" style="display: flex; gap: 30px; align-items: flex-start; margin-top: 20px;">
+                    <div style="flex-shrink: 0; text-align: center; min-width: 150px;">
+                        <div style="width: 100px; height: 100px; background: var(--light-bg); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; color: var(--primary-blue); font-weight: 800; margin: 0 auto 15px; border: 3px solid var(--accent-red);">
+                            V
+                        </div>
+                        <h4 style="color: var(--primary-blue); font-size: 1.2rem; margin-bottom: 5px;">Vishal ER</h4>
+                        <p style="font-size: 0.9rem; color: #666; font-weight: 700;">1NH22CS422</p>
+                        <div style="background: var(--primary-blue); color: white; padding: 5px 10px; border-radius: 5px; font-size: 0.8rem; font-weight: 700; margin-top: 10px; display: inline-block;">Placed at Rubrik</div>
+                    </div>
+                    <div style="flex-grow: 1;">
+                        <i class="fa-solid fa-quote-left" style="font-size: 2rem; color: var(--accent-red); opacity: 0.2; margin-bottom: 15px; display: block;"></i>
+                        <p style="font-size: 1.1rem; line-height: 1.8; color: #444; font-style: italic;">
+                            "My placement experience at New Horizon College of Engineering (NHCE) has been transformative, thanks to the dedicated placement cell, the CSE department, and our supportive lecturers. The placement cell provided comprehensive technical skills, soft skills, resume-building, and aptitude training, ensuring we were well-prepared for job opportunities. The CSE department strengthened my technical foundation through a robust curriculum and hands-on projects while lecturers offered invaluable guidance. With numerous industry interactions and webinars, I gained insights into real-world challenges. As a result, I secured a position at Rubrik, and I am deeply grateful for NHCE's role in shaping my career."
+                        </p>
+                    </div>
+                </div>
+                <div class="card span-12 reveal" style="display: flex; gap: 30px; align-items: flex-start; margin-top: 20px;">
+                    <div style="flex-shrink: 0; text-align: center; min-width: 150px;">
+                        <div style="width: 100px; height: 100px; background: var(--light-bg); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; color: var(--primary-blue); font-weight: 800; margin: 0 auto 15px; border: 3px solid var(--accent-red);">
+                            L
+                        </div>
+                        <h4 style="color: var(--primary-blue); font-size: 1.2rem; margin-bottom: 5px;">Leah Richa Aby</h4>
+                        <p style="font-size: 0.9rem; color: #666; font-weight: 700;">1NH21CS143</p>
+                        <div style="background: var(--primary-blue); color: white; padding: 5px 10px; border-radius: 5px; font-size: 0.8rem; font-weight: 700; margin-top: 10px; display: inline-block;">Placed at Vontier</div>
+                    </div>
+                    <div style="flex-grow: 1;">
+                        <i class="fa-solid fa-quote-left" style="font-size: 2rem; color: var(--accent-red); opacity: 0.2; margin-bottom: 15px; display: block;"></i>
+                        <p style="font-size: 1.1rem; line-height: 1.8; color: #444; font-style: italic;">
+                            "I am immensely grateful to New Horizon College of Engineering for their unwavering support during my placement journey at
+                            Vontier. The Placement and Life Skills Cell was crucial, providing a well-structured training program that enhanced my coding,
+                            problem-solving, and aptitude skills. The online platform offered valuable resources, including assessments and mock sessions,
+                            preparing me for recruitment. I'm thankful to the faculty and mentors for their constant guidance and encouragement, which helped
+                            me achieve this significant milestone. I am proud to be a part of this college and appreciate their dedication to student success."
+                        </p>
+                    </div>
+                </div>
+                <div class="card span-12 reveal" style="display: flex; gap: 30px; align-items: flex-start; margin-top: 20px;">
+                    <div style="flex-shrink: 0; text-align: center; min-width: 150px;">
+                        <div style="width: 100px; height: 100px; background: var(--light-bg); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; color: var(--primary-blue); font-weight: 800; margin: 0 auto 15px; border: 3px solid var(--accent-red);">
+                            B
+                        </div>
+                        <h4 style="color: var(--primary-blue); font-size: 1.2rem; margin-bottom: 5px;">Bipin Sai Surya Guttula</h4>
+                        <p style="font-size: 0.9rem; color: #666; font-weight: 700;">1NH22CS048</p>
+                        <div style="background: var(--primary-blue); color: white; padding: 5px 10px; border-radius: 5px; font-size: 0.8rem; font-weight: 700; margin-top: 10px; display: inline-block;">Internship at JP Morgan Chase</div>
+                    </div>
+                    <div style="flex-grow: 1;">
+                        <i class="fa-solid fa-quote-left" style="font-size: 2rem; color: var(--accent-red); opacity: 0.2; margin-bottom: 15px; display: block;"></i>
+                        <p style="font-size: 1.1rem; line-height: 1.8; color: #444; font-style: italic;">
+                            "I sincerely thank New Horizon College for allowing me to participate in the Code for Good 2024 hackathon. Their constant support
+                            helped me secure the runner-up position and land a summer internship with JP Morgan Chase. I am truly grateful for the
+                            mentorship and encouragement that guided me through this experience."
+                        </p>
+                    </div>
+                </div>
+                <div class="card span-12 reveal" style="display: flex; gap: 30px; align-items: flex-start; margin-top: 20px;">
+                    <div style="flex-shrink: 0; text-align: center; min-width: 150px;">
+                        <div style="width: 100px; height: 100px; background: var(--light-bg); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; color: var(--primary-blue); font-weight: 800; margin: 0 auto 15px; border: 3px solid var(--accent-red);">
+                            s
+                        </div>
+                        <h4 style="color: var(--primary-blue); font-size: 1.2rem; margin-bottom: 5px;">Surya K. M</h4>
+                        <p style="font-size: 0.9rem; color: #666; font-weight: 700;">NH21CS242</p>
+                        <div style="background: var(--primary-blue); color: white; padding: 5px 10px; border-radius: 5px; font-size: 0.8rem; font-weight: 700; margin-top: 10px; display: inline-block;">Internship at JP Morgan Chase</div>
+                    </div>
+                    <div style="flex-grow: 1;">
+                        <i class="fa-solid fa-quote-left" style="font-size: 2rem; color: var(--accent-red); opacity: 0.2; margin-bottom: 15px; display: block;"></i>
+                        <p style="font-size: 1.1rem; line-height: 1.8; color: #444; font-style: italic;">
+                            "I am grateful to New Horizon College of Engineering and its dedicated HRD team for playing a crucial role in my
+                            career journey. Through the college's teaching and placement cell's training and support, I secured a position at
+                            Morgan Stanley. Their structured training approach and unwavering support were instrumental in helping me achieve
+                            this milestone. Thank you, NHCE, for laying the foundation of my professional success."
+                        </p>
+                    </div>
                 </div>
             </div>
         </section>

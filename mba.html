@@ -98,11 +98,26 @@
         .logo-area { margin-bottom: 40px; text-align: center; }
         .logo-area img { width: 100%; max-width: 240px; filter: brightness(0) invert(1); }
 
-        .simple-back-arrow {
-            color: white; font-size: 2rem; margin-bottom: 20px;
-            cursor: pointer; transition: 0.3s; display: inline-block;
-        }
-        .simple-back-arrow:hover { color: var(--accent-red); transform: translateX(-5px); }
+      .nav-arrows-container {
+    display: flex;
+    gap: 20px; /* Space between the two arrows */
+    align-items: center;
+}
+
+.simple-back-arrow {
+    color: white; 
+    font-size: 2rem; 
+    margin-bottom: 20px;
+    cursor: pointer; 
+    transition: 0.3s; 
+    display: inline-block;
+    text-decoration: none;
+}
+
+.simple-back-arrow:hover { 
+    color: var(--accent-red); 
+    transform: translateX(-5px); 
+}
 
         .nav-links { list-style: none; flex-grow: 1; }
         .nav-links li { margin-bottom: 8px; }
@@ -345,7 +360,15 @@
     </div>
 
     <aside class="sidebar">
-        <a href="programs.html" class="simple-back-arrow"><i class="fa-solid fa-circle-arrow-left"></i></a>
+	<div class="nav-arrows-container">
+    <a href="index.html" class="simple-back-arrow" title="Home">
+        <i class="fa-solid fa-house-circle-check"></i>
+    </a>
+    
+    <a href="admissions.html" class="simple-back-arrow" title="Back">
+        <i class="fa-solid fa-circle-arrow-left"></i>
+    </a>
+</div>
         <div class="logo-area"><img src="images/logo-2.png" alt="NHCE Logo"></div>
         <ul class="nav-links">
             <li><a onclick="switchTab('overview')" id="link-overview" class="active"><i class="fa-solid fa-chart-line"></i> <span>Overview</span></a></li>
@@ -399,37 +422,146 @@
   
     </div>
 
-    <div id="academic" class="span-12 section-container">
-        <div class="grid-layout">
-            
-            <div class="card">
-                <h3>1st Year (Core) <i class="fas fa-chart-line" style="float:right; opacity:0.3"></i></h3>
-                <div class="item-row"><i class="fas fa-check"></i> Management Principles & OB</div>
-                <div class="item-row"><i class="fas fa-check"></i> Managerial Economics</div>
-                <div class="item-row"><i class="fas fa-check"></i> Marketing Management</div>
-                <div class="item-row"><i class="fas fa-check"></i> Financial Statement Analysis</div>
-                <div class="item-row"><i class="fas fa-check"></i> Business Research Methods</div>
-            </div>
+<div id="academic" class="span-12 section-container">
+<div class="span-12 reveal" style="margin-bottom: 40px;">
+<h3 style="color: var(--primary-blue); font-weight: 800; border-left: 6px solid var(--accent-red); padding-left: 15px; margin-bottom: 20px; font-size: 1.6rem;">
+FIRST SEMESTER <i class="fas fa-chart-line" style="float:right; opacity:0.2"></i>
+</h3>      
+<div class="card" style="padding: 30px;">
+<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+<div style="border-right: 1px solid rgba(34, 29, 92, 0.1); padding-right: 15px;">
+<div class="item-row"><i class="fas fa-check"></i> Management Principles & Organisational Behaviour</div>
+<div class="item-row"><i class="fas fa-check"></i> Managerial Economics
+</div>
+<div class="item-row"><i class="fas fa-check"></i> Data Analysis and Decision Making
+</div>
+</div>
+<div style="border-right: 1px solid rgba(34, 29, 92, 0.1); padding-right: 15px;">
+<div class="item-row"><i class="fas fa-check"></i> Accounting &amp; Financial Statement Analysis
+</div>
+<div class="item-row"><i class="fas fa-check"></i> Marketing Management
+</div>
+<div class="item-row"><i class="fas fa-check"></i> Business Research Methods
+Management</div>
+</div>
+<div>
+<div class="item-row"><i class="fas fa-check"></i> Managerial Communication
+</div>
+<div class="item-row"><i class="fas fa-check"></i> Basics to Excel
+</div>
+<div class="item-row"><i class="fas fa-check"></i> Business Immersion Project </div>
+</div>
+</div>
+</div>
+</div>
 
-            <div class="card">
-                <h3>2nd Year (Electives) <i class="fas fa-briefcase" style="float:right; opacity:0.3"></i></h3>
-                <div class="item-row"><i class="fas fa-check"></i> Dual Specialization Electives</div>
-                <div class="item-row"><i class="fas fa-check"></i> Managing Digital Business</div>
-                <div class="item-row"><i class="fas fa-check"></i> International Business</div>
-                <div class="item-row"><i class="fas fa-check"></i> Indian Ethos & Business Ethics</div>
-                <div class="item-row"><i class="fas fa-check"></i> Innovation & Design Thinking</div>
-            </div>
 
-            <div class="card">
-                <h3>Practicum <i class="fas fa-handshake" style="float:right; opacity:0.3"></i></h3>
-                <div class="item-row"><i class="fas fa-check"></i> 6-Week Corporate Internship</div>
-                <div class="item-row"><i class="fas fa-check"></i> Business Immersion Project</div>
-                <div class="item-row"><i class="fas fa-check"></i> Societal Project</div>
-                <div class="item-row"><i class="fas fa-check"></i> Industry-Linked Dissertation</div>
-            </div>
 
-        </div>
-    </div>
+<div class="span-12 reveal" style="margin-bottom: 40px;">
+<h3 style="color: var(--primary-blue); font-weight: 800; border-left: 6px solid var(--accent-red); padding-left: 15px; margin-bottom: 20px; font-size: 1.6rem;">
+SECOND SEMESTER <i class="fas fa-chart-line" style="float:right; opacity:0.2"></i>
+</h3>      
+<div class="card" style="padding: 30px;">
+<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+<div style="border-right: 1px solid rgba(34, 29, 92, 0.1); padding-right: 15px;">
+<div class="item-row"><i class="fas fa-check"></i> Production &amp; Operations Management</div>
+<div class="item-row"><i class="fas fa-check"></i> Corporate Finance
+</div>
+<div class="item-row"><i class="fas fa-check"></i> Human Resource Management
+</div>
+
+</div>
+<div style="border-right: 1px solid rgba(34, 29, 92, 0.1); padding-right: 15px;">
+<div class="item-row"><i class="fas fa-check"></i> Entrepreneurship Development 
+</div>
+<div class="item-row"><i class="fas fa-check"></i> Business Ethics & Corporate Governance 
+</div>
+<div class="item-row"><i class="fas fa-check"></i> Corporate Interface &mp; Professional Development 
+Management</div>
+</div>
+<div>
+<div class="item-row"><i class="fas fa-check"></i> Quantitative Techniques & Operations Research
+Management</div>
+<div class="item-row"><i class="fas fa-check"></i> Societal Project
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+
+
+<div class="span-12 reveal" style="margin-bottom: 40px;">
+<h3 style="color: var(--primary-blue); font-weight: 800; border-left: 6px solid var(--accent-red); padding-left: 15px; margin-bottom: 20px; font-size: 1.6rem;">
+THIRD SEMESTER <i class="fas fa-chart-line" style="float:right; opacity:0.2"></i>
+</h3>      
+<div class="card" style="padding: 30px;">
+<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+<div style="border-right: 1px solid rgba(34, 29, 92, 0.1); padding-right: 15px;">
+<div class="item-row"><i class="fas fa-check"></i> Managing Digital Business</div>
+<div class="item-row"><i class="fas fa-check"></i> International Business
+</div>
+<div class="item-row"><i class="fas fa-check"></i> Elective 1
+</div>
+
+</div>
+<div style="border-right: 1px solid rgba(34, 29, 92, 0.1); padding-right: 15px;">
+<div class="item-row"><i class="fas fa-check"></i> Elective 2
+</div>
+<div class="item-row"><i class="fas fa-check"></i> Elective 1
+</div>
+</div>
+<div>
+
+
+<div class="item-row"><i class="fas fa-check"></i> Elective 2</div>
+<div class="item-row"><i class="fas fa-check"></i> Internship
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+<div class="span-12 reveal" style="margin-bottom: 40px;">
+<h3 style="color: var(--primary-blue); font-weight: 800; border-left: 6px solid var(--accent-red); padding-left: 15px; margin-bottom: 20px; font-size: 1.6rem;">
+FOURTH SEMESTER <i class="fas fa-chart-line" style="float:right; opacity:0.2"></i>
+</h3>      
+<div class="card" style="padding: 30px;">
+<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+<div style="border-right: 1px solid rgba(34, 29, 92, 0.1); padding-right: 15px;">
+<div class="item-row"><i class="fas fa-check"></i> Indian Ethos
+</div>
+<div class="item-row"><i class="fas fa-check"></i> Elective 1
+
+</div>
+
+
+</div>
+<div style="border-right: 1px solid rgba(34, 29, 92, 0.1); padding-right: 15px;">
+<div class="item-row"><i class="fas fa-check"></i> Elective 2
+</div>
+<div class="item-row"><i class="fas fa-check"></i> Elective 1
+</div>
+</div>
+<div>
+
+
+<div class="item-row"><i class="fas fa-check"></i> Elective 2</div>
+<div class="item-row"><i class="fas fa-check"></i> Innovation & Design Thinking Based Project Dissertation
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+
+
+
+
+</div>
 
 <div id="vap" class="span-12 section-container" style="margin-top: 30px;">
     <h2 style="margin-bottom: 25px; color: var(--primary-blue); font-weight: 800;">Value Added Programs (VAP)</h2>

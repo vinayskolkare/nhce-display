@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NHCE - Template</title>
+    <title>NHCE - Admissions, Courses & Minor Degrees</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -14,6 +14,7 @@
             --light-bg: #f0f2f5;
             --white: #ffffff;
             --text-dark: #221d5c;
+            --gold: #d4af37;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -49,20 +50,9 @@
             position: absolute;
             top: 50%; left: 50%;
             transform: translate(-50%, -50%);
-            width: 35vw;
-            max-width: 500px;
-            opacity: 0.04;
-            z-index: 2;
+            width: 35vw; max-width: 500px;
+            opacity: 0.04; z-index: 2;
         }
-
-        .floating-element {
-            position: absolute;
-            opacity: 0.1;
-            z-index: 0;
-        }
-
-        .float-bubble { border-radius: 50%; filter: blur(40px); }
-        .float-hex { clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); }
 
         /* --- CONTENT WRAPPER --- */
         .page-content {
@@ -73,422 +63,748 @@
             margin: 0 auto;
         }
 
-        /* --- ADMISSIONS UI --- */
-.section {
-    margin-bottom: 60px;
-}
+        .section { margin-bottom: 80px; }
 
-.section-title {
-    font-size: 32px;
-    font-weight: 800;
-    margin-bottom: 25px;
-    color: var(--primary-blue);
-    position: relative;
-}
+        .section-title {
+            font-size: 36px; font-weight: 800; margin-bottom: 35px;
+            color: var(--primary-blue); position: relative;
+            display: flex; align-items: center; gap: 15px;
+        }
 
-.section-title::after {
-    content: "";
-    width: 60px;
-    height: 4px;
-    background: var(--accent-red);
-    position: absolute;
-    bottom: -8px;
-    left: 0;
-    border-radius: 2px;
-}
+        .section-title::after {
+            content: ""; width: 80px; height: 5px;
+            background: var(--accent-red); position: absolute;
+            bottom: -10px; left: 0; border-radius: 2px;
+        }
 
-.card-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 25px;
-}
+        /* --- COURSE CARDS --- */
+        .course-group h3 {
+            font-size: 24px; margin: 40px 0 20px;
+            color: var(--primary-blue); border-left: 6px solid var(--accent-red);
+            padding-left: 15px;
+        }
 
-.card {
-    background: var(--white);
-    border-radius: 18px;
-    padding: 25px;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.08);
-    transition: transform 0.4s ease, box-shadow 0.4s ease;
-    position: relative;
-    overflow: hidden;
-}
+        .card-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
 
-.card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 30px 60px rgba(0,0,0,0.12);
-}
+        .card {
+            background: var(--white); border-radius: 20px; padding: 30px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.06);
+            transition: all 0.3s ease; border: 1px solid rgba(0,0,0,0.03);
+            display: flex; flex-direction: column;
+        }
 
-.card img {
-    width: 100%;
-    height: 160px;
-    object-fit: cover;
-    border-radius: 14px;
-    margin-bottom: 15px;
-}
+        .card:hover { transform: translateY(-8px); box-shadow: 0 25px 50px rgba(0,0,0,0.1); }
+        .card h4 { font-size: 20px; margin-bottom: 15px; color: var(--primary-blue); display: flex; align-items: center; gap: 12px; }
+        .card h4 i { color: var(--accent-red); }
+        .card p { font-size: 15px; line-height: 1.6; color: #555; margin-bottom: 15px; }
 
-.card h3 {
-    font-size: 20px;
-    font-weight: 700;
-    margin-bottom: 10px;
-}
+        /* --- MINOR DEGREE STYLING --- */
+        .minor-intro-card {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, #3a3285 100%);
+            color: white; padding: 40px; border-radius: 24px; margin-bottom: 30px;
+        }
 
-.card p, .card li {
-    font-size: 15px;
-    line-height: 1.6;
-    color: #555;
-}
+        .minor-intro-card h3 { color: #fff; margin-bottom: 15px; font-size: 28px; }
+        .minor-intro-card p { color: rgba(255,255,255,0.9); font-size: 16px; margin-bottom: 20px; }
 
-.card ul {
-    padding-left: 18px;
-}
+        .minor-table {
+            width: 100%; border-collapse: collapse; background: white;
+            border-radius: 15px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
 
-.icon-badge {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    background: var(--accent-red);
-    color: #fff;
-    padding: 10px;
-    border-radius: 50%;
-    font-size: 16px;
-}
+        .minor-table th { background: var(--primary-blue); color: white; padding: 18px; text-align: left; }
+        .minor-table td { padding: 15px 18px; border-bottom: 1px solid #eee; font-size: 15px; }
+        .minor-table tr:nth-child(even) { background: #f9f9fb; }
+        .branch-label { font-weight: 700; color: var(--accent-red); text-transform: uppercase; font-size: 13px; }
 
-/* Apply Steps */
-.steps {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 20px;
-}
+        /* --- BIGGER SCHOLARSHIP UI --- */
+        .scholarship-highlight {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 30px;
+        }
 
-.step {
-    background: var(--white);
-    border-radius: 16px;
-    padding: 25px;
-    box-shadow: 0 15px 35px rgba(0,0,0,0.07);
-}
+        .scholar-card {
+            background: white; border-radius: 24px; padding: 40px;
+            text-align: center; border-top: 8px solid var(--gold);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+        }
 
-.step span {
-    font-size: 30px;
-    font-weight: 800;
-    color: var(--accent-red);
-}
-/*css styls - for course*/
+        .scholar-card h3 { font-size: 26px; margin-bottom: 20px; color: var(--primary-blue); }
 
-.course-group {
-    margin-bottom: 50px;
-}
+        .concession-row {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 15px 0; border-bottom: 1px dashed #ddd;
+        }
 
-.course-group h3 {
-    font-size: 26px;
-    font-weight: 800;
-    margin-bottom: 25px;
-    color: var(--primary-blue);
-}
+        .concession-row:last-child { border: none; }
+        .rank-tag { font-weight: 800; color: #444; }
+        .percent-tag { background: #fff4f4; color: var(--accent-red); padding: 5px 15px; border-radius: 50px; font-weight: 800; }
 
-.course-cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 22px;
-}
+        .eligibility-list { list-style: none; }
+        .eligibility-list li { position: relative; padding-left: 25px; margin-bottom: 12px; font-size: 15px; }
+        .eligibility-list li::before { content: "✓"; position: absolute; left: 0; color: var(--accent-red); font-weight: 900; }
 
-.course-card {
-    background: rgba(255, 255, 255, 0.9);
-    backdrop-filter: blur(8px);
-    border-radius: 20px;
-    padding: 22px;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.08);
-    transition: all 0.35s ease;
-    position: relative;
-}
-
-.course-card::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 5px;
-    background: linear-gradient(90deg, var(--primary-blue), var(--accent-red));
-    border-radius: 20px 20px 0 0;
-}
-
-.course-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 30px 60px rgba(0,0,0,0.12);
-}
-
-.course-card i {
-    font-size: 28px;
-    color: var(--accent-red);
-    margin-bottom: 12px;
-}
-
-.course-card h4 {
-    font-size: 18px;
-    font-weight: 700;
-    margin-bottom: 8px;
-}
-
-.course-card p {
-    font-size: 14.5px;
-    color: #555;
-    line-height: 1.6;
-}
-
-
-/* BACK BUTTON */
- .back-btn {
+        .back-btn {
             position: fixed; top: 25px; left: 25px; z-index: 100;
-            text-decoration: none; color: var(--blue);
+            text-decoration: none; color: var(--primary-blue);
             background: rgba(255, 255, 255, 0.95);
             padding: 12px 22px; border-radius: 50px;
             font-weight: 700; display: flex; align-items: center; gap: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); backdrop-filter: blur(10px);
         }
+
+        .tag { font-size: 12px; font-weight: 700; padding: 4px 12px; border-radius: 50px; background: #eee; margin-top: auto; align-self: flex-start; }
+
+        @media (max-width: 768px) {
+            .scholarship-highlight { grid-template-columns: 1fr; }
+            .section-title { font-size: 28px; }
+        }
+		
+		/* --- INDUSTRY CERTIFICATION TABLE UI --- */
+        .cert-container {
+            width: 100%;
+            overflow-x: auto;
+            background: var(--white);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+
+        .cert-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1000px;
+        }
+
+        .cert-table th {
+            background: var(--primary-blue);
+            color: white;
+            padding: 20px;
+            text-align: left;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .cert-table td {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            vertical-align: top;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .specialization-tag {
+            font-weight: 800;
+            color: var(--accent-red);
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .job-opps {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 13px;
+            color: #444;
+            border-left: 3px solid var(--primary-blue);
+        }
+
+        .semester-badge {
+            display: inline-block;
+            background: #eef2ff;
+            color: var(--primary-blue);
+            padding: 4px 10px;
+            border-radius: 5px;
+            font-weight: 700;
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+		
+		.floating-element {
+            position: absolute;
+            opacity: 0.1;
+            z-index: 0;
+        }
+
+        .float-bubble { border-radius: 50%; filter: blur(40px); }
+        .float-hex { clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); }
+
+
+.eligibility-container {
+        padding: 60px 5%;
+        background: #f8f9fa;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .eligibility-header {
+        text-align: center;
+        margin-bottom: 50px;
+    }
+
+    .eligibility-header h2 {
+        font-size: 32px;
+        color: #221d5c; /* NHCE Blue */
+        position: relative;
+        display: inline-block;
+        padding-bottom: 10px;
+    }
+
+    .eligibility-header h2::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60px;
+        height: 4px;
+        background: #ec2024; /* NHCE Red */
+        border-radius: 2px;
+    }
+
+    .eligibility-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 25px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .eligibility-card {
+        background: #ffffff;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        border-top: 5px solid #221d5c;
+        transition: transform 0.3s ease;
+    }
+
+    .eligibility-card:hover {
+        transform: translateY(-10px);
+    }
+
+    .eligibility-card.research {
+        border-top-color: #ec2024;
+    }
+
+    .eligibility-card i {
+        font-size: 24px;
+        color: #ec2024;
+        margin-bottom: 15px;
+    }
+
+    .eligibility-card h3 {
+        font-size: 20px;
+        color: #221d5c;
+        margin-bottom: 15px;
+        font-weight: 700;
+    }
+
+    .eligibility-card p {
+        font-size: 14.5px;
+        line-height: 1.6;
+        color: #555;
+    }
+
+    .highlight-text {
+        color: #221d5c;
+		}
+		
+		/* Base state: Hidden and shifted down */
+.reveal-section {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: all 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    will-change: opacity, transform;
+}
+
+/* Active state: Visible and in position */
+.reveal-section.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Optional: Staggered effect for cards inside a section */
+.reveal-section.active .card, 
+.reveal-section.active .cert-table tr {
+    animation: fadeInUp 0.6s ease forwards;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Delaying individual cards for a "wave" effect */
+.reveal-section.active .card:nth-child(2) { animation-delay: 0.2s; }
+.reveal-section.active .card:nth-child(3) { animation-delay: 0.4s; }
+.reveal-section.active .card:nth-child(4) { animation-delay: 0.6s; }
+.btn-sm-nhce {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 18px; /* Compact size */
+        background-color: #221d5c; /* NHCE Blue */
+        color: #ffffff;
+        text-decoration: none;
+        border-radius: 4px; /* More professional square-round edge */
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        font-size: 12px; /* Small font */
+        transition: all 0.3s ease;
+        border: 1px solid transparent;
+        cursor: pointer;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .btn-sm-nhce:hover {
+        background-color: #ec2024; /* Changes to NHCE Red on hover */
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(236, 32, 36, 0.3);
+    }
+
+    .btn-sm-nhce i {
+        font-size: 10px;
+        transition: transform 0.3s ease;
+    }
+
+    .btn-sm-nhce:hover i {
+        transform: translateX(3px);
+    }
+	
+	
+	/* PORTAL STYLING */
+    .program-portal-header {
+        text-align: left;
+        margin-bottom: 40px;
+    }
+    
+    .portal-subtitle {
+        color: #666;
+        font-size: 16px;
+        margin-top: 10px;
+    }
+
+    .portal-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 30px;
+    }
+
+    .portal-card {
+        background: #ffffff;
+        padding: 40px;
+        border-radius: 20px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.05);
+        border: 1px solid rgba(34, 29, 92, 0.05);
+        display: flex;
+        flex-direction: column;
+        transition: all 0.4s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .portal-card:hover {
+        transform: translateY(-10px);
+        border-color: var(--accent-red);
+        box-shadow: 0 25px 50px rgba(0,0,0,0.1);
+    }
+
+    .portal-icon {
+        font-size: 40px;
+        color: var(--primary-blue);
+        margin-bottom: 20px;
+    }
+
+    .portal-card h3 {
+        font-size: 24px;
+        color: var(--primary-blue);
+        margin-bottom: 15px;
+        font-weight: 800;
+    }
+
+    .portal-mini-list {
+        list-style: none;
+        margin: 20px 0;
+        padding: 0;
+    }
+
+    .portal-mini-list li {
+        padding: 8px 0;
+        font-size: 14px;
+        color: #555;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        align-items: center;
+    }
+
+    .portal-mini-list li::before {
+        content: "•";
+        color: var(--accent-red);
+        font-weight: bold;
+        margin-right: 10px;
+    }
+
+    .nhce-portal-btn {
+        margin-top: auto;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        padding: 15px 25px;
+        background: var(--primary-blue);
+        color: white;
+        text-decoration: none;
+        border-radius: 50px;
+        font-weight: 700;
+        font-size: 14px;
+        transition: all 0.3s ease;
+    }
+
+    .nhce-portal-btn:hover {
+        background: var(--accent-red);
+        color: white;
+    }
+
+    /* Subtle Background Accent for Cards */
+    .portal-card::after {
+        content: '';
+        position: absolute;
+        top: -20px;
+        right: -20px;
+        width: 100px;
+        height: 100px;
+        background: rgba(34, 29, 92, 0.02);
+        border-radius: 50%;
+        z-index: 0;
+    }
+
     </style>
 </head>
 <body>
 
- <a href="index-2.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> BACK</a>
+    <a href="index-2.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> BACK</a>
 
     <div class="bg-overlay-container" id="bg-container">
         <canvas id="bg-hex-canvas"></canvas>
         <img src="images/logo-1.png" class="center-watermark" alt="Watermark">
     </div>
 
-   <main class="page-content">
+    <main class="page-content">
 
-    <!-- PROGRAMS -->
-    <section class="section">
-        <h2 class="section-title">🎓 Programs Offered</h2>
+       <section class="section reveal-section">
+    <div class="program-portal-header">
+        <h2 class="section-title">📘 Academic Programs</h2>
+        <p class="portal-subtitle">Explore our wide range of Undergraduate, Postgraduate, and Research programs tailored for industry excellence.</p>
+    </div>
 
-        <div class="card-grid">
-            <div class="card">
-                 <a href="programs.html" style="text-decoration:none;">
-                <span class="icon-badge"><i class="fa-solid fa-laptop-code"></i></span>
-                <img src="images/img1.jpg" alt="B.Tech">
-                <h3>B.Tech / BE</h3>
-                <p>Undergraduate engineering programs across multiple specialized branches with strong industry focus.</p>
+    <div class="portal-grid">
+        <div class="portal-card">
+            <div class="portal-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+            <h3>Undergraduate (B.E)</h3>
+            <p>12+ Specialized Engineering streams including AI, CSE, and Robotics.</p>
+            <ul class="portal-mini-list">
+                <li>Computer Science & Engineering</li>
+                <li>AI & Machine Learning</li>
+                <li>Electronics & Communication</li>
+            </ul>
+            <a href="programs.html" class="nhce-portal-btn">
+                View All B.E Programs <i class="fa-solid fa-arrow-right"></i>
             </a>
-            </div>
+        </div>
 
-            <div class="card">
-                <span class="icon-badge"><i class="fa-solid fa-microchip"></i></span>
-                <img src="images/img2.jpg" alt="M.Tech">
-                <h3>M.Tech</h3>
-                <p>Advanced postgraduate engineering programs designed for technical depth and research exposure.</p>
-            </div>
-
-            <div class="card">
-                <span class="icon-badge"><i class="fa-solid fa-chart-line"></i></span>
-                <img src="images/img4.jpg" alt="MBA MCA">
-                <h3>MBA / MCA</h3>
-                <p>Management and computer applications programs emphasizing leadership and innovation.</p>
-            </div>
-
-            <div class="card">
-                <a href="resdc.html" style="text-decoration:none;">
-                <span class="icon-badge"><i class="fa-solid fa-flask"></i></span>
-                <img src="images/img5.jpg" alt="Research">
-                <h3>Ph.D. / M.Sc (Engg)</h3>
-                <p>Research-focused programs aligned with VTU guidelines for academic excellence.</p>
+        <div class="portal-card">
+            <div class="portal-icon"><i class="fa-solid fa-user-tie"></i></div>
+            <h3>Postgraduate</h3>
+            <p>Advanced Master's programs for career acceleration and specialization.</p>
+            <ul class="portal-mini-list">
+                <li>M.Tech in CSE</li>
+                <li>Master of Business Admin (MBA)</li>
+                <li>Master of Computer Apps (MCA)</li>
+            </ul>
+            <a href="programs.html" class="nhce-portal-btn">
+                View PG Programs <i class="fa-solid fa-arrow-right"></i>
             </a>
-            </div>
         </div>
-    </section>
 
-    <!-- COURSES OFFERED -->
-<section class="section">
-    <h2 class="section-title">📘 Courses Offered at NHCE</h2>
-
-    <!-- UG -->
-    <div class="course-group">
-        <h3>Undergraduate Programs (B.Tech / BE)</h3>
-
-        <div class="course-cards">
-            <div class="course-card">
-                <i class="fa-solid fa-code"></i>
-                <h4>Computer Science & Engineering</h4>
-                <p>Core computing program with strong foundations in software, systems and emerging technologies.</p>
-            </div>
-
-            <div class="course-card">
-                <i class="fa-solid fa-network-wired"></i>
-                <h4>Information Science & Engineering</h4>
-                <p>Focuses on data, networking, software engineering and information systems.</p>
-            </div>
-
-            <div class="course-card">
-                <i class="fa-solid fa-brain"></i>
-                <h4>Artificial Intelligence & Machine Learning</h4>
-                <p>Industry-driven program covering AI models, data science and intelligent systems.</p>
-            </div>
-
-            <div class="course-card">
-                <i class="fa-solid fa-microchip"></i>
-                <h4>Electronics & Communication Engineering</h4>
-                <p>Emphasizes electronics, communication systems, VLSI and embedded technologies.</p>
-            </div>
-
-            <div class="course-card">
-                <i class="fa-solid fa-bolt"></i>
-                <h4>Electrical & Electronics Engineering</h4>
-                <p>Power systems, control engineering and electrical technologies for modern industry.</p>
-            </div>
-
-       
+        <div class="portal-card">
+            <div class="portal-icon"><i class="fa-solid fa-microscope"></i></div>
+            <h3>Research (Ph.D)</h3>
+            <p>State-of-the-art research centers recognized by VTU for academic excellence.</p>
+            <ul class="portal-mini-list">
+                <li>Engineering Research Centers</li>
+                <li>Management & Basic Sciences</li>
+                <li>Recognized Research Supervisors</li>
+            </ul>
+            <a href="resdc.html" class="nhce-portal-btn">
+                Research Details <i class="fa-solid fa-arrow-right"></i>
+            </a>
         </div>
     </div>
+</section>
+		
+		<section class="eligibility-container">
+		<h3 class="section-title">📌 Eligibility Criteria</h3>
 
-    <!-- PG -->
-    <div class="course-group">
-        <h3>Postgraduate Programs (M.Tech)</h3>
 
-        <div class="course-cards">
-            <div class="course-card">
-                <i class="fa-solid fa-laptop-code"></i>
-                <h4>Computer Science & Engineering</h4>
-                <p>Advanced computing concepts, research methodologies and system design.</p>
-            </div>
-
-            <div class="course-card">
-                <i class="fa-solid fa-microchip"></i>
-                <h4>VLSI Design & Embedded Systems</h4>
-                <p>Specialized program in chip design, embedded hardware and electronics.</p>
-            </div>
-
-            <div class="course-card">
-                <i class="fa-solid fa-cogs"></i>
-                <h4>Machine Design</h4>
-                <p>Advanced mechanical design principles and industrial applications.</p>
-            </div>
-
-            <div class="course-card">
-                <i class="fa-solid fa-plug"></i>
-                <h4>Power Systems Engineering</h4>
-                <p>Generation, transmission and smart power system technologies.</p>
-            </div>
+    <div class="eligibility-grid">
+        <div class="eligibility-card">
+            <i class="fa-solid fa-user-graduate"></i>
+            <h3>Bachelor of Engineering (B.E)</h3>
+            <p>Passed 2nd PUC/12th standard with English. Minimum <span class="highlight-text">45% aggregate</span> in Physics and Mathematics (compulsory) along with Chemistry / Computer Science / Electronics / Biology.</p>
         </div>
-    </div>
 
-    <!-- MBA / MCA -->
-    <div class="course-group">
-        <h3>Management & Computer Applications</h3>
-
-        <div class="course-cards">
-            <div class="course-card">
-                <i class="fa-solid fa-chart-line"></i>
-                <h4>Master of Business Administration (MBA)</h4>
-                <p>Leadership-focused management program aligned with industry requirements.</p>
-            </div>
-
-            <div class="course-card">
-                <i class="fa-solid fa-database"></i>
-                <h4>Master of Computer Applications (MCA)</h4>
-                <p>Advanced application development, software engineering and computing.</p>
-            </div>
+        <div class="eligibility-card">
+            <i class="fa-solid fa-microchip"></i>
+            <h3>M.Tech</h3>
+            <p>Bachelor’s Degree in Engineering or Technology in CSE / Information Science. <span class="highlight-text">GATE / PGCET scores are mandatory</span> for admission.</p>
         </div>
-    </div>
 
-    <!-- RESEARCH -->
-    <div class="course-group">
-        <h3>Research Programs</h3>
+        <div class="eligibility-card">
+            <i class="fa-solid fa-briefcase"></i>
+            <h3>MBA</h3>
+            <p>Regular 3-year Bachelor's degree with not less than <span class="highlight-text">50% aggregate marks</span> in all years of the degree examinations.</p>
+        </div>
 
-        <div class="course-cards">
-            <div class="course-card">
-                <i class="fa-solid fa-flask"></i>
-                <h4>Ph.D. in Engineering</h4>
-                <p>Doctoral research programs under VTU with interdisciplinary focus.</p>
-            </div>
+        <div class="eligibility-card">
+            <i class="fa-solid fa-code"></i>
+            <h3>MCA</h3>
+            <p>BCA / Bachelor's degree in CSE or equivalent, OR B.Sc / B.Com / B.A with Mathematics at 10+2 level. Minimum <span class="highlight-text">50% aggregate marks</span> required.</p>
+        </div>
 
-            <div class="course-card">
-                <i class="fa-solid fa-book-open"></i>
-                <h4>M.Sc (Engineering) by Research</h4>
-                <p>Research-oriented program for advanced academic and industrial innovation.</p>
-            </div>
+        <div class="eligibility-card research">
+            <i class="fa-solid fa-flask-vial"></i>
+            <h3>Research Programs</h3>
+            <p><span class="highlight-text">Ph.D / M.Sc (Engg) by Research</span> offered in: CSE, ECE, EEE, ISE, ME, Maths, Physics, Chemistry, MCA, and Management Studies.</p>
         </div>
     </div>
 </section>
 
-
-    <!-- ELIGIBILITY -->
-    <section class="section">
-        <h2 class="section-title">📌 Eligibility Requirements</h2>
-
-        <div class="card-grid">
-            <div class="card">
-                <h3>🧑‍🎓 B.Tech / BE</h3>
-                <ul>
-                    <li>Passed 12th with Physics & Maths</li>
-                    <li>Minimum 45% aggregate (as per category norms)</li>
-                </ul>
+        <section class="section">
+            <h2 class="section-title">🎓 Minor Degree Programs</h2>
+            
+            <div class="minor-intro-card">
+                <h3>Introduction & Purpose</h3>
+                <p>“With a view to enhance the employability skills and impart deep knowledge in emerging areas which are usually not being covered in Undergraduate Degree credit frameworks, AICTE has come up with the concept of ‘Minor Degree’ in emerging areas”.</p>
+                <div class="card-grid">
+                    <ul class="eligibility-list">
+                        <li>Study one additional minor course in Engineering</li>
+                        <li>Enhance interdisciplinary experience</li>
+                        <li>Exposure to concepts beyond regular degree program</li>
+                    </ul>
+                    <ul class="eligibility-list">
+                        <li>Encouraging multidisciplinary learning</li>
+                        <li>Specialize in a focused area of interest</li>
+                        <li>Offered between 4th to 8th semesters</li>
+                    </ul>
+                </div>
             </div>
 
-            <div class="card">
-                <h3>🎓 M.Tech</h3>
-                <ul>
-                    <li>Bachelor’s degree in relevant discipline</li>
-                    <li>GATE / PGCET scores applicable</li>
-                </ul>
+            <div class="card" style="margin-bottom: 30px;">
+                <p><strong>Credit Requirements:</strong> A student needs to earn an additional <strong>18 credits</strong> (over and above the required 160 credits for B.E) through VTU online courses. Students cannot enroll in a minor degree offered in their own stream (e.g., CSE students cannot take a Data Science minor).</p>
             </div>
 
-            <div class="card">
-                <h3>📊 MBA / MCA</h3>
-                <ul>
-                    <li>Recognized bachelor’s degree</li>
-                    <li>KMAT / MAT / PGCET accepted</li>
-                </ul>
+            <table class="minor-table">
+                <thead>
+                    <tr>
+                        <th>Sl.</th>
+                        <th>Offering Branch</th>
+                        <th>Minor Degree Courses Offered</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>1-5</td><td><span class="branch-label">Computer Science</span></td><td>Programming, Systems, Data Science, Artificial Intelligence, Foundation for Computing</td></tr>
+                    <tr><td>6-7</td><td><span class="branch-label">Electrical Engineering</span></td><td>VLSI Designs, Communication and Signal Processing</td></tr>
+                    <tr><td>8-9</td><td><span class="branch-label">Mechanical</span></td><td>Robotics</td></tr>
+                    <tr><td>10-14</td><td><span class="branch-label">Mechanical</span></td><td>Marketing, Operations, Patents and Intellectual Property Rights, Economics and Finance</td></tr>
+                    <tr><td>15</td><td><span class="branch-label">Humanities & Social Science</span></td><td>Psychology</td></tr>
+                </tbody>
+            </table>
+        </section>
+		
+		<section class="section">
+            <h2 class="section-title">🚀 Industry Certification Courses</h2>
+            <p style="margin-bottom: 20px; font-weight: 600;">Common to all B.E. Courses - Training Provided in 4th, 5th, 6th & 7th Semesters</p>
+            
+            <div class="cert-container">
+                <table class="cert-table">
+                    <thead>
+                        <tr>
+                            <th>Domain Specialization</th>
+                            <th>Technology Course 1 (4th/5th Sem)</th>
+                            <th>Technology Course 2 (6th/7th Sem)</th>
+                            <th>Job Opportunities</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="specialization-tag">DevOps</span></td>
+                            <td>IBM Full Stack Software Developer Professional Certificate</td>
+                            <td>Microsoft certified Designing and Implementing DevOps Solutions</td>
+                            <td><div class="job-opps">DevOps Engineer in MNCs like Goldman Sachs, Altran, Siemens, TCS, HCL</div></td>
+                        </tr>
+                        <tr>
+                            <td><span class="specialization-tag">Ethical Hacking</span></td>
+                            <td>EC-Council Certified Ethical Hacker (CEH)</td>
+                            <td>Forensic Investigator Certification</td>
+                            <td><div class="job-opps">Security Architect, CISO, Security Analyst, Cyber Security Lead</div></td>
+                        </tr>
+                        <tr>
+                            <td><span class="specialization-tag">Data Science</span></td>
+                            <td>Tableau Desktop Specialist</td>
+                            <td>Tableau Certified Data Analyst</td>
+                            <td><div class="job-opps">Data Analyst, Data Scientist, BI Manager in KPMG, Deloitte, IBM, Accenture</div></td>
+                        </tr>
+                        <tr>
+                            <td><span class="specialization-tag">Cloud (AWS)</span></td>
+                            <td>AWS Certified Cloud Practitioner</td>
+                            <td>AWS Certified Solutions Architect</td>
+                            <td><div class="job-opps">AWS Cloud Architect in Wipro, Infosys, MindTree</div></td>
+                        </tr>
+                        <tr>
+                            <td><span class="specialization-tag">Full Stack Development</span></td>
+                            <td>Coursera Certification Program</td>
+                            <td>Microsoft Certified: Azure Developer Associate</td>
+                            <td><div class="job-opps">Full Stack Developer, Software Engineer, Automation Engineer</div></td>
+                        </tr>
+                        <tr>
+                            <td><span class="specialization-tag">VLSI Design</span></td>
+                            <td>Front End Verification of Digital VLSI Design</td>
+                            <td>Universal Verification Methodology (UVM) training</td>
+                            <td><div class="job-opps">System Verilog Engineer, SoC Engineer, Design Verification Engineer in Intel</div></td>
+                        </tr>
+                        <tr>
+                            <td><span class="specialization-tag">Embedded Systems</span></td>
+                            <td>ARM Certification (Getting Started)</td>
+                            <td>ARM Certification (Get Practical with Hardware)</td>
+                            <td><div class="job-opps">Embedded Software Engineer, ARM Designer, ARM Developer</div></td>
+                        </tr>
+                        <tr>
+                            <td><span class="specialization-tag">Digital Manufacturing</span></td>
+                            <td>IMTMA Certification on Manufacturing Tech</td>
+                            <td>Bosch Certification on Autotronics / Trinity NDT</td>
+                            <td><div class="job-opps">Robotics Engineer, Mechanical Design Engineer, Manufacturing Solutions</div></td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
+        </section>
 
-            <div class="card">
-                <h3>📚 Ph.D / Research</h3>
-                <ul>
-                    <li>Applications as per VTU notifications</li>
-                    <li>Two admission cycles every year</li>
-                </ul>
+        <section class="section">
+            <h2 class="section-title">🎓 Minor Degree Program</h2>
+            <div style="background: var(--primary-blue); color: white; padding: 30px; border-radius: 20px; margin-bottom: 30px;">
+                <p>AICTE concept to enhance employability in emerging areas. Earn <strong>18 additional credits</strong> between 4th to 8th semester via VTU online courses.</p>
             </div>
-        </div>
-    </section>
+            <table class="minor-table">
+                <thead>
+                    <tr><th>Branch</th><th>Minor Courses</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td><b>Computer Science</b></td><td>Programming, Systems, Data Science, AI, Foundation for Computing</td></tr>
+                    <tr><td><b>Electrical</b></td><td>VLSI Designs, Communication and Signal Processing</td></tr>
+                    <tr><td><b>Mechanical</b></td><td>Robotics, Marketing, Operations, IP Rights, Economics & Finance</td></tr>
+                    <tr><td><b>Humanities</b></td><td>Psychology</td></tr>
+                </tbody>
+            </table>
+        </section>
+        <section class="section">
+            <h2 class="section-title">💰 Scholarships (Academic Year 2025-26)</h2>
+            
+            <div class="scholarship-highlight">
+                <div class="scholar-card">
+                    <i class="fa-solid fa-trophy" style="font-size: 50px; color: var(--gold); margin-bottom: 20px;"></i>
+                    <h3>CET Scholarships</h3>
+                    <div class="concession-row">
+                        <span class="rank-tag">Rank 01 - 1000</span>
+                        <span class="percent-tag">100% CONCESSION</span>
+                    </div>
+                    <div class="concession-row">
+                        <span class="rank-tag">Rank 1001 - 3000</span>
+                        <span class="percent-tag">50% CONCESSION</span>
+                    </div>
+                    <div class="concession-row">
+                        <span class="rank-tag">Rank 3001 - 5000</span>
+                        <span class="percent-tag">25% CONCESSION</span>
+                    </div>
+                    <p style="margin-top:20px; font-size: 13px;">*Concession on total fee</p>
+                </div>
 
-    <!-- HOW TO APPLY -->
-    <section class="section">
-        <h2 class="section-title">📝 How to Apply</h2>
-
-        <div class="steps">
-            <div class="step"><span>01</span><p>Visit the official NHCE admissions page</p></div>
-            <div class="step"><span>02</span><p>Click on “Apply Now” / “Admission Form”</p></div>
-            <div class="step"><span>03</span><p>Fill personal, academic & contact details</p></div>
-            <div class="step"><span>04</span><p>Pay the application fee (~₹1,000)</p></div>
-            <div class="step"><span>05</span><p>Submit required documents</p></div>
-        </div>
-    </section>
-
-    <!-- ENTRANCE PATHWAYS -->
-    <section class="section">
-        <h2 class="section-title">📅 Entrance Pathways</h2>
-
-        <div class="card-grid">
-            <div class="card">
-                <h3>💡 Merit / Entrance Based</h3>
-                <ul>
-                    <li>KCET – Karnataka rank-based admissions</li>
-                    <li>JEE Main – Out-of-state applicants</li>
-                </ul>
+                <div class="scholar-card" style="border-top-color: var(--primary-blue);">
+                    <i class="fa-solid fa-medal" style="font-size: 50px; color: var(--primary-blue); margin-bottom: 20px;"></i>
+                    <h3>Merit Scholarship</h3>
+                    <p>For students with <strong>85% and above</strong> in II PUC / 12th Std:</p>
+                    <div class="concession-row">
+                        <span class="rank-tag">New Horizon Students</span>
+                        <span class="percent-tag" style="background: #eef2ff; color: var(--primary-blue);">Rs. 25,000/-</span>
+                    </div>
+                    <div class="concession-row">
+                        <span class="rank-tag">Other Schools/Colleges</span>
+                        <span class="percent-tag" style="background: #eef2ff; color: var(--primary-blue);">Rs. 20,000/-</span>
+                    </div>
+                </div>
             </div>
+        </section>
 
-            <div class="card">
-                <h3>📌 Management Quota</h3>
-                <p>Direct admissions available on a first-come, first-served basis with applicable fee structure.</p>
+        <section class="section">
+            <h2 class="section-title">📌 Admission Guidelines</h2>
+            <div class="card-grid">
+                <div class="card">
+                    <h4><i class="fa-solid fa-user-graduate"></i> B.E Eligibility</h4>
+                    <ul class="eligibility-list">
+                        <li>Passed 12th/PUC with English.</li>
+                        <li>45% aggregate in Physics & Maths (Compulsory).</li>
+                        <li>Along with Chemistry/CS/Electronics/Bio.</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4><i class="fa-solid fa-shirt"></i> Dress Code</h4>
+                    <p><strong>Boys:</strong> No shorts, headgears, torn jeans, or chappals.</p>
+                    <p><strong>Girls:</strong> No shorts, short skirts/dresses, torn jeans, strapless tops, burkhas, or headscarves.</p>
+                    <span class="tag" style="background: #ffebeb; color: red;">Strictly Followed</span>
+                </div>
+                <div class="card">
+                    <h4><i class="fa-solid fa-language"></i> Language Lab</h4>
+                    <p>Open 9:00 AM - 9:00 PM. Includes German, Japanese, French, Spanish, and more.</p>
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-</main>
+    </main>
+	
+	<script>
+	document.addEventListener("DOMContentLoaded", function() {
+    const observerOptions = {
+        threshold: 0.15 // Trigger when 15% of the section is visible
+    };
 
+    const observer = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                // Add the active class to trigger CSS transitions
+                entry.target.classList.add('active');
+                // Optional: Stop observing once animated
+                observer.unobserve(entry.target);
+            }
+        });
+    }, observerOptions);
 
-    <script>
+    // Apply the observer to every section with the reveal class
+    const sections = document.querySelectorAll('.reveal-section');
+    sections.forEach(section => {
+        observer.observe(section);
+    });
+});
+	</script>
+	    <script>
         const container = document.getElementById('bg-container');
         const hexCanvas = document.getElementById('bg-hex-canvas');
         const ctx = hexCanvas.getContext('2d');

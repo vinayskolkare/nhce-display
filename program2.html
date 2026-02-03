@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Academic Hub | Kinetic Doodle Flow</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --blue: #231d5d;
+            --red: #c01c28;
+            --white: #ffffff;
+            --bg-grey: #e2e8f0;
+            
+            --h-w: clamp(145px, 17vw, 260px); 
+            --h-h: calc(var(--h-w) * 1.1);
+            --grid-gap: clamp(15px, 3vw, 35px);
+            --ease-puffer: cubic-bezier(0.47, 1.64, 0.41, 0.8);
+        }
+
+        body, html {
+            margin: 0; padding: 0;
+            width: 100%; height: 100vh;
+            background-color: var(--bg-grey);
+            display: flex; justify-content: center; align-items: center;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            overflow: hidden;
+            touch-action: manipulation;
+        }
+
+       .nav-container {
+    position: fixed; 
+    top: 25px; 
+    left: 25px; 
+    z-index: 100;
+    display: flex; /* Makes them inline */
+    gap: 12px;     /* Space between buttons */
+}
+
+/* Your original class, with position: fixed removed */
+.back-btn {
+    text-decoration: none; 
+    color: var(--blue);
+    background: rgba(255, 255, 255, 0.95);
+    padding: 12px 22px; 
+    border-radius: 50px;
+    font-weight: 700; 
+    display: flex; 
+    align-items: center; 
+    gap: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid white;
+    transition: 0.3s;
+}
+
+.back-btn:hover {
+    background: #fff;
+    transform: translateY(-2px);
+}
+
+        /* --- KINETIC BACKGROUND ELEMENTS --- */
+        #kinetic-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1; pointer-events: none;
+        }
+
+        .kinetic-el {
+            position: absolute;
+            bottom: -150px;
+            opacity: 0.2; /* Semi-opaque */
+            animation: flowUp 12s linear infinite;
+        }
+
+        .k-blue { background-color: var(--blue); }
+        .k-red { background-color: var(--red); }
+
+        .k-bubble { border-radius: 50%; }
+        .k-hex { clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); }
+
+        @keyframes flowUp {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            20% { opacity: 0.25; }
+            80% { opacity: 0.25; }
+            100% { transform: translateY(-120vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* --- DOODLES --- */
+        .doodle {
+            position: absolute;
+            color: rgba(35, 29, 93, 0.18);
+            z-index: 2;
+            pointer-events: none;
+            animation: doodlePop 8s ease-in-out infinite alternate;
+        }
+
+        @keyframes doodlePop {
+            0% { transform: scale(0.8) rotate(-5deg); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: scale(1.1) rotate(5deg); opacity: 0; }
+        }
+
+        .watermark {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 75vw; opacity: 0.12; z-index: 3; pointer-events: none; filter: grayscale(1);
+        }
+
+        /* --- GRID & PUFFER ENTRY --- */
+        .grid-container {
+            position: relative; display: flex; flex-direction: column;
+            align-items: center; gap: calc(var(--grid-gap) * -1.2); z-index: 10;
+        }
+        .row { display: flex; justify-content: center; gap: var(--grid-gap); }
+        .row-top { transform: translateY(10%); }
+
+        .hex-wrap {
+            position: relative; opacity: 0; transform: scale(0.3);
+            animation: pufferAppear 0.8s var(--ease-puffer) forwards;
+        }
+
+        @keyframes pufferAppear {
+            0% { opacity: 0; transform: scale(0.3); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        /* --- RADIAL GLOW & PULSE --- */
+        .hex {
+            width: var(--h-w); height: var(--h-h);
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            text-decoration: none; position: relative;
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.3);
+            overflow: hidden;
+            animation: breathingHex 5s infinite ease-in-out;
+        }
+
+        .hex::after {
+            content: '';
+            position: absolute; top: 50%; left: 50%;
+            width: 140%; height: 140%;
+            background: radial-gradient(circle, var(--glow-c) 0%, transparent 65%);
+            transform: translate(-50%, -50%);
+            animation: radialGlowMove 5s infinite ease-in-out;
+            pointer-events: none; z-index: 1;
+        }
+
+        @keyframes radialGlowMove {
+            0%, 100% { opacity: 0.3; transform: translate(-50%, -50%) scale(0.85); }
+            50% { opacity: 1; transform: translate(-50%, -50%) scale(1.15); }
+        }
+
+        @keyframes breathingHex {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        .blue { background: #231d5d; --glow-c: rgba(110, 140, 255, 0.6); }
+        .red { background: #c01c28; --glow-c: rgba(255, 100, 100, 0.6); }
+        .white { background: #ffffff; --glow-c: rgba(200, 220, 255, 0.5); border: 1px solid #cbd5e1; }
+
+        .hex i { font-size: clamp(2.3rem, 4vw, 4.5rem); color: white; margin-bottom: 8px; z-index: 5; position: relative; }
+        .hex span { 
+            color: white; font-weight: 800; font-size: clamp(2.1rem, 0.95vw, 1.15rem); 
+            text-transform: uppercase; text-align: center; padding: 0 10%; line-height: 1.1; z-index: 5; letter-spacing: 0.05rem; position: relative;
+        }
+        .white i, .white span { color: var(--blue); }
+
+        /* TOUCH RESPONSE */
+        .hex:active {
+            transform: scale(0.9) !important;
+            filter: brightness(1.5) !important;
+            transition: 0.1s;
+        }
+    </style>
+</head>
+<body>
+
+<div class="nav-container">
+    <a href="index-2.html" class="back-btn"><i class="fa-solid fa-house"></i> HOME</a>
+    <a href="admissions.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> BACK</a>
+</div>
+
+    <!--<a href="index-2.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> BACK</a>-->
+	
+	
+
+    <div id="kinetic-bg"></div>
+    <img src="images/logofiles-01.png" class="watermark" alt="logo">
+
+    <div class="grid-container">
+        <div class="row row-top">
+            <div class="hex-wrap" style="animation-delay: 0.1s;"><a href="aiml.html" class="hex blue"><i class="fa-solid fa-brain"></i><span>AI &amp; ML</span></a></div>
+            <div class="hex-wrap" style="animation-delay: 0.2s;"><a href="apps.html" class="hex white"><i class="fa-solid fa-atom"></i><span>Applied Sciences</span></a></div>
+            <div class="hex-wrap" style="animation-delay: 0.3s;"><a href="cs-1.html" class="hex red"><i class="fa-solid fa-laptop-code"></i><span>CSE</span></a></div>
+        </div>
+        <div class="row">
+            <div class="hex-wrap" style="animation-delay: 0.4s;"><a href="ece.html" class="hex blue"><i class="fa-solid fa-tower-broadcast"></i><span>ECE</span></a></div>
+            <div class="hex-wrap" style="animation-delay: 0.5s;"><a href="eee.html" class="hex red"><i class="fa-solid fa-bolt"></i><span>EEE</span></a></div>
+            <div class="hex-wrap" style="animation-delay: 0.6s;"><a href="mba.html" class="hex blue"><i class="fa-solid fa-chart-line"></i><span>MBA</span></a></div>
+            <div class="hex-wrap" style="animation-delay: 0.7s;"><a href="mca.html" class="hex white"><i class="fa-solid fa-code"></i><span>MCA</span></a></div>
+        </div>
+    </div>
+
+    <script>
+        const bg = document.getElementById('kinetic-bg');
+        const doodleIcons = ['fa-book', 'fa-graduation-cap', 'fa-lightbulb', 'fa-pencil', 'fa-microscope', 'fa-brain', 'fa-flask', 'fa-atom'];
+
+        function createKineticElements() {
+            for (let i = 0; i < 30; i++) {
+                const el = document.createElement('div');
+                const isHex = Math.random() > 0.5;
+                const isRed = Math.random() > 0.5;
+                const size = Math.random() * 60 + 20;
+                
+                el.className = `kinetic-el ${isHex ? 'k-hex' : 'k-bubble'} ${isRed ? 'k-red' : 'k-blue'}`;
+                el.style.width = `${size}px`;
+                el.style.height = isHex ? `${size * 1.1}px` : `${size}px`;
+                el.style.left = `${Math.random() * 100}vw`;
+                el.style.animationDuration = `${Math.random() * 8 + 6}s`;
+                el.style.animationDelay = `${Math.random() * -15}s`;
+                
+                bg.appendChild(el);
+            }
+        }
+
+        function spawnDoodles() {
+            for (let i = 0; i < 15; i++) {
+                const d = document.createElement('i');
+                d.className = `fa-solid ${doodleIcons[Math.floor(Math.random() * doodleIcons.length)]} doodle`;
+                d.style.left = `${Math.random() * 90}vw`;
+                d.style.top = `${Math.random() * 90}vh`;
+                d.style.fontSize = `${Math.random() * 20 + 20}px`;
+                d.style.animationDelay = `${Math.random() * 10}s`;
+                document.body.appendChild(d);
+            }
+        }
+
+        createKineticElements();
+        spawnDoodles();
+    </script>
+</body>
+</html>

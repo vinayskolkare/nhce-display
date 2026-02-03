@@ -363,7 +363,7 @@
         </div>
         <ul class="nav-links">
             <li><a onclick="switchTab('overview')" id="link-overview" class="active"><i class="fa-solid fa-chart-line"></i> <span>Overview</span></a></li>
-            <li><a onclick="switchTab('academics')" id="link-academics"><i class="fa-solid fa-book"></i> <span>Academics</span></a></li>
+            <li><a onclick="switchTab('academics')" id="link-academics"><i class="fa-solid fa-book"></i> <span>Syllabus</span></a></li>
             <li><a onclick="switchTab('labs')" id="link-labs"><i class="fa-solid fa-flask"></i> <span>Labs</span></a></li>
             <li><a onclick="switchTab('coe')" id="link-coe"><i class="fa-solid fa-microchip"></i> <span>CoE</span></a></li>
             <li><a onclick="switchTab('activities')" id="link-activities"><i class="fa-solid fa-calendar-days"></i> <span>Activities</span></a></li>
@@ -383,7 +383,7 @@
                     </div>
                 </div>
                 <div class="stat-box span-4"><h4 class="counter" data-target="28" data-suffix=" LPA">0 LPA</h4><p>Highest Package</p></div>
-                <div class="stat-box span-4"><h4 class="counter" data-target="92" data-suffix="%">0%</h4><p>Placement Rate</p></div>
+                <div class="stat-box span-4"><h4 class="counter" data-target="100" data-suffix="%">%</h4><p>Placement Assistance</p></div>
                 <div class="stat-box span-4"><h4 class="counter" data-target="14">0</h4><p>Patents Filed</p></div>
                 <div class="card span-6">
                     <h3>Our Vision</h3>
@@ -402,51 +402,213 @@
         </section>
 
         <section id="academics" class="tab-content">
-            <div class="dashboard-grid">
-                <div class="hero-tile">
-                    <canvas id="academics-canvas"></canvas>
-                    <div class="hero-content">
-                        <span class="pre-title">ACADEMICS & NEP 2020</span>
-                        <h1>Curriculum <br>Excellence</h1>
-                        <p class="sub-title">Restructuring Indian education to create an equitable and inclusive system providing learning for all.</p>
-                    </div>
-                </div>
-                <div class="card span-6">
-                    <h3>NEP & Scheme (2024-25)</h3>
-                    <ul class="list-items">
-                        <li><strong>2nd Year:</strong> <span class="counter" data-target="160">0</span> Credits (2022 scheme)</li>
-                        <li><strong>3rd Year:</strong> <span class="counter" data-target="160">0</span> Credits (2021 scheme)</li>
-                        <li><strong>4th Year:</strong> <span class="counter" data-target="160">0</span> Credits (Current scheme)</li>
-                    </ul>
-                </div>
-                <div class="card span-6">
-                    <h3>Degree Programs</h3>
-                    <div class="degree-container">
-                        <span class="degree-tag">Major Degree</span> 
-                        <p style="margin-bottom: 10px;"><span class="counter" data-target="160">0</span> Credits as per NEP</p>
-                        <span class="degree-tag">Minor Degree</span> 
-                        <p style="margin-bottom: 10px;"><span class="counter" data-target="18">0</span> Credits (Cross-branch selection: e.g. Mechanical students opting for CS scheme)</p>
-                        <span class="degree-tag">Honours Degree</span> 
-                        <p><span class="counter" data-target="18">0</span> Credits (Specialized Research)</p>
-                    </div>
-                </div>
-                <div class="card span-6">
-                    <h3>Global Program (AI & ML)</h3>
-                    <ul class="list-items">
-                        <li><strong>Core Focus:</strong> Full Stack Python Development</li>
-                        <li><strong>Visualization:</strong> Mastery in Tableau</li>
-                        <li><strong>MLOps Formula:</strong> ML + DEV + OPS</li>
-                    </ul>
-                </div>
-                <div class="card span-6">
-                    <h3>Career Lifecycle</h3>
-                    <ul class="list-items">
-                        <li><strong>Experiment:</strong> Data Acquisition & Modeling</li>
-                        <li><strong>Develop:</strong> Testing & Deployment</li>
-                        <li><strong>Operate:</strong> Monitoring & Feedback</li>
-                    </ul>
-                </div>
+           <div class="span-12 reveal" style="margin-bottom: 40px;">
+    <h3 style="color: var(--primary-blue); font-weight: 800; border-left: 6px solid var(--accent-red); padding-left: 15px; margin-bottom: 20px; font-size: 1.6rem;">
+        THIRD SEMESTER <i class="fas fa-cog" style="float:right; opacity:0.2"></i>
+    </h3>
+    
+    <div class="card" style="padding: 30px;">
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+            <div style="border-right: 1px solid rgba(34, 29, 92, 0.1); padding-right: 15px;">
+                <div class="item-row"><i class="fas fa-check"></i> Numerical Methods and Transforms</div>
+                <div class="item-row"><i class="fas fa-check"></i> Mechanics of Materials</div>
+                <div class="item-row"><i class="fas fa-check"></i> Material Science and Metallurgy</div>
+                <div class="item-row"><i class="fas fa-check"></i> Tool Engineering</div>
+                <div class="item-row"><i class="fas fa-check"></i> Basic Applied Mathematics - I</div>
             </div>
+            
+            <div style="border-right: 1px solid rgba(34, 29, 92, 0.1); padding-right: 15px;">
+                <div class="item-row"><i class="fas fa-check"></i> Computer Aided Machine Drawing</div>
+                <div class="item-row"><i class="fas fa-check"></i> Mechanics of Materials Lab</div>
+                <div class="item-row"><i class="fas fa-check"></i> Fluid Mechanics Lab</div>
+                <div class="item-row"><i class="fas fa-check"></i> Instrumentation in Thermal Engineering</div>
+            </div>
+            
+            <div>
+                <div class="item-row"><i class="fas fa-check"></i> Sustainable Manufacturing and Green Technologies</div>
+                <div class="item-row"><i class="fas fa-check"></i> Bioenergy and Biofuels</div>
+                <div class="item-row"><i class="fas fa-check"></i> Bio Inspired Design and Innovation</div>
+                <div class="item-row"><i class="fas fa-check"></i> Universal Human Values and Life Skills</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="span-12 reveal" style="margin-bottom: 40px;">
+    <h3 style="color: var(--primary-blue); font-weight: 800; border-left: 6px solid var(--accent-red); padding-left: 15px; margin-bottom: 20px; font-size: 1.6rem;">
+        FOURTH SEMESTER <i class="fas fa-vials" style="float:right; opacity:0.2"></i>
+    </h3>
+    
+    <div class="card" style="padding: 30px;">
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+            <div style="border-right: 1px solid rgba(34, 29, 92, 0.1); padding-right: 15px;">
+                <div class="item-row"><i class="fas fa-check"></i> Numerical, Complex Analysis and Probability Theory</div>
+                <div class="item-row"><i class="fas fa-check"></i> Engineering Thermodynamics</div>
+                <div class="item-row"><i class="fas fa-check"></i> Engineering Thermodynamics Lab</div>
+                <div class="item-row"><i class="fas fa-check"></i> Manufacturing Technology</div>
+                <div class="item-row"><i class="fas fa-check"></i> Manufacturing Technology Lab</div>
+                <div class="item-row"><i class="fas fa-check"></i> Mechanical Measurements and Metrology</div>
+                <div class="item-row"><i class="fas fa-check"></i> Mechanical Measurements and Metrology Lab</div>
+                <div class="item-row"><i class="fas fa-check"></i> Basic Applied Mathematics-II</div>
+            </div>
+            
+            <div style="border-right: 1px solid rgba(34, 29, 92, 0.1); padding-right: 15px;">
+                <div class="item-row"><i class="fas fa-check"></i> Introduction to Solar Energy</div>
+                <div class="item-row"><i class="fas fa-check"></i> Rotor Dynamics</div>
+                <div class="item-row"><i class="fas fa-check"></i> Aerospace Propulsion System</div>
+                <div class="item-row"><i class="fas fa-check"></i> Non Traditional Machining</div>
+                <div class="item-row"><i class="fas fa-check"></i> Fundamentals of Nanotechnology</div>
+                <div class="item-row"><i class="fas fa-check"></i> Mat Lab for Mechanical Engineers</div>
+                <div class="item-row"><i class="fas fa-check"></i> Energy Management and Auditing</div>
+            </div>
+            
+            <div>
+                <div class="item-row"><i class="fas fa-check"></i> Tools for Energy Systems Design and Drafting</div>
+                <div class="item-row"><i class="fas fa-check"></i> Air and Water Resources Engineering Lab</div>
+                <div class="item-row"><i class="fas fa-check"></i> Introduction to Augmented and Virtual Reality</div>
+                <div class="item-row"><i class="fas fa-check"></i> Design Thinking and Fabrication</div>
+                <div class="item-row"><i class="fas fa-check"></i> Mini Project</div>
+                <div class="item-row"><i class="fas fa-check"></i> National Service Scheme</div>
+                <div class="item-row"><i class="fas fa-check"></i> Physical Education and Sports</div>
+                <div class="item-row"><i class="fas fa-check"></i> Yoga</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="span-12 reveal" style="margin-bottom: 40px;">
+    <h3 style="color: var(--primary-blue); font-weight: 800; border-left: 6px solid var(--accent-red); padding-left: 15px; margin-bottom: 20px; font-size: 1.6rem;">
+        FIFTH SEMESTER <i class="fas fa-microchip" style="float:right; opacity:0.2"></i>
+    </h3>
+    
+    <div class="card" style="padding: 30px;">
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+            <div style="border-right: 1px solid rgba(34, 29, 92, 0.1); padding-right: 15px;">
+                <div class="item-row"><i class="fas fa-check"></i> Operation Research and Management</div>
+                <div class="item-row"><i class="fas fa-check"></i> Heat Power Cycles</div>
+                <div class="item-row"><i class="fas fa-check"></i> Heat Power Cycles Lab</div>
+                <div class="item-row"><i class="fas fa-check"></i> Theory of Machines</div>
+                <div class="item-row"><i class="fas fa-check"></i> Theory of Machines Lab</div>
+            </div>
+            
+            <div style="border-right: 1px solid rgba(34, 29, 92, 0.1); padding-right: 15px;">
+                <div class="item-row"><i class="fas fa-check"></i> Non Destructive Testing</div>
+                <div class="item-row"><i class="fas fa-check"></i> Composite Materials</div>
+                <div class="item-row"><i class="fas fa-check"></i> Statistics for Engineers</div>
+                <div class="item-row"><i class="fas fa-check"></i> Electric Vehicles and Battery Management System</div>
+                <div class="item-row"><i class="fas fa-check"></i> Competitive Coding</div>
+            </div>
+            
+            <div>
+                <div class="item-row"><i class="fas fa-check"></i> Research Methodology and IPR</div>
+                <div class="item-row"><i class="fas fa-check"></i> Critical and Creative Thinking Skills</div>
+                <div class="item-row"><i class="fas fa-check"></i> Environmental Studies</div>
+                <div class="item-row"><i class="fas fa-check"></i> Mini Project-II</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="span-12 reveal" style="margin-bottom: 40px;">
+    <h3 style="color: var(--primary-blue); font-weight: 800; border-left: 6px solid var(--accent-red); padding-left: 15px; margin-bottom: 20px; font-size: 1.6rem;">
+        SIXTH SEMESTER <i class="fas fa-car-side" style="float:right; opacity:0.2"></i>
+    </h3>
+    
+    <div class="card" style="padding: 30px;">
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+            <div style="border-right: 1px solid rgba(34, 29, 92, 0.1); padding-right: 15px;">
+                <div class="item-row"><i class="fas fa-check"></i> Machine Design</div>
+                <div class="item-row"><i class="fas fa-check"></i> Machine Design Lab</div>
+                <div class="item-row"><i class="fas fa-check"></i> Finite Element Methods</div>
+                <div class="item-row"><i class="fas fa-check"></i> Finite Element Methods Lab</div>
+                <div class="item-row"><i class="fas fa-check"></i> Workshop Technology</div>
+                <div class="item-row"><i class="fas fa-check"></i> Project Phase I</div>
+            </div>
+            
+            <div style="border-right: 1px solid rgba(34, 29, 92, 0.1); padding-right: 15px;">
+                <div class="item-row"><i class="fas fa-check"></i> Emerging Automotive Technologies</div>
+                <div class="item-row"><i class="fas fa-check"></i> Autonomous Vehicles</div>
+                <div class="item-row"><i class="fas fa-check"></i> Mechatronics</div>
+                <div class="item-row"><i class="fas fa-check"></i> MEMS and Microsystem Technology</div>
+                <div class="item-row"><i class="fas fa-check"></i> Instrumentation Engineering</div>
+                <div class="item-row"><i class="fas fa-check"></i> 3D Printing Technology</div>
+            </div>
+            
+            <div>
+                <div class="item-row"><i class="fas fa-check"></i> Introduction to Cloud Computing</div>
+                <div class="item-row"><i class="fas fa-check"></i> R-Programming</div>
+                <div class="item-row"><i class="fas fa-check"></i> Renewable Energy Resources</div>
+                <div class="item-row"><i class="fas fa-check"></i> Problem Solving Skills</div>
+                <div class="item-row"><i class="fas fa-check"></i> National Service Scheme (NSS)</div>
+                <div class="item-row"><i class="fas fa-check"></i> Physical Education (Sports and Athletics)</div>
+                <div class="item-row"><i class="fas fa-check"></i> Yoga</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="span-12 reveal" style="margin-bottom: 40px;">
+    <h3 style="color: var(--primary-blue); font-weight: 800; border-left: 6px solid var(--accent-red); padding-left: 15px; margin-bottom: 20px; font-size: 1.6rem;">
+        SEVENTH SEMESTER <i class="fas fa-industry" style="float:right; opacity:0.2"></i>
+    </h3>
+    
+    <div class="card" style="padding: 30px;">
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+            <div style="border-right: 1px solid rgba(34, 29, 92, 0.1); padding-right: 15px;">
+                <div class="item-row"><i class="fas fa-check"></i> Fundamentals of Heat Transfer</div>
+                <div class="item-row"><i class="fas fa-check"></i> Fundamentals of Heat Transfer Lab</div>
+            </div>
+            
+            <div style="border-right: 1px solid rgba(34, 29, 92, 0.1); padding-right: 15px;">
+                <div class="item-row"><i class="fas fa-check"></i> Computer Integrated Manufacturing</div>
+                <div class="item-row"><i class="fas fa-check"></i> Computer Integrated Manufacturing Lab</div>
+                <div class="item-row"><i class="fas fa-check"></i> Mechanical Vibrations</div>
+            </div>
+            
+            <div>
+                <div class="item-row"><i class="fas fa-check"></i> Project Phase - II</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="span-12 reveal" style="margin-bottom: 40px;">
+    <h3 style="color: var(--primary-blue); font-weight: 800; border-left: 6px solid var(--accent-red); padding-left: 15px; margin-bottom: 20px; font-size: 1.6rem;">
+        EIGHTH SEMESTER <i class="fas fa-robot" style="float:right; opacity:0.2"></i>
+    </h3>
+    
+    <div class="card" style="padding: 30px;">
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+            <div style="border-right: 1px solid rgba(34, 29, 92, 0.1); padding-right: 15px;">
+                <div class="item-row"><i class="fas fa-check"></i> Additive Manufacturing</div>
+                <div class="item-row"><i class="fas fa-check"></i> Industrial Robotics</div>
+                <div class="item-row"><i class="fas fa-check"></i> Control Engineering</div>
+                <div class="item-row"><i class="fas fa-check"></i> Hydraulics and Pneumatics</div>
+            </div>
+            
+            <div style="border-right: 1px solid rgba(34, 29, 92, 0.1); padding-right: 15px;">
+                <div class="item-row"><i class="fas fa-check"></i> Refrigeration and Air Conditioning</div>
+                <div class="item-row"><i class="fas fa-check"></i> Energy Engineering</div>
+                <div class="item-row"><i class="fas fa-check"></i> Sustainable Energy Systems Design</div>
+                <div class="item-row"><i class="fas fa-check"></i> Industrial Internet of Things</div>
+            </div>
+            
+            <div>
+                <div class="item-row"><i class="fas fa-check"></i> Advanced Nanotechnology</div>
+                <div class="item-row"><i class="fas fa-check"></i> Advanced Semiconductor Materials and its Applications</div>
+                <div class="item-row"><i class="fas fa-check"></i> Internship</div>
+                <div class="item-row"><i class="fas fa-check"></i> Indian Knowledge Systems</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
         </section>
 
         <section id="labs" class="tab-content">
@@ -509,25 +671,31 @@
                 <h4 class="activities-section-title">Academic Activities</h4>
                 
                 <div class="span-4 reveal">
+				<a href="mech-results.html?cat=12&name=Cocurricular" style="text-decoration: none; color: inherit;">
                     <div class="activity-card">
-                        <div class="activity-img"><img src="images/img-5.webp" alt="Co-curricular"></div>
+                        <div class="activity-img"><img src="images/seminar-01.webp" alt="Co-curricular"></div>
                         <div class="activity-info"><h5>Co-curricular Activities</h5><p>Engaging technical competitions, hackathons, and coding challenges held regularly.</p></div>
                     </div>
+					</a>
                 </div>
                 <div class="span-4 reveal">
+				<a href="mech-results.html?cat=11&name=Seminars" style="text-decoration: none; color: inherit;">
                     <div class="activity-card">
-                        <div class="activity-img"><img src="images/img-6.webp" alt="Seminars"></div>
+                        <div class="activity-img"><img src="images/8-1.jpg" alt="Seminars"></div>
                         <div class="activity-info"><h5>Seminars & Workshops</h5><p>Hands-on sessions on Generative AI, MLOps, and Deep Learning by experts.</p></div>
                     </div>
+					</a>
                 </div>
                 <div class="span-4 reveal">
+				<a href="mech-results.html?cat=8&name=Cocurricular" style="text-decoration: none; color: inherit;">
                     <div class="activity-card">
                         <div class="activity-img"><img src="images/img-7.webp" alt="Alumni"></div>
-                        <div class="activity-info"><h5>Alumni Talk Series</h5><p>Bridge the gap with industry insights from our successful graduates worldwide.</p></div>
+                        <div class="activity-info"><h5>Acheivements</h5><p>Bridge the gap with industry insights from our successful graduates worldwide.</p></div>
                     </div>
+					</a>
                 </div>
 
-                <h4 class="activities-section-title">Industry & Social</h4>
+                <h4 class="activities-section-title">Industry Visists</h4>
                 
                 <div class="span-4 reveal">
                     <div class="activity-card">
@@ -775,5 +943,37 @@
             initReveal();
         };
     </script>
+	
+	
+				<script>
+window.addEventListener('load', () => {
+    // Standard initializations
+    if (typeof createNeuralEffect === "function") createNeuralEffect('neural-canvas');
+    if (typeof initHexBg === "function") initHexBg();
+    initReveal();
+
+    // 1. Get the tab from the URL (?tab=activities)
+    const urlParams = new URLSearchParams(window.location.search);
+    const targetTab = urlParams.get('tab');
+
+    if (targetTab) {
+        // 2. Wait for the specific element to exist before switching
+        const checkExist = setInterval(() => {
+            const element = document.getElementById(targetTab);
+            if (element) {
+                console.log("Found tab, switching to:", targetTab);
+                switchTab(targetTab);
+                clearInterval(checkExist); // Stop looking once found
+            }
+        }, 50); // Checks every 50ms
+
+        // 3. Safety timeout: stop looking after 3 seconds if not found
+        setTimeout(() => clearInterval(checkExist), 3000);
+    } else {
+        // Default startup tab
+        switchTab('overview');
+    }
+});
+</script>
 </body>
 </html>

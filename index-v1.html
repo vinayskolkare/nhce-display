@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>NHCE & NHCM Portal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        html, body {
+            margin: 0; padding: 0;
+            overflow: hidden;
+            height: 100vh; width: 100vw;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #000;
+            position: relative;
+        }
+
+        /* Fullscreen Video Wrapper */
+        .video-background {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1;
+            pointer-events: none;
+            overflow: hidden;
+            background: #000; /* Fallback */
+        }
+
+        /* The IFrame must be larger than the container to hide YouTube UI */
+        #yt-player {
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 100vw;
+            height: 56.25vw; /* 16:9 ratio */
+            min-height: 100vh;
+            min-width: 177.77vh; /* 16:9 ratio */
+            transform: translate(-50%, -50%);
+            filter: brightness(0.5) contrast(1.1); /* Darken for visibility */
+        }
+
+        #transitionOverlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-color: #ffffff;
+            z-index: 200;
+            pointer-events: none;
+            opacity: 0;
+        }
+
+        canvas { 
+            display: block; position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 3;
+            pointer-events: none;
+        }
+
+        .split-view {
+            position: relative;
+            display: flex;
+            width: 100vw; height: 100vh;
+            z-index: 101;
+        }
+
+        .portal-side {
+            flex: 1;
+            display: flex; justify-content: center; align-items: center;
+        }
+
+        .click-zone {
+            display: flex; flex-direction: column; align-items: center;
+            cursor: pointer; padding: 30px; 
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 30px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .click-zone:hover { 
+            transform: scale(1.05);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .logo-container {
+            position: relative;
+            width: clamp(150px, 18vw, 350px);
+            height: clamp(150px, 18vw, 350px);
+        }
+
+        .logo-container img { width: 100%; height: 100%; object-fit: contain; }
+
+        .tap-text {
+            margin-top: 25px;
+            font-size: clamp(18px, 2.2vw, 36px);
+            font-weight: 800;
+            color: #ffffff;
+            letter-spacing: 2px;
+            text-shadow: 0 4px 15px rgba(0,0,0,0.8);
+        }
+    </style>
+</head>
+<body>
+
+<div class="video-background">
+    <div id="yt-player"></div>
+</div>
+
+<div id="transitionOverlay"></div>
+
+<div class="split-view">
+    <div class="portal-side">
+        <div class="click-zone" onclick="startTransition(event, 'index-2.html')">
+            <div class="logo-container">
+                <img src="images/nhce-logo.png" alt="NHCE Logo" />
+            </div>
+            <div class="tap-text">NHCE DISCOVER →</div>
+        </div>
+    </div>
+    <div class="portal-side">
+        <div class="click-zone" onclick="startTransition(event, 'index-3.html')">
+            <div class="logo-container">
+                <img src="images/nhcm-logo.png" alt="NHCM Logo" />
+            </div>
+            <div class="tap-text">NHCM DISCOVER →</div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+<script>
+    var tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/iframe_api";
+    var firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+    var player;
+    function onYouTubeIframeAPIReady() {
+        player = new YT.Player('yt-player', {
+            videoId: 'L_Wsvd216I0',
+            playerVars: {
+                'autoplay': 1,
+                'controls': 0,
+                'rel': 0,
+                'showinfo': 0,
+                'modestbranding': 1,
+                'loop': 1,
+                'playlist': 'L_Wsvd216I0', // Required for loop to work
+                'mute': 1,
+                'enablejsapi': 1,
+                'origin': window.location.origin
+            },
+            events: {
+                'onReady': onPlayerReady,
+                'onStateChange': onPlayerStateChange
+            }
+        });
+    }
+
+    function onPlayerReady(event) {
+        event.target.playVideo();
+    }
+
+    function onPlayerStateChange(event) {
+        // Ensure it loops if the 'loop' parameter fails
+        if (event.data === YT.PlayerState.ENDED) {
+            player.playVideo();
+        }
+    }
+
+    // --- THREE.JS PARTICLES (Subtle) ---
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+    camera.position.z = 5;
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    const particles = [];
+    for(let i=0; i<60; i++) {
+        const geo = new THREE.SphereGeometry(0.04, 8, 8);
+        const mat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.2 });
+        const mesh = new THREE.Mesh(geo, mat);
+        mesh.position.set((Math.random()-0.5)*15, (Math.random()-0.5)*12, 0);
+        particles.push({ mesh, speed: 0.005 + Math.random()*0.015 });
+        scene.add(mesh);
+    }
+
+    function animate() {
+        requestAnimationFrame(animate);
+        particles.forEach(p => {
+            p.mesh.position.y += p.speed;
+            if(p.mesh.position.y > 6) p.mesh.position.y = -6;
+        });
+        renderer.render(scene, camera);
+    }
+    animate();
+
+    // --- TRANSITION ---
+    function startTransition(event, url) {
+        gsap.to(".split-view, canvas, .video-background", { opacity: 0, duration: 0.6 });
+        gsap.to("#transitionOverlay", { 
+            opacity: 1, 
+            duration: 0.6, 
+            onComplete: () => window.location.href = url 
+        });
+    }
+
+    window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+</script>
+</body>
+</html>

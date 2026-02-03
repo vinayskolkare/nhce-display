@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>M.Tech CSE - Full Academic Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-blue: #221d5c;
+            --accent-red: #ec2024;
+            --light-bg: #f4f7f6;
+            --sidebar-width: 18%; 
+        }
+
+        body { font-family: 'Inter', sans-serif; margin: 0; display: flex; background: var(--light-bg); color: #333; }
+
+        /* Sidebar - 33% Width */
+        .sidebar {
+            width: var(--sidebar-width); 
+            height: 100vh; 
+            background: var(--primary-blue);
+            position: fixed; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center;
+            padding: 30px; /* Top padding set to 30px as requested */
+            border-right: 8px solid var(--accent-red); 
+            z-index: 1000;
+            box-sizing: border-box;
+        }
+
+        .logo-area { 
+            text-align: center; 
+            width: 100%;
+            margin-top: 0; /* Ensures it stays at the top of the padding */
+        }
+        
+        .logo-area img { 
+            width: 100%; 
+            max-width: 300px; 
+            filter: brightness(0) invert(1); 
+        }
+
+        .portal-title {
+            color: white;
+            margin-top: 25px;
+            font-weight: 300;
+            letter-spacing: 3px;
+            font-size: 1.2rem;
+            border-top: 1px solid rgba(255,255,255,0.2);
+            padding-top: 15px;
+            width: 80%;
+        }
+
+        /* Main Content */
+        main { 
+            margin-left: var(--sidebar-width); 
+            width: calc(100% - var(--sidebar-width)); 
+            padding: 40px; 
+            box-sizing: border-box;
+        }
+
+        .top-nav { 
+            display: flex; 
+            align-items: center; 
+            margin-bottom: 30px; 
+            background: white;
+            padding: 15px 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        /* Back Button on Left */
+        .back-btn { 
+            text-decoration: none; 
+            color: white; 
+            background: var(--primary-blue);
+            padding: 10px 22px;
+            border-radius: 8px;
+            font-weight: 700; 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+            transition: all 0.3s ease;
+        }
+        .back-btn:hover { background: var(--accent-red); transform: translateX(-3px); }
+
+        /* Tabs on Right */
+        .tab-wrapper { 
+            display: flex; 
+            gap: 12px; 
+            margin-left: auto; 
+        }
+        
+        .tab-btn { 
+            padding: 10px 20px; 
+            border: none; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-weight: 700; 
+            background: #f0f2f5; 
+            color: var(--primary-blue);
+            transition: 0.3s; 
+        }
+        .tab-btn.active { background: var(--primary-blue); color: white; }
+
+        /* Content Cards */
+        .card { background: white; border-radius: 20px; padding: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 30px; }
+        .section-title { color: var(--primary-blue); font-weight: 800; border-left: 6px solid var(--accent-red); padding-left: 15px; margin-bottom: 25px; }
+
+        /* Data Tables */
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        th { text-align: left; padding: 18px; background: #f8f9fa; color: var(--primary-blue); border-bottom: 2px solid #eee; font-size: 0.85rem; text-transform: uppercase; }
+        td { padding: 18px; border-bottom: 1px solid #f0f0f0; font-size: 1rem; }
+        .code-tag { background: #f0f2f5; color: var(--primary-blue); padding: 5px 10px; border-radius: 5px; font-weight: 700; font-size: 0.85rem; }
+        .sem-header { background: var(--primary-blue); color: white; padding: 12px 20px; font-weight: 700; border-radius: 8px; margin: 30px 0 15px 0; display: inline-block; }
+
+        .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; }
+        .info-item { background: #fff; padding: 30px; border-radius: 15px; border: 1px solid #eee; transition: 0.3s; }
+        .info-item:hover { border-color: var(--accent-red); box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .info-item h4 { color: var(--accent-red); margin: 0 0 15px 0; font-size: 1.1rem; }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="logo-area">
+            <img src="images/logo-2.png" alt="NHCE Logo">
+        </div>
+    </aside>
+
+    <main>
+	        <div class="hero-tile">
+                    <canvas id="neural-canvas"></canvas>
+                    <div class="hero-content">
+                        <h1>M.tech in Computer Science</h1>
+                        <p class="sub-title">Building the Intelligent Future with Next-Gen Technology and Research.</p>
+                    </div>
+                </div>
+        <div class="top-nav">
+            <a href="admissions.html" class="back-btn">
+                <i class="fas fa-arrow-left"></i> BACK
+            </a>
+
+            <div class="tab-wrapper">
+                <button class="tab-btn active" onclick="switchTab('syllabus')">Syllabus</button>
+                <button class="tab-btn" onclick="switchTab('vision')">Vision</button>
+                <button class="tab-btn" onclick="switchTab('outcomes')">Outcomes</button>
+            </div>
+        </div>
+		
+
+        <div id="syllabus" class="tab-content">
+            <div class="card">
+                <h2 class="section-title">ACADEMIC CURRICULUM 2025-26</h2>
+                
+                <div class="sem-header"><i class="fas fa-book-open"></i> Semester 1 & 2</div>
+                <table>
+                    <thead><tr><th>Course Code</th><th>Course Title</th><th>Credits/Ref</th></tr></thead>
+                    <tbody id="sem1-2-body"></tbody>
+                </table>
+
+                <div class="sem-header"><i class="fas fa-layer-group"></i> Semester 3</div>
+                <table>
+                    <thead><tr><th>Course Code</th><th>Course Title</th><th>Page Ref</th></tr></thead>
+                    <tbody id="sem3-body"></tbody>
+                </table>
+
+                <div class="sem-header"><i class="fas fa-graduation-cap"></i> Semester 4</div>
+                <table>
+                    <thead><tr><th>Course Code</th><th>Course Title</th><th>Page Ref</th></tr></thead>
+                    <tbody id="sem4-body"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="vision" class="tab-content" style="display:none;">
+            <div class="card">
+                <h2 class="section-title">Vision & Mission</h2>
+                <p style="font-size: 1.1rem; line-height: 1.8; margin-bottom: 30px;">To emerge as a department of eminence in Computer Science and Engineering in serving the IT Industry and the nation by empowering students with high technical competence.</p>
+                <div class="info-grid">
+                    <div class="info-item"><h4>RESEARCH</h4>Culture of research, innovation, and hands-on learning in CSE.</div>
+                    <div class="info-item"><h4>INDUSTRY</h4>Long-term interaction and involvement of the IT industry in design.</div>
+                    <div class="info-item"><h4>ETHICS</h4>Awareness in professional, ethical, social, and environmental dimensions.</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="outcomes" class="tab-content" style="display:none;">
+            <div class="card">
+                <h2 class="section-title">Program Outcomes</h2>
+                <div id="po-grid" class="info-grid"></div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const academicData = {
+            sem1_2: [
+                { code: "24SCS11", title: "Mathematics for Computational Thinking", ref: "4 Credits" },
+                { code: "24SCS12", title: "Advanced Algorithms", ref: "3 Credits" },
+                { code: "24SCS21", title: "Cloud Computing & Virtualization", ref: "Page 35" },
+                { code: "24SCS22", title: "Devops", ref: "Page 40" }
+            ],
+            sem3: [
+                { code: "24SCS31", title: "Advanced Computer Network & Security", pg: "11" },
+                { code: "24SCS321", title: "PE 3: Prompt Engineering", pg: "15" },
+                { code: "24SCS34", title: "Project Work Phase - 1", pg: "30" }
+            ],
+            sem4: [
+                { code: "24SCS41", title: "Project Work Phase - 2", pg: "38" },
+                { code: "24MOOC2", title: "BOS Online Courses", pg: "41" }
+            ]
+        };
+
+        const pos = [
+            { id: "PO1", title: "Engineering Knowledge", desc: "Apply math, science, and engineering fundamentals to complex CSE problems." },
+            { id: "PO4", title: "Modern Tool Usage", desc: "Create, select, and apply modern IT tools including prediction and modeling." },
+            { id: "PSO1", title: "Specific Skills", desc: "Ability to design, develop and implement computer programs for research gaps." }
+        ];
+
+        function renderData() {
+            document.getElementById('sem1-2-body').innerHTML = academicData.sem1_2.map(i => `
+                <tr><td><span class="code-tag">${i.code}</span></td><td><strong>${i.title}</strong></td><td>${i.ref}</td></tr>
+            `).join('');
+
+            document.getElementById('sem3-body').innerHTML = academicData.sem3.map(i => `
+                <tr><td><span class="code-tag">${i.code}</span></td><td><strong>${i.title}</strong></td><td>${i.pg}</td></tr>
+            `).join('');
+
+            document.getElementById('sem4-body').innerHTML = academicData.sem4.map(i => `
+                <tr><td><span class="code-tag">${i.code}</span></td><td><strong>${i.title}</strong></td><td>${i.pg}</td></tr>
+            `).join('');
+
+            document.getElementById('po-grid').innerHTML = pos.map(p => `
+                <div class="info-item"><h4>${p.id}: ${p.title}</h4><p>${p.desc}</p></div>
+            `).join('');
+        }
+
+        function switchTab(id) {
+            document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(id).style.display = 'block';
+            event.target.classList.add('active');
+        }
+
+        window.onload = renderData;
+    </script>
+</body>
+</html>
